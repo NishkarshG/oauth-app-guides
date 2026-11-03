@@ -1,0 +1,1943 @@
+{
+"source": "https://docs.composio.dev/toolkits/managed-auth",
+"capturedAt": "2026-11-03",
+"managed": [
+{
+"name": "Aircall",
+"doc": "aircall",
+"slug": "AIRCALL"
+},
+{
+"name": "Airtable",
+"doc": "airtable",
+"slug": "AIRTABLE"
+},
+{
+"name": "Apaleo",
+"doc": "apaleo",
+"slug": "APALEO"
+},
+{
+"name": "Asana",
+"doc": "asana",
+"slug": "ASANA"
+},
+{
+"name": "Attio",
+"doc": "attio",
+"slug": "ATTIO"
+},
+{
+"name": "Basecamp",
+"doc": "basecamp",
+"slug": "BASECAMP"
+},
+{
+"name": "Bitbucket",
+"doc": "bitbucket",
+"slug": "BITBUCKET"
+},
+{
+"name": "Blackbaud",
+"doc": "blackbaud",
+"slug": "BLACKBAUD"
+},
+{
+"name": "Boldsign",
+"doc": "boldsign",
+"slug": "BOLDSIGN"
+},
+{
+"name": "Box",
+"doc": "box",
+"slug": "BOX"
+},
+{
+"name": "Cal",
+"doc": "cal",
+"slug": "CAL"
+},
+{
+"name": "Calendly",
+"doc": "calendly",
+"slug": "CALENDLY"
+},
+{
+"name": "Canva",
+"doc": "canva",
+"slug": "CANVA"
+},
+{
+"name": "Capsule CRM",
+"doc": "capsule_crm",
+"slug": "CAPSULE_CRM"
+},
+{
+"name": "ClickUp",
+"doc": "clickup",
+"slug": "CLICKUP"
+},
+{
+"name": "Confluence",
+"doc": "confluence",
+"slug": "CONFLUENCE"
+},
+{
+"name": "Contentful",
+"doc": "contentful",
+"slug": "CONTENTFUL"
+},
+{
+"name": "Crowdin",
+"doc": "crowdin",
+"slug": "CROWDIN"
+},
+{
+"name": "Dart",
+"doc": "dart",
+"slug": "DART"
+},
+{
+"name": "Daytona",
+"doc": "daytona",
+"slug": "DAYTONA"
+},
+{
+"name": "Dialpad",
+"doc": "dialpad",
+"slug": "DIALPAD"
+},
+{
+"name": "Discord",
+"doc": "discord",
+"slug": "DISCORD"
+},
+{
+"name": "Discord Bot",
+"doc": "discordbot",
+"slug": "DISCORDBOT"
+},
+{
+"name": "Dropbox",
+"doc": "dropbox",
+"slug": "DROPBOX"
+},
+{
+"name": "Dub",
+"doc": "dub",
+"slug": "DUB"
+},
+{
+"name": "Dynamics 365",
+"doc": "dynamics365",
+"slug": "DYNAMICS365"
+},
+{
+"name": "Eventbrite",
+"doc": "eventbrite",
+"slug": "EVENTBRITE"
+},
+{
+"name": "Excel",
+"doc": "excel",
+"slug": "EXCEL"
+},
+{
+"name": "Exist",
+"doc": "exist",
+"slug": "EXIST"
+},
+{
+"name": "Facebook",
+"doc": "facebook",
+"slug": "FACEBOOK"
+},
+{
+"name": "Fathom",
+"doc": "fathom",
+"slug": "FATHOM"
+},
+{
+"name": "Figma",
+"doc": "figma",
+"slug": "FIGMA"
+},
+{
+"name": "Freeagent",
+"doc": "freeagent",
+"slug": "FREEAGENT"
+},
+{
+"name": "FreshBooks",
+"doc": "freshbooks",
+"slug": "FRESHBOOKS"
+},
+{
+"name": "GitHub",
+"doc": "github",
+"slug": "GITHUB"
+},
+{
+"name": "GitLab",
+"doc": "gitlab",
+"slug": "GITLAB"
+},
+{
+"name": "Gmail",
+"doc": "gmail",
+"slug": "GMAIL"
+},
+{
+"name": "Gong",
+"doc": "gong",
+"slug": "GONG"
+},
+{
+"name": "Google Ads",
+"doc": "googleads",
+"slug": "GOOGLEADS"
+},
+{
+"name": "Google Analytics",
+"doc": "google_analytics",
+"slug": "GOOGLE_ANALYTICS"
+},
+{
+"name": "Google BigQuery",
+"doc": "googlebigquery",
+"slug": "GOOGLEBIGQUERY"
+},
+{
+"name": "Google Calendar",
+"doc": "googlecalendar",
+"slug": "GOOGLECALENDAR"
+},
+{
+"name": "Google Classroom",
+"doc": "google_classroom",
+"slug": "GOOGLE_CLASSROOM"
+},
+{
+"name": "Google Docs",
+"doc": "googledocs",
+"slug": "GOOGLEDOCS"
+},
+{
+"name": "Google Drive",
+"doc": "googledrive",
+"slug": "GOOGLEDRIVE"
+},
+{
+"name": "Google Maps",
+"doc": "google_maps",
+"slug": "GOOGLE_MAPS"
+},
+{
+"name": "Google Meet",
+"doc": "googlemeet",
+"slug": "GOOGLEMEET"
+},
+{
+"name": "Google Photos",
+"doc": "googlephotos",
+"slug": "GOOGLEPHOTOS"
+},
+{
+"name": "Google Search Console",
+"doc": "google_search_console",
+"slug": "GOOGLE_SEARCH_CONSOLE"
+},
+{
+"name": "Google Sheets",
+"doc": "googlesheets",
+"slug": "GOOGLESHEETS"
+},
+{
+"name": "Google Slides",
+"doc": "googleslides",
+"slug": "GOOGLESLIDES"
+},
+{
+"name": "Google Super",
+"doc": "googlesuper",
+"slug": "GOOGLESUPER"
+},
+{
+"name": "Google Tasks",
+"doc": "googletasks",
+"slug": "GOOGLETASKS"
+},
+{
+"name": "Gorgias",
+"doc": "gorgias",
+"slug": "GORGIAS"
+},
+{
+"name": "Greenhouse",
+"doc": "greenhouse",
+"slug": "GREENHOUSE"
+},
+{
+"name": "Gumroad",
+"doc": "gumroad",
+"slug": "GUMROAD"
+},
+{
+"name": "Harvest",
+"doc": "harvest",
+"slug": "HARVEST"
+},
+{
+"name": "HubSpot",
+"doc": "hubspot",
+"slug": "HUBSPOT"
+},
+{
+"name": "Hugging Face",
+"doc": "hugging_face",
+"slug": "HUGGING_FACE"
+},
+{
+"name": "Instagram",
+"doc": "instagram",
+"slug": "INSTAGRAM"
+},
+{
+"name": "Intercom",
+"doc": "intercom",
+"slug": "INTERCOM"
+},
+{
+"name": "Jira",
+"doc": "jira",
+"slug": "JIRA"
+},
+{
+"name": "Kit",
+"doc": "kit",
+"slug": "KIT"
+},
+{
+"name": "Linear",
+"doc": "linear",
+"slug": "LINEAR"
+},
+{
+"name": "LinkedIn",
+"doc": "linkedin",
+"slug": "LINKEDIN"
+},
+{
+"name": "Linkhut",
+"doc": "linkhut",
+"slug": "LINKHUT"
+},
+{
+"name": "Mailchimp",
+"doc": "mailchimp",
+"slug": "MAILCHIMP"
+},
+{
+"name": "Microsoft OneNote",
+"doc": "onenote",
+"slug": "ONENOTE"
+},
+{
+"name": "Microsoft Teams",
+"doc": "microsoft_teams",
+"slug": "MICROSOFT_TEAMS"
+},
+{
+"name": "Miro",
+"doc": "miro",
+"slug": "MIRO"
+},
+{
+"name": "Monday",
+"doc": "monday",
+"slug": "MONDAY"
+},
+{
+"name": "Moneybird",
+"doc": "moneybird",
+"slug": "MONEYBIRD"
+},
+{
+"name": "Mural",
+"doc": "mural",
+"slug": "MURAL"
+},
+{
+"name": "NotebookLM",
+"doc": "notebook_lm",
+"slug": "NOTEBOOK_LM"
+},
+{
+"name": "Notion",
+"doc": "notion",
+"slug": "NOTION"
+},
+{
+"name": "Omnisend",
+"doc": "omnisend",
+"slug": "OMNISEND"
+},
+{
+"name": "OneDrive",
+"doc": "one_drive",
+"slug": "ONE_DRIVE"
+},
+{
+"name": "Outlook",
+"doc": "outlook",
+"slug": "OUTLOOK"
+},
+{
+"name": "PagerDuty",
+"doc": "pagerduty",
+"slug": "PAGERDUTY"
+},
+{
+"name": "Pinterest",
+"doc": "pinterest",
+"slug": "PINTEREST"
+},
+{
+"name": "Pinterest Ads",
+"doc": "pinterest_ads",
+"slug": "PINTEREST_ADS"
+},
+{
+"name": "Prisma",
+"doc": "prisma",
+"slug": "PRISMA"
+},
+{
+"name": "Productboard",
+"doc": "productboard",
+"slug": "PRODUCTBOARD"
+},
+{
+"name": "Pushbullet",
+"doc": "pushbullet",
+"slug": "PUSHBULLET"
+},
+{
+"name": "QuickBooks",
+"doc": "quickbooks",
+"slug": "QUICKBOOKS"
+},
+{
+"name": "Reddit",
+"doc": "reddit",
+"slug": "REDDIT"
+},
+{
+"name": "Reddit Ads",
+"doc": "reddit_ads",
+"slug": "REDDIT_ADS"
+},
+{
+"name": "Roam",
+"doc": "roam",
+"slug": "ROAM"
+},
+{
+"name": "Salesforce",
+"doc": "salesforce",
+"slug": "SALESFORCE"
+},
+{
+"name": "Sentry",
+"doc": "sentry",
+"slug": "SENTRY"
+},
+{
+"name": "Servicem8",
+"doc": "servicem8",
+"slug": "SERVICEM8"
+},
+{
+"name": "SharePoint",
+"doc": "share_point",
+"slug": "SHARE_POINT"
+},
+{
+"name": "Shippo",
+"doc": "shippo",
+"slug": "SHIPPO"
+},
+{
+"name": "Slack",
+"doc": "slack",
+"slug": "SLACK"
+},
+{
+"name": "Slackbot",
+"doc": "slackbot",
+"slug": "SLACKBOT"
+},
+{
+"name": "Splitwise",
+"doc": "splitwise",
+"slug": "SPLITWISE"
+},
+{
+"name": "Square",
+"doc": "square",
+"slug": "SQUARE"
+},
+{
+"name": "Stack Exchange",
+"doc": "stack_exchange",
+"slug": "STACK_EXCHANGE"
+},
+{
+"name": "Stripe",
+"doc": "stripe",
+"slug": "STRIPE"
+},
+{
+"name": "Supabase",
+"doc": "supabase",
+"slug": "SUPABASE"
+},
+{
+"name": "Ticketmaster",
+"doc": "ticketmaster",
+"slug": "TICKETMASTER"
+},
+{
+"name": "Ticktick",
+"doc": "ticktick",
+"slug": "TICKTICK"
+},
+{
+"name": "TikTok Ads",
+"doc": "tiktok_ads",
+"slug": "TIKTOK_ADS"
+},
+{
+"name": "Timely",
+"doc": "timely",
+"slug": "TIMELY"
+},
+{
+"name": "Todoist",
+"doc": "todoist",
+"slug": "TODOIST"
+},
+{
+"name": "Trello",
+"doc": "trello",
+"slug": "TRELLO"
+},
+{
+"name": "Twitch",
+"doc": "twitch",
+"slug": "TWITCH"
+},
+{
+"name": "Typeform",
+"doc": "typeform",
+"slug": "TYPEFORM"
+},
+{
+"name": "WakaTime",
+"doc": "wakatime",
+"slug": "WAKATIME"
+},
+{
+"name": "Webex",
+"doc": "webex",
+"slug": "WEBEX"
+},
+{
+"name": "WhatsApp",
+"doc": "whatsapp",
+"slug": "WHATSAPP"
+},
+{
+"name": "Wrike",
+"doc": "wrike",
+"slug": "WRIKE"
+},
+{
+"name": "Yandex",
+"doc": "yandex",
+"slug": "YANDEX"
+},
+{
+"name": "YNAB",
+"doc": "ynab",
+"slug": "YNAB"
+},
+{
+"name": "YouTube",
+"doc": "youtube",
+"slug": "YOUTUBE"
+},
+{
+"name": "Zendesk",
+"doc": "zendesk",
+"slug": "ZENDESK"
+},
+{
+"name": "Zeplin",
+"doc": "zeplin",
+"slug": "ZEPLIN"
+},
+{
+"name": "Zoho",
+"doc": "zoho",
+"slug": "ZOHO"
+},
+{
+"name": "Zoho Bigin",
+"doc": "zoho_bigin",
+"slug": "ZOHO_BIGIN"
+},
+{
+"name": "Zoho Books",
+"doc": "zoho_books",
+"slug": "ZOHO_BOOKS"
+},
+{
+"name": "Zoho Desk",
+"doc": "zoho_desk",
+"slug": "ZOHO_DESK"
+},
+{
+"name": "Zoho Inventory",
+"doc": "zoho_inventory",
+"slug": "ZOHO_INVENTORY"
+},
+{
+"name": "Zoho Invoice",
+"doc": "zoho_invoice",
+"slug": "ZOHO_INVOICE"
+},
+{
+"name": "Zoho Mail",
+"doc": "zoho_mail",
+"slug": "ZOHO_MAIL"
+},
+{
+"name": "Zoom",
+"doc": "zoom",
+"slug": "ZOOM"
+}
+],
+"byo": [
+{
+"name": "Adobe Marketing Agent MCP",
+"doc": "adobe_marketing_agent_mcp",
+"slug": "ADOBE_MARKETING_AGENT_MCP"
+},
+{
+"name": "AdRoll",
+"doc": "adroll",
+"slug": "ADROLL"
+},
+{
+"name": "Aha!",
+"doc": "aha",
+"slug": "AHA"
+},
+{
+"name": "Ahrefs",
+"doc": "ahrefs",
+"slug": "AHREFS"
+},
+{
+"name": "Ahrefs MCP",
+"doc": "ahrefs_mcp",
+"slug": "AHREFS_MCP"
+},
+{
+"name": "AirOps MCP",
+"doc": "airops_mcp",
+"slug": "AIROPS_MCP"
+},
+{
+"name": "Alpaca",
+"doc": "alpaca",
+"slug": "ALPACA"
+},
+{
+"name": "Amplitude MCP",
+"doc": "amplitude_mcp",
+"slug": "AMPLITUDE_MCP"
+},
+{
+"name": "Apify MCP",
+"doc": "apify_mcp",
+"slug": "APIFY_MCP"
+},
+{
+"name": "Atlassian MCP",
+"doc": "atlassian_mcp",
+"slug": "ATLASSIAN_MCP"
+},
+{
+"name": "Audioscrape MCP",
+"doc": "audioscrape_mcp",
+"slug": "AUDIOSCRAPE_MCP"
+},
+{
+"name": "AWeber",
+"doc": "aweber",
+"slug": "AWEBER"
+},
+{
+"name": "Azure Monitor Activity Log",
+"doc": "azure_monitor_activity_log",
+"slug": "AZURE_MONITOR_ACTIVITY_LOG"
+},
+{
+"name": "BambooHR",
+"doc": "bamboohr",
+"slug": "BAMBOOHR"
+},
+{
+"name": "Beeminder",
+"doc": "beeminder",
+"slug": "BEEMINDER"
+},
+{
+"name": "Better Stack MCP",
+"doc": "better_stack_mcp",
+"slug": "BETTER_STACK_MCP"
+},
+{
+"name": "bexio",
+"doc": "bexio",
+"slug": "BEXIO"
+},
+{
+"name": "Bitly",
+"doc": "bitly",
+"slug": "BITLY"
+},
+{
+"name": "Bitwarden",
+"doc": "bitwarden",
+"slug": "BITWARDEN"
+},
+{
+"name": "Blackboard",
+"doc": "blackboard",
+"slug": "BLACKBOARD"
+},
+{
+"name": "Borneo",
+"doc": "borneo",
+"slug": "BORNEO"
+},
+{
+"name": "Box MCP",
+"doc": "box_mcp",
+"slug": "BOX_MCP"
+},
+{
+"name": "Brevo",
+"doc": "brevo",
+"slug": "BREVO"
+},
+{
+"name": "Brex",
+"doc": "brex",
+"slug": "BREX"
+},
+{
+"name": "Buffer",
+"doc": "buffer",
+"slug": "BUFFER"
+},
+{
+"name": "Calendly MCP",
+"doc": "calendly_mcp",
+"slug": "CALENDLY_MCP"
+},
+{
+"name": "Candid MCP",
+"doc": "candid_mcp",
+"slug": "CANDID_MCP"
+},
+{
+"name": "Canva MCP",
+"doc": "canva_mcp",
+"slug": "CANVA_MCP"
+},
+{
+"name": "Canvas",
+"doc": "canvas",
+"slug": "CANVAS"
+},
+{
+"name": "Carbon Voice MCP",
+"doc": "carbon_voice_mcp",
+"slug": "CARBON_VOICE_MCP"
+},
+{
+"name": "Cashfree MCP",
+"doc": "cashfree_payments_mcp",
+"slug": "CASHFREE_PAYMENTS_MCP"
+},
+{
+"name": "Circleback MCP",
+"doc": "circleback_mcp",
+"slug": "CIRCLEBACK_MCP"
+},
+{
+"name": "Clarify MCP",
+"doc": "clarify_mcp",
+"slug": "CLARIFY_MCP"
+},
+{
+"name": "Clay MCP",
+"doc": "clay_mcp",
+"slug": "CLAY_MCP"
+},
+{
+"name": "CleverReach",
+"doc": "cleverreach",
+"slug": "CLEVERREACH"
+},
+{
+"name": "ClickFunnels 2.0",
+"doc": "clickfunnels",
+"slug": "CLICKFUNNELS"
+},
+{
+"name": "ClickHouse MCP",
+"doc": "clickhouse_mcp",
+"slug": "CLICKHOUSE_MCP"
+},
+{
+"name": "ClickUp MCP",
+"doc": "clickup_mcp",
+"slug": "CLICKUP_MCP"
+},
+{
+"name": "Clio Manage",
+"doc": "clio_manage",
+"slug": "CLIO_MANAGE"
+},
+{
+"name": "Clockify",
+"doc": "clockify",
+"slug": "CLOCKIFY"
+},
+{
+"name": "Close MCP",
+"doc": "close_mcp",
+"slug": "CLOSE_MCP"
+},
+{
+"name": "Cloudflare MCP",
+"doc": "cloudflare_mcp",
+"slug": "CLOUDFLARE_MCP"
+},
+{
+"name": "Clover",
+"doc": "clover",
+"slug": "CLOVER"
+},
+{
+"name": "Clueso MCP",
+"doc": "clueso_mcp",
+"slug": "CLUESO_MCP"
+},
+{
+"name": "Coinbase Agents MCP",
+"doc": "coinbase_agents_mcp",
+"slug": "COINBASE_AGENTS_MCP"
+},
+{
+"name": "Coinbase Wallet MCP",
+"doc": "coinbase_wallet_mcp",
+"slug": "COINBASE_WALLET_MCP"
+},
+{
+"name": "Commerce Layer",
+"doc": "commerce_layer",
+"slug": "COMMERCE_LAYER"
+},
+{
+"name": "Common Room MCP",
+"doc": "common_room_mcp",
+"slug": "COMMON_ROOM_MCP"
+},
+{
+"name": "Consensus MCP",
+"doc": "consensus_mcp",
+"slug": "CONSENSUS_MCP"
+},
+{
+"name": "Constant Contact",
+"doc": "constant_contact",
+"slug": "CONSTANT_CONTACT"
+},
+{
+"name": "Contacts+",
+"doc": "contacts_plus",
+"slug": "CONTACTS_PLUS"
+},
+{
+"name": "Contentsquare MCP",
+"doc": "contentsquare_mcp",
+"slug": "CONTENTSQUARE_MCP"
+},
+{
+"name": "Coupa",
+"doc": "coupa",
+"slug": "COUPA"
+},
+{
+"name": "Cradl AI",
+"doc": "cradl_ai",
+"slug": "CRADL_AI"
+},
+{
+"name": "Craft MCP",
+"doc": "craft_mcp",
+"slug": "CRAFT_MCP"
+},
+{
+"name": "Customer.io MCP",
+"doc": "customerio_mcp",
+"slug": "CUSTOMERIO_MCP"
+},
+{
+"name": "D2L Brightspace",
+"doc": "d2lbrightspace",
+"slug": "D2LBRIGHTSPACE"
+},
+{
+"name": "Databricks",
+"doc": "databricks",
+"slug": "DATABRICKS"
+},
+{
+"name": "Datadog",
+"doc": "datadog",
+"slug": "DATADOG"
+},
+{
+"name": "Datadog MCP",
+"doc": "datadog_mcp",
+"slug": "DATADOG_MCP"
+},
+{
+"name": "dbt Cloud",
+"doc": "dbt_cloud",
+"slug": "DBT_CLOUD"
+},
+{
+"name": "Deel",
+"doc": "deel",
+"slug": "DEEL"
+},
+{
+"name": "DeepL MCP",
+"doc": "deepl_mcp",
+"slug": "DEEPL_MCP"
+},
+{
+"name": "Deputy",
+"doc": "deputy",
+"slug": "DEPUTY"
+},
+{
+"name": "Descript MCP",
+"doc": "descript_mcp",
+"slug": "DESCRIPT_MCP"
+},
+{
+"name": "DevCycle",
+"doc": "dev_cycle",
+"slug": "DEV_CYCLE"
+},
+{
+"name": "DigitalOcean",
+"doc": "digital_ocean",
+"slug": "DIGITAL_OCEAN"
+},
+{
+"name": "Disqus",
+"doc": "disqus",
+"slug": "DISQUS"
+},
+{
+"name": "DocuSign",
+"doc": "docusign",
+"slug": "DOCUSIGN"
+},
+{
+"name": "Dribbble",
+"doc": "dribbble",
+"slug": "DRIBBBLE"
+},
+{
+"name": "Dropbox Sign",
+"doc": "dropbox_sign",
+"slug": "DROPBOX_SIGN"
+},
+{
+"name": "Dynatrace",
+"doc": "dynatrace",
+"slug": "DYNATRACE"
+},
+{
+"name": "eBay",
+"doc": "ebay",
+"slug": "EBAY"
+},
+{
+"name": "Egnyte",
+"doc": "egnyte",
+"slug": "EGNYTE"
+},
+{
+"name": "Epic Games",
+"doc": "epic_games",
+"slug": "EPIC_GAMES"
+},
+{
+"name": "Era Context MCP",
+"doc": "era_context_mcp",
+"slug": "ERA_CONTEXT_MCP"
+},
+{
+"name": "Eraser MCP",
+"doc": "eraser_mcp",
+"slug": "ERASER_MCP"
+},
+{
+"name": "Fellow.ai MCP",
+"doc": "fellow_ai_mcp",
+"slug": "FELLOW_AI_MCP"
+},
+{
+"name": "Financial Datasets AI MCP",
+"doc": "financial_datasets_ai_mcp",
+"slug": "FINANCIAL_DATASETS_AI_MCP"
+},
+{
+"name": "Follow Up Boss",
+"doc": "follow_up_boss",
+"slug": "FOLLOW_UP_BOSS"
+},
+{
+"name": "freee",
+"doc": "freee",
+"slug": "FREEE"
+},
+{
+"name": "Freshsales",
+"doc": "freshsales",
+"slug": "FRESHSALES"
+},
+{
+"name": "Front",
+"doc": "front",
+"slug": "FRONT"
+},
+{
+"name": "FuseAI MCP",
+"doc": "fuseai_mcp",
+"slug": "FUSEAI_MCP"
+},
+{
+"name": "Gagelist",
+"doc": "gagelist",
+"slug": "GAGELIST"
+},
+{
+"name": "GetResponse",
+"doc": "getresponse",
+"slug": "GETRESPONSE"
+},
+{
+"name": "Glen MCP",
+"doc": "glen_mcp",
+"slug": "GLEN_MCP"
+},
+{
+"name": "Glide MCP",
+"doc": "glide_mcp",
+"slug": "GLIDE_MCP"
+},
+{
+"name": "GoCardless MCP",
+"doc": "gocardless_mcp",
+"slug": "GOCARDLESS_MCP"
+},
+{
+"name": "Google Admin",
+"doc": "google_admin",
+"slug": "GOOGLE_ADMIN"
+},
+{
+"name": "Google AdSense",
+"doc": "google_adsense",
+"slug": "GOOGLE_ADSENSE"
+},
+{
+"name": "Google Chat",
+"doc": "google_chat",
+"slug": "GOOGLE_CHAT"
+},
+{
+"name": "Google Data Studio",
+"doc": "google_data_studio",
+"slug": "GOOGLE_DATA_STUDIO"
+},
+{
+"name": "Google Merchant Center",
+"doc": "google_merchant",
+"slug": "GOOGLE_MERCHANT"
+},
+{
+"name": "Googlecontacts",
+"doc": "googlecontacts",
+"slug": "GOOGLECONTACTS"
+},
+{
+"name": "Googleforms",
+"doc": "googleforms",
+"slug": "GOOGLEFORMS"
+},
+{
+"name": "GoTo Training",
+"doc": "go_to_training",
+"slug": "GO_TO_TRAINING"
+},
+{
+"name": "Grafana Cloud MCP",
+"doc": "grafana_cloud_mcp",
+"slug": "GRAFANA_CLOUD_MCP"
+},
+{
+"name": "Granola MCP",
+"doc": "granola_mcp",
+"slug": "GRANOLA_MCP"
+},
+{
+"name": "Greptile MCP",
+"doc": "greptile_mcp",
+"slug": "GREPTILE_MCP"
+},
+{
+"name": "Gusto",
+"doc": "gusto",
+"slug": "GUSTO"
+},
+{
+"name": "HaloPSA",
+"doc": "halopsa",
+"slug": "HALOPSA"
+},
+{
+"name": "Help Scout",
+"doc": "help_scout",
+"slug": "HELP_SCOUT"
+},
+{
+"name": "Higgsfield MCP",
+"doc": "higgsfield_mcp",
+"slug": "HIGGSFIELD_MCP"
+},
+{
+"name": "HighLevel Agency",
+"doc": "highlevel_agency",
+"slug": "HIGHLEVEL_AGENCY"
+},
+{
+"name": "HighLevel Location",
+"doc": "highlevel_location",
+"slug": "HIGHLEVEL_LOCATION"
+},
+{
+"name": "Honeycomb MCP",
+"doc": "honeycomb_mcp",
+"slug": "HONEYCOMB_MCP"
+},
+{
+"name": "Ignav Flights MCP",
+"doc": "ignav_flights_mcp",
+"slug": "IGNAV_FLIGHTS_MCP"
+},
+{
+"name": "Imply Polaris",
+"doc": "imply_polaris",
+"slug": "IMPLY_POLARIS"
+},
+{
+"name": "Infisical",
+"doc": "infisical",
+"slug": "INFISICAL"
+},
+{
+"name": "Jentic MCP",
+"doc": "jentic_mcp",
+"slug": "JENTIC_MCP"
+},
+{
+"name": "Jibble",
+"doc": "jibble",
+"slug": "JIBBLE"
+},
+{
+"name": "Jobber",
+"doc": "jobber",
+"slug": "JOBBER"
+},
+{
+"name": "Judge.me",
+"doc": "judge_me",
+"slug": "JUDGE_ME"
+},
+{
+"name": "Kernel MCP",
+"doc": "kernel_mcp",
+"slug": "KERNEL_MCP"
+},
+{
+"name": "Kick",
+"doc": "kick",
+"slug": "KICK"
+},
+{
+"name": "Kintone REST",
+"doc": "kintone_rest",
+"slug": "KINTONE_REST"
+},
+{
+"name": "Klaviyo",
+"doc": "klaviyo",
+"slug": "KLAVIYO"
+},
+{
+"name": "Kommo",
+"doc": "kommo",
+"slug": "KOMMO"
+},
+{
+"name": "LaunchDarkly",
+"doc": "launch_darkly",
+"slug": "LAUNCH_DARKLY"
+},
+{
+"name": "Legal Data Hunter MCP",
+"doc": "legal_data_hunter_mcp",
+"slug": "LEGAL_DATA_HUNTER_MCP"
+},
+{
+"name": "Lever",
+"doc": "lever",
+"slug": "LEVER"
+},
+{
+"name": "Lightspeed Retail X-Series",
+"doc": "lightspeed",
+"slug": "LIGHTSPEED"
+},
+{
+"name": "LILT MCP",
+"doc": "lilt_mcp",
+"slug": "LILT_MCP"
+},
+{
+"name": "Linear MCP",
+"doc": "linear_mcp",
+"slug": "LINEAR_MCP"
+},
+{
+"name": "Linkedin Ads",
+"doc": "linkedin_ads",
+"slug": "LINKEDIN_ADS"
+},
+{
+"name": "LiveChat",
+"doc": "livechat",
+"slug": "LIVECHAT"
+},
+{
+"name": "Lodgify",
+"doc": "lodgify",
+"slug": "LODGIFY"
+},
+{
+"name": "Longbridge MCP",
+"doc": "longbridge_mcp",
+"slug": "LONGBRIDGE_MCP"
+},
+{
+"name": "Lucid MCP",
+"doc": "lucid_mcp",
+"slug": "LUCID_MCP"
+},
+{
+"name": "Magic Patterns MCP",
+"doc": "magic_patterns_mcp",
+"slug": "MAGIC_PATTERNS_MCP"
+},
+{
+"name": "MailUp",
+"doc": "mail_up",
+"slug": "MAIL_UP"
+},
+{
+"name": "MarcoPolo MCP",
+"doc": "marcopolo_mcp",
+"slug": "MARCOPOLO_MCP"
+},
+{
+"name": "Matterport",
+"doc": "matterport",
+"slug": "MATTERPORT"
+},
+{
+"name": "Memelord MCP",
+"doc": "memelord_mcp",
+"slug": "MEMELORD_MCP"
+},
+{
+"name": "Mercury MCP",
+"doc": "mercury_mcp",
+"slug": "MERCURY_MCP"
+},
+{
+"name": "Meta Ads",
+"doc": "metaads",
+"slug": "METAADS"
+},
+{
+"name": "Microsoft Advertising",
+"doc": "microsoft_advertising",
+"slug": "MICROSOFT_ADVERTISING"
+},
+{
+"name": "Microsoft Bookings",
+"doc": "microsoft_bookings",
+"slug": "MICROSOFT_BOOKINGS"
+},
+{
+"name": "Microsoft Entra ID",
+"doc": "microsoft_entra_id",
+"slug": "MICROSOFT_ENTRA_ID"
+},
+{
+"name": "Microsoft Power Bi",
+"doc": "microsoft_power_bi",
+"slug": "MICROSOFT_POWER_BI"
+},
+{
+"name": "Microsoft PowerPoint",
+"doc": "microsoft_powerpoint",
+"slug": "MICROSOFT_POWERPOINT"
+},
+{
+"name": "Microsoft To Do",
+"doc": "microsoft_todo",
+"slug": "MICROSOFT_TODO"
+},
+{
+"name": "Microsoft Word",
+"doc": "microsoft_word",
+"slug": "MICROSOFT_WORD"
+},
+{
+"name": "Midpage MCP",
+"doc": "midpage_mcp",
+"slug": "MIDPAGE_MCP"
+},
+{
+"name": "Mintlify MCP",
+"doc": "mintlify_mcp",
+"slug": "MINTLIFY_MCP"
+},
+{
+"name": "Mobbin MCP",
+"doc": "mobbin_mcp",
+"slug": "MOBBIN_MCP"
+},
+{
+"name": "Modem MCP",
+"doc": "modem_mcp",
+"slug": "MODEM_MCP"
+},
+{
+"name": "Monday MCP",
+"doc": "monday_mcp",
+"slug": "MONDAY_MCP"
+},
+{
+"name": "Money Forward",
+"doc": "money_forward",
+"slug": "MONEY_FORWARD"
+},
+{
+"name": "MongoDB",
+"doc": "mongodb",
+"slug": "MONGODB"
+},
+{
+"name": "MongoDB MCP",
+"doc": "mongodb_mcp",
+"slug": "MONGODB_MCP"
+},
+{
+"name": "MotherDuck MCP",
+"doc": "motherduck_mcp",
+"slug": "MOTHERDUCK_MCP"
+},
+{
+"name": "Neo4J",
+"doc": "neo4j",
+"slug": "NEO4J"
+},
+{
+"name": "Neon",
+"doc": "neon",
+"slug": "NEON"
+},
+{
+"name": "Neon MCP",
+"doc": "neon_mcp",
+"slug": "NEON_MCP"
+},
+{
+"name": "Netlify MCP",
+"doc": "netlify_mcp",
+"slug": "NETLIFY_MCP"
+},
+{
+"name": "Netsuite",
+"doc": "netsuite",
+"slug": "NETSUITE"
+},
+{
+"name": "Notion MCP",
+"doc": "notion_mcp",
+"slug": "NOTION_MCP"
+},
+{
+"name": "Octagon MCP",
+"doc": "octagon_mcp",
+"slug": "OCTAGON_MCP"
+},
+{
+"name": "Otter.ai MCP",
+"doc": "otter_ai_mcp",
+"slug": "OTTER_AI_MCP"
+},
+{
+"name": "PandaDoc MCP",
+"doc": "pandadoc_mcp",
+"slug": "PANDADOC_MCP"
+},
+{
+"name": "Parallel Task MCP",
+"doc": "parallel_task_mcp",
+"slug": "PARALLEL_TASK_MCP"
+},
+{
+"name": "Parma",
+"doc": "parma",
+"slug": "PARMA"
+},
+{
+"name": "Particl MCP",
+"doc": "particl_mcp",
+"slug": "PARTICL_MCP"
+},
+{
+"name": "Paypal",
+"doc": "paypal",
+"slug": "PAYPAL"
+},
+{
+"name": "PayPal Zettle",
+"doc": "zettle",
+"slug": "ZETTLE"
+},
+{
+"name": "Peec AI MCP",
+"doc": "peec_ai_mcp",
+"slug": "PEEC_AI_MCP"
+},
+{
+"name": "Personio",
+"doc": "personio",
+"slug": "PERSONIO"
+},
+{
+"name": "Photon MCP",
+"doc": "photon_mcp",
+"slug": "PHOTON_MCP"
+},
+{
+"name": "Pinecone",
+"doc": "pinecone",
+"slug": "PINECONE"
+},
+{
+"name": "Pipedrive",
+"doc": "pipedrive",
+"slug": "PIPEDRIVE"
+},
+{
+"name": "Plaid MCP",
+"doc": "plaid_mcp",
+"slug": "PLAID_MCP"
+},
+{
+"name": "Plain MCP",
+"doc": "plain_mcp",
+"slug": "PLAIN_MCP"
+},
+{
+"name": "PlanetScale",
+"doc": "planetscale",
+"slug": "PLANETSCALE"
+},
+{
+"name": "Polar",
+"doc": "polar",
+"slug": "POLAR"
+},
+{
+"name": "PostHog MCP",
+"doc": "posthog_mcp",
+"slug": "POSTHOG_MCP"
+},
+{
+"name": "ProductNow MCP",
+"doc": "productnow_mcp",
+"slug": "PRODUCTNOW_MCP"
+},
+{
+"name": "Pylon MCP",
+"doc": "pylon_mcp",
+"slug": "PYLON_MCP"
+},
+{
+"name": "QuickNode MCP",
+"doc": "quicknode_mcp",
+"slug": "QUICKNODE_MCP"
+},
+{
+"name": "Quire",
+"doc": "quire",
+"slug": "QUIRE"
+},
+{
+"name": "Railway",
+"doc": "railway",
+"slug": "RAILWAY"
+},
+{
+"name": "Railway MCP",
+"doc": "railway_mcp",
+"slug": "RAILWAY_MCP"
+},
+{
+"name": "Ramp",
+"doc": "ramp",
+"slug": "RAMP"
+},
+{
+"name": "Ramp MCP",
+"doc": "ramp_mcp",
+"slug": "RAMP_MCP"
+},
+{
+"name": "Razorpay",
+"doc": "razorpay",
+"slug": "RAZORPAY"
+},
+{
+"name": "RD Station Marketing",
+"doc": "rd_station_marketing",
+"slug": "RD_STATION_MARKETING"
+},
+{
+"name": "Read AI MCP",
+"doc": "read_ai_mcp",
+"slug": "READ_AI_MCP"
+},
+{
+"name": "Rebrandly",
+"doc": "rebrandly",
+"slug": "REBRANDLY"
+},
+{
+"name": "Recraft MCP",
+"doc": "recraft_mcp",
+"slug": "RECRAFT_MCP"
+},
+{
+"name": "Recruitee",
+"doc": "recruitee",
+"slug": "RECRUITEE"
+},
+{
+"name": "Reloadly",
+"doc": "reloadly",
+"slug": "RELOADLY"
+},
+{
+"name": "Resend",
+"doc": "resend",
+"slug": "RESEND"
+},
+{
+"name": "Resend MCP",
+"doc": "resend_mcp",
+"slug": "RESEND_MCP"
+},
+{
+"name": "Rillet",
+"doc": "rillet",
+"slug": "RILLET"
+},
+{
+"name": "Salesforce Service Cloud",
+"doc": "salesforce_service_cloud",
+"slug": "SALESFORCE_SERVICE_CLOUD"
+},
+{
+"name": "Scheduleonce",
+"doc": "scheduleonce",
+"slug": "SCHEDULEONCE"
+},
+{
+"name": "Scorecard MCP",
+"doc": "scorecard_mcp",
+"slug": "SCORECARD_MCP"
+},
+{
+"name": "SearchAPI MCP",
+"doc": "searchapi_mcp",
+"slug": "SEARCHAPI_MCP"
+},
+{
+"name": "Semrush MCP",
+"doc": "semrush_mcp",
+"slug": "SEMRUSH_MCP"
+},
+{
+"name": "Sendloop",
+"doc": "sendloop",
+"slug": "SENDLOOP"
+},
+{
+"name": "SendPulse",
+"doc": "send_pulse",
+"slug": "SEND_PULSE"
+},
+{
+"name": "Sentry MCP",
+"doc": "sentry_mcp",
+"slug": "SENTRY_MCP"
+},
+{
+"name": "ServiceNow",
+"doc": "servicenow",
+"slug": "SERVICENOW"
+},
+{
+"name": "ServiceTitan",
+"doc": "servicetitan",
+"slug": "SERVICETITAN"
+},
+{
+"name": "SharePoint Graph",
+"doc": "sharepoint_graph",
+"slug": "SHAREPOINT_GRAPH"
+},
+{
+"name": "Shopify",
+"doc": "shopify",
+"slug": "SHOPIFY"
+},
+{
+"name": "Sideshow MCP",
+"doc": "sideshow_mcp",
+"slug": "SIDESHOW_MCP"
+},
+{
+"name": "SignNow",
+"doc": "sign_now",
+"slug": "SIGN_NOW"
+},
+{
+"name": "Simplescraper MCP",
+"doc": "simplescraper_mcp",
+"slug": "SIMPLESCRAPER_MCP"
+},
+{
+"name": "Smartsheet",
+"doc": "smartsheet",
+"slug": "SMARTSHEET"
+},
+{
+"name": "Snapchat",
+"doc": "snapchat",
+"slug": "SNAPCHAT"
+},
+{
+"name": "Snowflake",
+"doc": "snowflake",
+"slug": "SNOWFLAKE"
+},
+{
+"name": "Snyk",
+"doc": "snyk",
+"slug": "SNYK"
+},
+{
+"name": "SoundCloud",
+"doc": "soundcloud",
+"slug": "SOUNDCLOUD"
+},
+{
+"name": "Splice MCP",
+"doc": "splice_mcp",
+"slug": "SPLICE_MCP"
+},
+{
+"name": "Spotify",
+"doc": "spotify",
+"slug": "SPOTIFY"
+},
+{
+"name": "Statsig MCP",
+"doc": "statsig_mcp",
+"slug": "STATSIG_MCP"
+},
+{
+"name": "Storyblok",
+"doc": "storyblok",
+"slug": "STORYBLOK"
+},
+{
+"name": "Stripe MCP",
+"doc": "stripe_mcp",
+"slug": "STRIPE_MCP"
+},
+{
+"name": "Stytch MCP",
+"doc": "stytch_mcp",
+"slug": "STYTCH_MCP"
+},
+{
+"name": "Supabase MCP",
+"doc": "supabase_mcp",
+"slug": "SUPABASE_MCP"
+},
+{
+"name": "Supabase Read MCP",
+"doc": "supabase_read_mcp",
+"slug": "SUPABASE_READ_MCP"
+},
+{
+"name": "SurveyMonkey",
+"doc": "survey_monkey",
+"slug": "SURVEY_MONKEY"
+},
+{
+"name": "Synthesize Bio MCP",
+"doc": "synthesize_bio_mcp",
+"slug": "SYNTHESIZE_BIO_MCP"
+},
+{
+"name": "Tally",
+"doc": "tally",
+"slug": "TALLY"
+},
+{
+"name": "Tavily MCP",
+"doc": "tavily_mcp",
+"slug": "TAVILY_MCP"
+},
+{
+"name": "ThoughtSpot Spotter MCP",
+"doc": "thoughtspot_spotter_mcp",
+"slug": "THOUGHTSPOT_SPOTTER_MCP"
+},
+{
+"name": "Threads",
+"doc": "threads",
+"slug": "THREADS"
+},
+{
+"name": "Ticket Tailor MCP",
+"doc": "ticket_tailor_mcp",
+"slug": "TICKET_TAILOR_MCP"
+},
+{
+"name": "Tiktok",
+"doc": "tiktok",
+"slug": "TIKTOK"
+},
+{
+"name": "TinyFish MCP",
+"doc": "tinyfish_mcp",
+"slug": "TINYFISH_MCP"
+},
+{
+"name": "Todoist MCP",
+"doc": "todoist_mcp",
+"slug": "TODOIST_MCP"
+},
+{
+"name": "Toneden",
+"doc": "toneden",
+"slug": "TONEDEN"
+},
+{
+"name": "Trello MCP",
+"doc": "trello_mcp",
+"slug": "TRELLO_MCP"
+},
+{
+"name": "Twitter",
+"doc": "twitter",
+"slug": "TWITTER"
+},
+{
+"name": "Vantage MCP",
+"doc": "vantage_mcp",
+"slug": "VANTAGE_MCP"
+},
+{
+"name": "Vercel",
+"doc": "vercel",
+"slug": "VERCEL"
+},
+{
+"name": "Vercel MCP",
+"doc": "vercel_mcp",
+"slug": "VERCEL_MCP"
+},
+{
+"name": "Vibe",
+"doc": "vibe",
+"slug": "VIBE"
+},
+{
+"name": "Vibe Prospecting MCP",
+"doc": "vibe_prospecting_mcp",
+"slug": "VIBE_PROSPECTING_MCP"
+},
+{
+"name": "vidIQ MCP",
+"doc": "vidiq_mcp",
+"slug": "VIDIQ_MCP"
+},
+{
+"name": "Vimeo",
+"doc": "vimeo",
+"slug": "VIMEO"
+},
+{
+"name": "Webflow",
+"doc": "webflow",
+"slug": "WEBFLOW"
+},
+{
+"name": "Whop",
+"doc": "whop",
+"slug": "WHOP"
+},
+{
+"name": "WildApricot",
+"doc": "wild_apricot",
+"slug": "WILD_APRICOT"
+},
+{
+"name": "Wispr Flow MCP",
+"doc": "wispr_flow_mcp",
+"slug": "WISPR_FLOW_MCP"
+},
+{
+"name": "Wix",
+"doc": "wix",
+"slug": "WIX"
+},
+{
+"name": "Wix MCP",
+"doc": "wix_mcp",
+"slug": "WIX_MCP"
+},
+{
+"name": "WordPress.com",
+"doc": "wordpress_com",
+"slug": "WORDPRESS_COM"
+},
+{
+"name": "Workable",
+"doc": "workable",
+"slug": "WORKABLE"
+},
+{
+"name": "Workday",
+"doc": "workday",
+"slug": "WORKDAY"
+},
+{
+"name": "X MCP",
+"doc": "x_mcp",
+"slug": "X_MCP"
+},
+{
+"name": "Xero",
+"doc": "xero",
+"slug": "XERO"
+},
+{
+"name": "Zernio MCP",
+"doc": "zernio_mcp",
+"slug": "ZERNIO_MCP"
+},
+{
+"name": "Zoho Calendar",
+"doc": "zoho_calendar",
+"slug": "ZOHO_CALENDAR"
+},
+{
+"name": "Zoho Campaigns",
+"doc": "zoho_campaigns",
+"slug": "ZOHO_CAMPAIGNS"
+},
+{
+"name": "Zoho Recruit",
+"doc": "zoho_recruit",
+"slug": "ZOHO_RECRUIT"
+},
+{
+"name": "Zoho Sign",
+"doc": "zoho_sign",
+"slug": "ZOHO_SIGN"
+},
+{
+"name": "Zoho WorkDrive",
+"doc": "zoho_work_drive",
+"slug": "ZOHO_WORK_DRIVE"
+},
+{
+"name": "Zoom Team Chat",
+"doc": "zoom_chat",
+"slug": "ZOOM_CHAT"
+},
+{
+"name": "Zoominfo",
+"doc": "zoominfo",
+"slug": "ZOOMINFO"
+}
+]
+}

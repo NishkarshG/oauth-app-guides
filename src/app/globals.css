@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f6f3;
+  --panel: #ffffff;
+  --ink: #16181d;
+  --muted: #5b6069;
+  --line: #dcdcd6;
+  --accent: #2337d6;
+  --quick: #0f7a4d;
+  --moderate: #2337d6;
+  --involved: #b35900;
+  --severe: #b3261e;
+  --tested: #0f7a4d;
+  --sourced: #2337d6;
+  --uncertain: #a35f00;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317;
+    --panel: #191c21;
+    --ink: #eceded;
+    --muted: #9ba1ab;
+    --line: #2d3138;
+    --accent: #93a2ff;
+    --quick: #4cc78f;
+    --moderate: #93a2ff;
+    --involved: #f0a14a;
+    --severe: #ff8a80;
+    --tested: #4cc78f;
+    --sourced: #93a2ff;
+    --uncertain: #e6ad5c;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-plex-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  :root {
+    --bg: #fff;
+  }
+}
