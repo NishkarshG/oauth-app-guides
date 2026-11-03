@@ -97,6 +97,8 @@ export type Probe = {
   finalUrl: string | null;
   redirects: string[];
   loginWall: boolean;
+  /** The HTML had almost no text, so the page needs JavaScript and the probe can't tell what a visitor would see. */
+  clientRendered: boolean;
   title: string | null;
   error: string | null;
   at: string;

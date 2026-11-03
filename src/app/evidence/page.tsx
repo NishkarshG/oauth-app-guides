@@ -28,7 +28,7 @@ export default function EvidencePage() {
         After the agent finishes, the server compares each label with its own record of the run. &ldquo;Tested&rdquo; has to cite a probe that really ran. &ldquo;Sourced&rdquo; has to cite a page the agent really retrieved. Any label that fails is downgraded, and the change is listed on the guide.
       </p>
 
-      <h2 className="mt-8 text-xl font-semibold">What a person checked</h2>
+      <h2 className="mt-8 text-xl font-semibold">The independent source check</h2>
       <p className="mt-2 text-sm">{verification.summary}</p>
       {verification.entries.length > 0 && (
         <ul className="mt-4 divide-y divide-line rounded-md border border-line bg-panel text-sm">

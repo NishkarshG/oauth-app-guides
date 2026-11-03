@@ -1,0 +1,383 @@
+{
+  "app": {
+    "name": "Notion",
+    "website": "https://www.notion.com",
+    "category": "Docs & wikis",
+    "summary": "OAuth access to a user's Notion workspace lets an agent read, search, create and update the pages and databases that user has chosen to share with the connection."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "quick",
+    "headline": "No review is needed for OAuth: an 'Any workspace' public connection works for every Notion user once you create it.",
+    "rationale": {
+      "text": "You create a public connection yourself in the Notion Developer portal (app.notion.com/developers/connections), and Notion says it works through its OAuth flow without a Marketplace listing. The only review is for the optional Marketplace listing, which includes a security review and quotes 5-10 business days. The one decision you can't undo is installation scope. It is fixed when you create the connection, and only 'Any workspace' connections can be listed. Composio already manages Notion, so you only need your own connection if you want your own branding, capability set or quota.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization",
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing",
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes (plus 1-2 hours if you also prepare a Marketplace listing)",
+    "approvalWait": "None for OAuth; 5-10 business days if you choose a Marketplace listing",
+    "firstConnection": "About 15-30 minutes after you sign in as a Workspace Owner",
+    "handsOnMinutesHigh": 180,
+    "waitDaysHigh": 14,
+    "basis": {
+      "text": "The Notion Marketplace listing FAQ says to expect an email reply within 5-10 business days of submitting. Notion publishes no timeline for creating a connection, because that step has no review. Hands-on times are estimates.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Public connection, own workspace testing",
+      "whoCanConnect": "You and anyone in your own workspace, as soon as the connection exists",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Workspace Owners create connections in the Developer portal. Notion delivers OAuth credentials and an authorization URL in the connection's Configuration tab.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.notion.com/guides/get-started/authorization"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Any customer can connect (unlisted)",
+      "whoCanConnect": "Any Notion user in any workspace, if the installation scope is 'Any workspace'. With 'Selected workspaces only', only the workspaces you picked.",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Notion says public connections work on their own and can be used through the OAuth flow without a Marketplace listing. Installation scope is permanent once the connection is created.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing",
+          "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Listed on the Notion Marketplace (optional)",
+      "whoCanConnect": "Any Notion user, and users can also find the connection in the Marketplace",
+      "reviewRequired": true,
+      "limit": {
+        "text": "The Notion team reviews every listing, and the overview page says this includes a security review. Expect a reply within 5-10 business days. Only 'Any workspace' connections are eligible.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing",
+          "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sign in as a Workspace Owner",
+      "detail": "Use a Notion account that is a Workspace Owner of the workspace that will own the connection. A free workspace is enough for testing.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The Developer portal loads and you can create a new connection",
+      "url": "https://app.notion.com/developers/connections",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a public connection",
+      "detail": "In the Developer portal, create a new public connection. Fill in the connection details, add your redirect URI(s) under the OAuth configuration section, and choose 'Any workspace' as the installation scope. This choice can't be changed later, and only 'Any workspace' connections can be listed on the Marketplace.",
+      "owner": "agent",
+      "estimate": "10-15 minutes",
+      "doneWhen": "The connection exists and its Configuration tab shows the OAuth client ID and client secret",
+      "url": "https://app.notion.com/developers/connections",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization",
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Choose capabilities and copy the credentials",
+      "detail": "Set the capabilities: read, update and insert content, comments, and user information with or without email. Copy the OAuth client ID, the client secret and the authorization URL from the Configuration tab.",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "You have the client ID, secret and authorization URL",
+      "url": "https://app.notion.com/developers/connections",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization",
+        "https://docs.unified.to/skills/notion-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the OAuth flow with your own account",
+      "detail": "Open the authorization URL, pick the pages to share, and exchange the code at POST https://api.notion.com/v1/oauth/token. The response contains both an access_token and a refresh_token.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "An API call such as search returns the pages you shared",
+      "url": "https://developers.notion.com/guides/get-started/authorization",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "(Optional) Draft and submit a Marketplace listing",
+      "detail": "In the Marketplace listing dashboard, go to Listings > Connections > Start a new connection listing. Add the name, description, category and tags, images and logo, then link the public connection. Save it as a draft and submit it for review. Track the status under Submitted.",
+      "owner": "agent",
+      "estimate": "1-2 hours",
+      "doneWhen": "The listing appears under Submitted",
+      "url": "https://www.notion.so/profile/connections",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "(Optional) Wait for the Notion review",
+      "detail": "The Notion team runs the review, including a security review, and replies by email. If they ask for changes, address the feedback and resubmit.",
+      "owner": "provider",
+      "estimate": "5-10 business days",
+      "doneWhen": "An approval email arrives and the listing is live at notion.com/integrations",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Notion account that is a Workspace Owner of the workspace that owns the connection.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Redirect URI(s) for your callback, here Composio's callback, entered under the OAuth configuration section.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Public connections may require company name, website, privacy policy URL, terms of use URL and a support email. These fields were required in Notion's older integration form. I didn't confirm them in the current Developer portal form.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "For a Marketplace listing only: listing name, description, category and tags, images and a logo, plus passing the security review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing",
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Installation scope ('Any workspace' or 'Selected workspaces only') is fixed when you create the connection. If you pick the restricted scope and later want a Marketplace listing, you must create a new connection, which gives you a new client ID that every existing user has to reconnect to.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview",
+        "https://docs.unified.to/skills/notion-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The token response now includes a refresh_token. Refreshing returns a new access token and a new refresh token, so save the new pair from every refresh. The old 'Notion tokens never expire' advice is out of date.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization",
+        "https://docs.unified.to/skills/notion-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Notion uses page-level permissions. A user who authorizes without sharing any pages gives a valid token that sees an empty workspace. That is expected behaviour, not an OAuth failure.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/notion-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The authorize endpoint api.notion.com/v1/oauth/authorize redirects to app.notion.com/install-integration, even with a fake client_id (test-probe). The page is rendered by JavaScript, so this probe couldn't see how an invalid client is reported. Old notion.so/profile/integrations links now redirect to app.notion.com.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1",
+        "p2"
+      ]
+    },
+    {
+      "text": "Notion now calls integrations 'connections' and also offers 'OAuth integrations' with a restricted scope and personal access tokens. Personal access tokens expire and can't serve users across multiple workspaces. For an agent that many customers connect, use a public connection with 'Any workspace' scope.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview",
+        "https://docs.unified.to/skills/notion-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Wrong installation scope chosen",
+      "signal": "The Marketplace won't accept the connection, or users outside the selected workspaces can't install it",
+      "nextMove": "Create a new public connection with 'Any workspace' scope and move your users over to it",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Not a Workspace Owner",
+      "signal": "You can't create a connection in the Developer portal",
+      "nextMove": "Ask a Workspace Owner to create it, or create a workspace you own",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Marketplace listing rejected",
+      "signal": "An email from Notion explains why, for example brand or trademark issues, quality, or missing baseline criteria",
+      "nextMove": "Fix the issues named in the feedback and resubmit from Listings > Connections. OAuth keeps working in the meantime.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the public connection form: name, redirect URIs and capabilities",
+    "Draft the Marketplace listing name, description, category and tags, plus the privacy and terms pages",
+    "Run a test OAuth exchange and an API search to confirm that shared pages are visible",
+    "Implement refresh-token handling that saves the rotated pair each time"
+  ],
+  "youMust": [
+    "Sign in to Notion as a Workspace Owner and accept the developer terms",
+    "Choose the installation scope, which can't be changed later",
+    "Go through the consent screen yourself to test the flow",
+    "Submit the Marketplace listing and handle reviewer feedback, if you want a listing"
+  ],
+  "uncertainties": [
+    {
+      "question": "Does the current Developer portal form still require privacy policy, terms of use and support email fields for public connections?",
+      "howToResolve": "Open app.notion.com/developers/connections and start creating a public connection"
+    },
+    {
+      "question": "Do Notion access tokens now have a fixed lifetime, or are refresh tokens only optional?",
+      "howToResolve": "Check the expires_in field (if any) in a real token response, and the Refresh a token reference"
+    },
+    {
+      "question": "The authorization guide mentions the Authorization URL field filling in 'after a public connection is submitted' — does any step like submitting or making it public come before the auth URL appears?",
+      "howToResolve": "Create a test public connection and check whether the Configuration tab shows the authorization URL right away"
+    }
+  ],
+  "providerContact": {
+    "channel": "Notion developer support at developers.notion.com (the Help/Support links), or team@makenotion.com for questions about Marketplace review",
+    "draftMessage": "Hi, we've built a public connection (client ID: <id>) with 'Any workspace' scope for our AI agent product. Can you confirm (1) that no review is needed before any Notion user can authorize it outside the Marketplace, (2) how long access tokens last and how refresh tokens rotate, and (3) the current status of our Marketplace listing submitted on <date>? Thanks."
+  },
+  "slug": "notion",
+  "origin": "library",
+  "input": "Notion",
+  "generatedAt": "2026-11-03T11:36:48.244Z",
+  "durationMs": 91803,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "managed",
+    "name": "Notion",
+    "slug": "NOTION",
+    "docUrl": "https://docs.composio.dev/toolkits/notion",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://www.notion.so/profile/integrations",
+      "purpose": "Check whether integration creation page requires login",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/profile/integrations?__dm_a=1",
+      "redirects": [
+        "https://app.notion.com/profile/integrations?__dm_a=1"
+      ],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Notion",
+      "error": null,
+      "at": "2026-11-03T11:35:30.438Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://api.notion.com/v1/oauth/authorize?client_id=test-probe&response_type=code&owner=user&redirect_uri=https://example.com/cb",
+      "purpose": "See how authorize endpoint responds to unknown client_id",
+      "status": 200,
+      "finalUrl": "https://app.notion.com/install-integration?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&owner=user",
+      "redirects": [
+        "https://app.notion.com/install-integration?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&owner=user"
+      ],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Notion",
+      "error": null,
+      "at": "2026-11-03T11:35:30.438Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://api.notion.com/v1/oauth/authorize?client_id=test-probe&response_type=code&owner=user&redirect_uri=https://example.com/cb",
+    "https://app.notion.com/install-integration?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&owner=user",
+    "https://app.notion.com/profile/integrations?__dm_a=1",
+    "https://developers.notion.com/",
+    "https://developers.notion.com/changelog/initial-users-may-reauthorize-a-public-integration-using-oauth",
+    "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing",
+    "https://developers.notion.com/guides/connections-and-tokens/public-integrations/overview",
+    "https://developers.notion.com/guides/get-started/authorization",
+    "https://developers.notion.com/guides/get-started/overview",
+    "https://developers.notion.com/reference/authorization",
+    "https://developers.notion.com/reference/create-a-token.md",
+    "https://developers.notion.com/reference/refresh-a-token",
+    "https://developers.notion.com/reference/refresh-a-token.md",
+    "https://docs.unified.to/skills/notion-oauth-app/SKILL.md",
+    "https://g2.com/products/apideck-ecosystem/reviews",
+    "https://github.com/techempower-org/candela/wiki/Notion-OAuth-setup",
+    "https://hexdocs.pm/notion_sdk/oauth-and-auth-overrides.html",
+    "https://note.com/o_m_g_da_yo/n/n02a635910e80?hl=en",
+    "https://tools.launchllama.co/tools/launch-directories/notion-marketplace",
+    "https://www.easy.tools/blog/sell-notion-templates",
+    "https://www.notion.com/help/selling-on-marketplace",
+    "https://www.notion.so/profile/integrations",
+    "https://www.scalekit.com/blog/notion-mcp-vs-api",
+    "https://zackliu.substack.com/p/where-to-sell-notion-templates"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 21,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

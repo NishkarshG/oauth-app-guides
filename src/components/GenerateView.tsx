@@ -17,7 +17,7 @@ function toRow(event: AgentEvent, key: number): Row | null {
     case "results": return null;
     case "probe": {
       const { probe } = event;
-      const outcome = probe.error ? `failed: ${probe.error}` : `${probe.status}${probe.loginWall ? ", login wall" : ""}`;
+      const outcome = probe.error ? `failed: ${probe.error}` : `${probe.status}${probe.loginWall ? ", login wall" : ""}${probe.clientRendered ? ", needs JavaScript" : ""}`;
       return { key, kind: "Probe", text: `${probe.url} → ${outcome}` };
     }
     case "audit":

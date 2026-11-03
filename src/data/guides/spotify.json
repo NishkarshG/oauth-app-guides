@@ -1,0 +1,437 @@
+{
+  "app": {
+    "name": "Spotify",
+    "website": "https://developer.spotify.com",
+    "category": "Music streaming",
+    "summary": "OAuth access to a user's Spotify account through the Web API: profile, library, playlists, playback control and listening history, depending on the scopes granted."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "severe",
+    "headline": "New Spotify apps cap at 5 allowlisted users. Opening them up needs a registered business with 250k MAU.",
+    "rationale": {
+      "text": "You can create an app in the Developer Dashboard in minutes. Since 11 February 2026, though, a new app stays in Development Mode, and Spotify describes that mode as for non-commercial, personal use only. In Development Mode the owner must have Spotify Premium, each developer can have up to 25 Client IDs that share one quota, each Client ID allows at most five authorized users, and only a reduced set of endpoints works. The only way past this is Extended Quota Mode. Since 15 May 2025 Spotify accepts those requests only from legally registered organizations that already run a launched service, are available in key Spotify markets, and have at least 250,000 monthly active users. Most teams building a new AI agent cannot meet that bar.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security",
+        "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/",
+        "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072",
+        "https://developer.spotify.com/blog/2026-07-23-web-api-quota-updates"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes to a working Development Mode app; several hours to prepare an Extended Quota request",
+    "approvalWait": "Up to 6 weeks for Extended Quota review, if you are eligible at all",
+    "firstConnection": "About 15 minutes after creating the app, for yourself or up to 4 other allowlisted users",
+    "handsOnMinutesHigh": 240,
+    "waitDaysHigh": 42,
+    "basis": {
+      "text": "App creation is self-serve. Spotify's quota modes documentation says review can take up to six weeks. Developers report that many requests are simply declined because they don't meet the eligibility criteria. The hands-on estimates are my own inference.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+        "https://community.spotify.com/t5/Spotify-for-Developers/Need-help-with-Spotify-API-quota-extension/td-p/7459193"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Development Mode (default for new apps)",
+      "whoCanConnect": "The app owner, who must have Spotify Premium, plus allowlisted Spotify accounts, up to 5 authorized users per Client ID",
+      "reviewRequired": false,
+      "limit": {
+        "text": "At most 5 authorized users, up to 25 Client IDs per developer sharing one quota (raised from 1 in July 2026), and a reduced set of supported endpoints. Spotify intends this mode for non-commercial, personal or learning use. The rules apply to new apps from 11 Feb 2026 and to existing Development Mode apps from 9 Mar 2026. Spotify postponed the endpoint restrictions for existing integrations.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security",
+          "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+          "https://developer.spotify.com/blog/2026-07-23-web-api-quota-updates"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Extended Quota Mode (any Spotify user can connect)",
+      "whoCanConnect": "Any Spotify user, with no allowlist, full endpoint set and a higher rate limit",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Requires an application that Spotify reviews. Since 15 May 2025 it is open only to organizations: a legally registered business with an active, launched service, availability in key Spotify markets, and at least 250k MAU. Individuals are not accepted, and you apply through a form using a company email. Spotify can also move apps back to Development Mode for low activity.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072",
+          "https://community.spotify.com/t5/Spotify-for-Developers/How-to-Transition-from-Development-to-Production-for-Commercial/td-p/6974262",
+          "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a Spotify Premium account for the app owner",
+      "detail": "Development Mode apps now require the owning developer account to have Spotify Premium. Use a monitored account, ideally an organization-controlled one, because all review feedback is sent to that account's email.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The owner account shows an active Premium plan",
+      "url": "https://www.spotify.com/premium/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Log in to the Developer Dashboard and accept the Developer Terms",
+      "detail": "Sign in at developer.spotify.com/dashboard with the Premium account and accept the Spotify Developer Terms. Read the Developer Policy too: it lists prohibited app types, and reviewers apply it when you request an extension.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "The Dashboard shows a 'Create app' button",
+      "url": "https://developer.spotify.com/dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.spotify.com/t5/Spotify-for-Developers/Extended-Quota-Mode-Request-Independent-Developer-TrackLine/td-p/7384615"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the app",
+      "detail": "Click 'Create app' and enter an App name, an App description and a Redirect URI. For Composio, use the Composio callback URL. Redirect URIs must be HTTPS or loopback (127.0.0.1); 'localhost' and plain-HTTP URIs are no longer accepted. Under 'Which API/SDKs are you planning to use?', tick Web API. You can create up to 25 Client IDs, but they share one quota.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "The app's Settings page shows a Client ID, and 'View client secret' reveals the secret",
+      "url": "https://developer.spotify.com/dashboard/create",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security",
+        "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Allowlist test users",
+      "detail": "In the app's 'User Management' tab, add the name and Spotify account email of each person who will connect. The limit is 5 authorized users. Anyone not on the list who tries to authorize, or call the API with their token, gets an error.",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "The users appear in User Management and can complete the OAuth consent",
+      "url": "https://developer.spotify.com/dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Check that your agent's tools work with Development Mode endpoints",
+      "detail": "Compare the actions you plan to use against Spotify's February 2026 change list. Some endpoints return 403 for Development Mode apps even when the owner is accessing their own data; developers have reported this for playlist-write endpoints, for example. Remove or replace those tools.",
+      "owner": "agent",
+      "estimate": "30 minutes",
+      "doneWhen": "Every tool your agent uses succeeds with a Development Mode token",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+        "https://github.com/spotify/spotify-web-api-ts-sdk/issues/159"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Check whether you're eligible for Extended Quota, and apply only if you are",
+      "detail": "Read the 'Quota modes' page. Apply only if your organization is a registered business with a launched service, availability in key markets and at least 250k MAU. Submit the 'Quota Extension Request for New Potential Partners' form from a company email address. Some applicants are later sent to an 'Extension Requests' section in the Dashboard. An agent can draft the use-case description, screenshots list and compliance notes.",
+      "owner": "you",
+      "estimate": "2-3 hours",
+      "doneWhen": "You receive a confirmation that the request was submitted",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.spotify.com/t5/Spotify-for-Developers/How-to-Transition-from-Development-to-Production-for-Commercial/td-p/6974262",
+        "https://community.spotify.com/t5/Spotify-for-Developers/Quota-Extension-Request-tab-not-visible-in-Developer-Dashboard/td-p/7401540"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for Spotify's review",
+      "detail": "Spotify sends feedback to the developer account's email address. Its quota documentation says review can take up to six weeks.",
+      "owner": "provider",
+      "estimate": "Up to 6 weeks",
+      "doneWhen": "The app shows Extended Quota Mode in the Dashboard, and non-allowlisted users can connect",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+        "https://community.spotify.com/t5/Spotify-for-Developers/Need-help-with-Spotify-API-quota-extension/td-p/7459193"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "The app owner needs a Spotify Premium subscription to run a Development Mode app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Extended Quota needs a legally registered organization, an active launched service, availability in key Spotify markets and at least 250,000 MAU. You apply through a form, from a company email. Requests from individuals are not accepted.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072",
+        "https://community.spotify.com/t5/Spotify-for-Developers/How-to-Transition-from-Development-to-Production-for-Commercial/td-p/6974262",
+        "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The Dashboard's create-app page is a JavaScript app. Anonymously, the URL resolves but the page shows almost nothing, and in practice you need a Spotify login to create an app.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "The authorize endpoint is https://accounts.spotify.com/authorize. Called anonymously with client_id=test-probe, it redirected to the Spotify login page before validating the client, so an invalid client ID doesn't show up until after the user logs in.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Development Mode and Extended Quota Mode have different rate limits, calculated over a rolling 30-second window. Development Mode apps also have separate quota restrictions. When you exceed a limit you get HTTP 429.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/concepts/rate-limits"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Extended Quota apps are not affected by the February 2026 endpoint and field changes. Development Mode apps lose access to some endpoints.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Spotify has moved some Extended Quota apps back to Development Mode for 'low activity', so extended access is not permanent.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Spotify says the 2026 restrictions are aimed at risky AI-driven and automated usage. An AI-agent use case may therefore get extra scrutiny under the Developer Policy, which also restricts using Spotify content to train ML/AI models.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The implicit grant is deprecated. Use Authorization Code (with a client secret) or Authorization Code with PKCE. Access tokens last about 1 hour and are renewed with the refresh token.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Five-user cap in Development Mode",
+      "signal": "Users not in User Management fail to authorize or get 403 errors. You can't add a 6th user.",
+      "nextMove": "Use it only for internal testing. For broader access you need Extended Quota Mode. There is no intermediate tier.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Extended Quota needs a registered business with 250k MAU",
+      "signal": "The request is declined, or the form is unavailable to individuals. Community moderators point to the eligibility criteria.",
+      "nextMove": "If you don't qualify, don't plan on Spotify being available to all your users. Consider integrating through an existing partner, or limit the feature to users who bring their own Development Mode app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.spotify.com/t5/Spotify-for-Developers/Extended-Quota-Mode-Request-Independent-Developer-TrackLine/td-p/7384615",
+        "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Endpoints restricted in Development Mode",
+      "signal": "403 Forbidden on some endpoints (developers report playlist write calls) even for the app owner",
+      "nextMove": "Check the February 2026 change list and the newer generic endpoints such as PUT/DELETE /me/library, and design your agent's tools around what works",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://github.com/spotify/spotify-web-api-ts-sdk/issues/159",
+        "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "All your Development Mode apps share one quota",
+      "signal": "A 429 response once the quota for your developer account runs out, even on a new Client ID.",
+      "nextMove": "Creating more apps will not add capacity. Reduce calls, or apply for Extended Quota Mode if you qualify.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.spotify.com/blog/2026-07-23-web-api-quota-updates"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the 'Create app' form: name, description, redirect URIs, Web API selection",
+    "Add up to 5 test users under User Management, given their emails",
+    "Check the agent's planned actions against the February 2026 Development Mode endpoint list",
+    "Draft the Extended Quota request text: use case, data handling, MAU evidence summary, compliance with the Developer Policy",
+    "Watch the Spotify developer blog and changelog for policy changes"
+  ],
+  "youMust": [
+    "Pay for Spotify Premium on the owner account, which Spotify requires",
+    "Accept the Spotify Developer Terms, a legal agreement",
+    "Prove business registration and MAU, and submit the Extended Quota form from a company email, since that requires identity and business attestation",
+    "Answer reviewer emails sent to the developer account"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does Extended Quota review take in practice, and how often are requests from 250k+ MAU organizations approved?",
+      "howToResolve": "Spotify documents up to six weeks, but forum threads describe longer waits. Ask in the Spotify for Developers community."
+    },
+    {
+      "question": "Exactly which endpoints and scopes are available to new Development Mode apps as of November 2026? Spotify's changelog shows updates in March, May and July 2026.",
+      "howToResolve": "Check the Web API changelog and the February 2026 changes reference on developer.spotify.com"
+    },
+    {
+      "question": "Does Spotify treat AI-agent integrations, as opposed to model training, as allowed under the Developer Policy?",
+      "howToResolve": "Read the current Developer Policy (Section III, prohibited applications) and ask Spotify developer support before applying"
+    },
+    {
+      "question": "Can a multi-tenant agent platform qualify if its MAU comes from the platform rather than from Spotify usage?",
+      "howToResolve": "Ask Spotify through the partner/quota form or in the community forum"
+    }
+  ],
+  "providerContact": {
+    "channel": "Spotify for Developers Community forum (community.spotify.com, 'Spotify for Developers' board), or the 'Quota Extension Request for New Potential Partners' form linked from the Quota modes doc",
+    "draftMessage": "Hi, we're [Company], a registered business running [service] with about [N] MAU in [markets]. We want to let our users connect their Spotify accounts to an AI assistant that uses the Web API for [specific actions, e.g. reading their library and controlling playback], with no model training on Spotify content. Could you confirm (1) whether this use case is allowed under the Developer Policy, (2) whether we meet the Extended Quota criteria, and (3) the current review timeline?"
+  },
+  "slug": "spotify",
+  "origin": "library",
+  "input": "Spotify",
+  "generatedAt": "2026-11-03T11:37:11.135Z",
+  "durationMs": 114712,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Spotify",
+    "slug": "SPOTIFY",
+    "docUrl": "https://docs.composio.dev/toolkits/spotify",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://developer.spotify.com/dashboard/create",
+      "purpose": "Check whether app creation requires login",
+      "status": 200,
+      "finalUrl": "https://developer.spotify.com/dashboard/create",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "spotify-for-developers",
+      "error": null,
+      "at": "2026-11-03T11:35:23.510Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://accounts.spotify.com/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=user-read-email",
+      "purpose": "See authorize endpoint response to unknown client_id",
+      "status": 200,
+      "finalUrl": "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fscope%3Duser-read-email%26response_type%3Dcode%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcallback%26client_id%3Dtest-probe&client_id=test-probe",
+      "redirects": [
+        "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fscope%3Duser-read-email%26response_type%3Dcode%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcallback%26client_id%3Dtest-probe&client_id=test-probe"
+      ],
+      "loginWall": true,
+      "clientRendered": true,
+      "title": "Spotify",
+      "error": null,
+      "at": "2026-11-03T11:35:23.509Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "purpose": "Read current quota-modes doc (extended quota criteria, review time)",
+      "status": 200,
+      "finalUrl": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Quota modes | Spotify for Developers",
+      "error": null,
+      "at": "2026-11-03T11:36:05.218Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://accounts.spotify.com/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=user-read-email",
+    "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fscope%3Duser-read-email%26response_type%3Dcode%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcallback%26client_id%3Dtest-probe&client_id=test-probe",
+    "https://community.spotify.com/forum/en/discussion/5618891/extended-quota-request",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Clarification-on-Extended-Quota-Mode-Eligibility/td-p/7503072",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Delay-in-replying-to-quota-extension-request/td-p/5653575",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Extended-Quota-Mode-Request-Independent-Developer-TrackLine/td-p/7384615",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Extended-quota-application-in-review-for-7-weeks/td-p/7429147",
+    "https://community.spotify.com/t5/Spotify-for-Developers/February-2026-Spotify-for-Developers-update-thread/td-p/7330564",
+    "https://community.spotify.com/t5/Spotify-for-Developers/How-to-Transition-from-Development-to-Production-for-Commercial/m-p/7013564/highlight/true",
+    "https://community.spotify.com/t5/Spotify-for-Developers/How-to-Transition-from-Development-to-Production-for-Commercial/td-p/6974262",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Important-App-review-and-quota-extension-waiting-times/m-p/5866107/highlight/true",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Important-App-review-and-quota-extension-waiting-times/m-p/6535406/highlight/true",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Important-App-review-and-quota-extension-waiting-times/td-p/5599466/page/2",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Important-App-review-and-quota-extension-waiting-times/td-p/5599466/page/9",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Need-help-with-Spotify-API-quota-extension/td-p/7459193",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Quota-Extension-Request-in-Review-for-over-6-weeks/td-p/5444664",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Quota-Extension-Request-tab-not-visible-in-Developer-Dashboard/td-p/7401540",
+    "https://community.spotify.com/t5/Spotify-for-Developers/Updating-the-Criteria-for-Web-API-Extended-Access/td-p/6920661/page/3",
+    "https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer/page/142",
+    "https://community.spotify.com/t5/Spotify-for-Developers/bd-p/Spotify_Developer/page/35",
+    "https://developer.spotify.com/blog/2021-05-27-improving-the-developer-and-user-experience-for-third-party-apps",
+    "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security",
+    "https://developer.spotify.com/blog/2026-07-23-web-api-quota-updates",
+    "https://developer.spotify.com/community/showcase",
+    "https://developer.spotify.com/community/showcase/open-source",
+    "https://developer.spotify.com/dashboard/create",
+    "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+    "https://developer.spotify.com/documentation/web-api/concepts/rate-limits",
+    "https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide",
+    "https://github.com/Osasuwu/like-current-song/issues/122",
+    "https://github.com/spotify/spotify-web-api-ts-sdk/issues/159",
+    "https://mlq.ai/news/spotify-mandates-premium-subscriptions-for-developer-mode-api-access/",
+    "https://nitiweb.net/news/2026-02-06/203",
+    "https://onyx.ma/spotify-tightens-developer-api-access-and-sets-new-rules/",
+    "https://pastranadigital.github.io/Spotify-API-as-MkDocs/concepts/Quota-modes/",
+    "https://sonovault.now/resources/spotify-api-rate-limits",
+    "https://techcrunch.com/2026/02/06/spotify-changes-developer-mode-api-to-require-premium-accounts-limits-test-users/",
+    "https://tildes.net/~tech/1sof/update_on_developer_access_and_platform_security_spotify_for_developers",
+    "https://translate.google.com/translate?client=srp&hl=tr&sl=en&tl=tr&u=https%3A%2F%2Fdeveloper.spotify.com%2Fdocumentation%2Fweb-api%2Fconcepts%2Fquota-modes",
+    "https://ubos.tech/news/spotify-introduces-premium%E2%80%91only-developer-api-with-test%E2%80%91user-limits/",
+    "https://vorplabs.com/agent-tools/spotify-api-changes",
+    "https://vorplabs.com/agent-tools/spotify-cli",
+    "https://www.itechguides.com/spotify-changes-developer-mode-api-to-require-premium-accounts-and-limit-test-users/",
+    "https://www.techbuzz.ai/articles/spotify-locks-down-api-access-with-premium-only-requirement",
+    "https://www.techzine.eu/news/devops/138608/spotify-puts-the-brakes-on-developer-mode-with-stricter-api-rules/"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 20,
+      "uncertain": 2
+    },
+    "changes": []
+  }
+}

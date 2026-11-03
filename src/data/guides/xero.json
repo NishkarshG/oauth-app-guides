@@ -1,0 +1,419 @@
+{
+  "app": {
+    "name": "Xero",
+    "website": "https://developer.xero.com",
+    "category": "Accounting software",
+    "summary": "OAuth 2.0 access to a customer's Xero organisations (tenants): invoices, contacts, bank transactions, reports and payroll, depending on the scopes granted."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "A new Xero app is free but capped at 5 connected organisations. More than 50 needs a paid plan plus App Certification.",
+    "rationale": {
+      "text": "Creating the app is self-serve and takes minutes. Since 2 March 2026, though, every app starts on the free Starter plan, which allows at most 5 connected organisations. Core ($35 AUD/month) raises that to 50. Plus (1,000 connections, $245 AUD/month) and every plan above it require App Certification. Advanced and above also require a security assessment that is repeated every year. Separately, each Xero organisation can connect only a limited number of uncertified apps. Xero's developer terms also forbid using data from its APIs to train AI/ML models, which matters for an AI agent.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing",
+        "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30 minutes to first connection. Certification for 50+ connections takes days of build and paperwork work.",
+    "approvalWait": "None up to 50 connections. Certification and security review take an estimated 2-6 weeks.",
+    "firstConnection": "Under 30 minutes",
+    "handsOnMinutesHigh": 2400,
+    "waitDaysHigh": 42,
+    "basis": {
+      "text": "Xero publishes no turnaround time for App Certification. Its FAQ says the security assessment typically takes about 5 working days to fill in, then 5-10 working days for Xero to assess the answers, plus time for any fixes. The 2-6 week certification figure is an estimate, not a published number.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://developer.xero.com/faq",
+        "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Starter: test on your own organisations",
+      "whoCanConnect": "Any Xero organisation, up to 5 in total across the app",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Maximum of 5 connections, free, with a rate limit of 1,000 calls per organisation per day. Once 5 organisations are connected, the app cannot take any more until you move up a plan or disconnect some.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.xero.com/pricing",
+          "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Core: small production",
+      "whoCanConnect": "Up to 50 organisations",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Paid plan ($35 AUD/month) with no certification needed. Data downloaded from the API (egress) is billed at $2.40 AUD per GB above the plan's allowance. The app is still uncertified, so each organisation's limit on uncertified apps still applies.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.xero.com/pricing"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Plus: certified app",
+      "whoCanConnect": "Up to 1,000 organisations; can be listed on the Xero App Store",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Requires App Certification, which means meeting Xero's certification checkpoints, including Sign Up with Xero. $245 AUD/month.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.xero.com/pricing",
+          "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Advanced / Enterprise",
+      "whoCanConnect": "Up to 10,000 organisations, or no limit on Enterprise",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Requires certification plus a security assessment reviewed by Xero's security team, repeated every year. Advanced is $1,445 AUD/month; Enterprise is priced on application.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.xero.com/pricing",
+          "https://developer.xero.com/faq"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create a Xero developer account",
+      "detail": "Sign in at developer.xero.com with a Xero login (create one if needed) and accept the Xero Developer Terms and Conditions. Since 4 December 2025 these terms include restrictions on how AI may use the data.",
+      "owner": "you",
+      "estimate": "10 min",
+      "doneWhen": "You can see the My Apps dashboard",
+      "url": "https://developer.xero.com/app/manage",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a new app (Web app)",
+      "detail": "In My Apps, choose New app, pick the Web app integration type (authorization code flow with a client secret), and enter the app name your customers will see on the consent screen, your company URL and the redirect URI. Then generate a client secret on the Configuration page.",
+      "owner": "agent",
+      "estimate": "10 min",
+      "doneWhen": "You have a Client ID and Client secret",
+      "url": "https://developer.xero.com/app/manage",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Connect your own organisation",
+      "detail": "Run the authorization code flow against https://login.xero.com/identity/connect/authorize with the openid, offline_access and accounting scopes you need. After the token exchange, call GET https://api.xero.com/connections to get the tenantId, and send it as the Xero-tenant-id header on API calls. The Demo Company works for testing.",
+      "owner": "agent",
+      "estimate": "15 min",
+      "doneWhen": "An API call returns data for your tenant",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Choose a plan before passing 5 connections",
+      "detail": "Upgrade the app to Core in the developer portal to allow up to 50 organisations. This needs billing details.",
+      "owner": "you",
+      "estimate": "10 min",
+      "doneWhen": "The app shows the Core plan",
+      "url": "https://developer.xero.com/pricing",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Apply for App Certification to go past 50",
+      "detail": "Work through the certification checkpoints, including Sign Up with Xero / Sign In with Xero, branding, connection handling and error handling. Then apply for certification and work with your Xero Developer Evangelist. An agent can prepare the evidence and listing copy.",
+      "owner": "you",
+      "estimate": "1-5 days of work plus Xero's review",
+      "doneWhen": "Xero confirms the app is certified and you can move to Plus",
+      "url": "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Security assessment (Advanced and above, or premium features)",
+      "detail": "Fill in Xero's security assessment questionnaire. It typically takes about 5 working days to complete, then 5-10 working days for Xero to review, and it must be redone every year.",
+      "owner": "you",
+      "estimate": "2-3 weeks",
+      "doneWhen": "Xero's security team approves the assessment",
+      "url": "https://developer.xero.com/faq",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/faq"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Xero login and acceptance of the Xero Developer Terms and Conditions.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A paid plan beyond 5 connections: Core $35, Plus $245, Advanced $1,445 AUD/month. Egress overage is $2.40 AUD per GB.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "App Certification for Plus and above, plus a yearly security assessment for Advanced and above.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing",
+        "https://developer.xero.com/faq"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "OAuth endpoints, published in the discovery document at https://identity.xero.com/.well-known/openid-configuration: authorize at https://login.xero.com/identity/connect/authorize, token at https://identity.xero.com/connect/token, plus a revocation endpoint. The discovery document lists PKCE S256 and the client_credentials grant.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Connections count Xero organisations (tenants), not users. One user can authorise several organisations in a single consent, and each one uses up a connection.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Each Xero organisation may connect only a limited number of uncertified apps. Xero's own page says 5; one third-party guide says 2. A customer who already uses several uncertified apps may be unable to connect yours.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The developer terms ban using data from Xero's APIs to train AI/ML models. Using the data at runtime for an agent is not the same as training, but check your data pipeline against the terms.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Rate limits apply per organisation: 1,000 calls a day on Starter and 5,000 a day on Core and above.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An unknown client_id on the authorize URL sends the user to a Xero 'Error 500' page that reads 'unauthorized_client – Unknown client or client not enabled'. The error is not returned to your redirect URI.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "Access tokens last about 30 minutes. Refresh tokens rotate on each use and expire after about 60 days without use, so request offline_access and refresh tokens ahead of expiry.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Apps created after March 2026 may have to use Xero's newer granular accounting scopes instead of the broad legacy ones such as accounting.transactions.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "5-connection cap on Starter",
+      "signal": "New organisations can't connect once 5 tenants are connected. The developer portal shows the connection limit has been reached.",
+      "nextMove": "Upgrade to Core (50 connections), or disconnect inactive tenants using Manage Your Connections.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing",
+        "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Certification required beyond 50 organisations",
+      "signal": "Plus and higher plans list App Certification as a prerequisite",
+      "nextMove": "Build to the certification checkpoints, including Sign Up with Xero, early, then apply for certification.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/pricing",
+        "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Organisation-side limit on uncertified apps",
+      "signal": "A customer's organisation has already connected the maximum number of uncertified apps and can't add yours",
+      "nextMove": "Get certified, or ask the customer to disconnect an unused uncertified app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.xero.com/documentation/best-practices/managing-connections/connections/"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the app configuration (name, URLs, redirect URIs) and generate the OAuth requests",
+    "Call /connections and handle the Xero-tenant-id header for each tenant",
+    "Draft certification evidence, App Store listing copy and privacy text",
+    "Estimate monthly egress and suggest which plan fits",
+    "Prepare draft answers to the security assessment questionnaire for a human to review"
+  ],
+  "youMust": [
+    "Accept the Xero Developer Terms, which include the ban on training AI models with Xero data",
+    "Add billing details and choose a paid plan before passing 5 connections",
+    "Apply for App Certification and deal with the Xero Developer Evangelist",
+    "Complete and sign off the security assessment for Advanced and above"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does App Certification review take in practice under the 2026 model?",
+      "howToResolve": "Ask Xero developer support or your Developer Evangelist when you apply."
+    },
+    {
+      "question": "Is the per-organisation limit on uncertified apps 5 (Xero's page) or 2 (a third-party guide)?",
+      "howToResolve": "Check the current Managing Connections page, or ask Xero support."
+    },
+    {
+      "question": "Do new apps have to use granular scopes, and what are the current access and refresh token lifetimes?",
+      "howToResolve": "Read developer.xero.com/documentation/guides/oauth2/scopes and the auth flow docs."
+    },
+    {
+      "question": "Does an AI agent's runtime use of data (RAG or prompts) fall inside the developer terms' AI restrictions?",
+      "howToResolve": "Read the Xero Developer Terms section on AI, and ask Xero to confirm in writing."
+    }
+  ],
+  "providerContact": {
+    "channel": "Xero Developer support (via developer.xero.com, under Contact / Support), or your assigned Developer Evangelist once you apply for certification",
+    "draftMessage": "Hi, we're building an AI agent that lets our customers connect their Xero organisations through OAuth 2.0 (Web app, client ID ...). We expect about N organisations in year one. Can you confirm (1) the typical turnaround for App Certification now, (2) the current per-organisation limit on uncertified apps, and (3) whether using API data at runtime in LLM prompts (with no model training) is allowed under the Developer Terms? Thanks."
+  },
+  "slug": "xero",
+  "origin": "library",
+  "input": "Xero",
+  "generatedAt": "2026-11-03T11:36:28.603Z",
+  "durationMs": 72160,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Xero",
+    "slug": "XERO",
+    "docUrl": "https://docs.composio.dev/toolkits/xero",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://identity.xero.com/.well-known/openid-configuration",
+      "purpose": "OIDC discovery",
+      "status": 200,
+      "finalUrl": "https://identity.xero.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T11:35:24.236Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://developer.xero.com/app/manage",
+      "purpose": "app registration login wall",
+      "status": 200,
+      "finalUrl": "https://developer.xero.com/app/manage",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Xero",
+      "error": null,
+      "at": "2026-11-03T11:35:24.236Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://login.xero.com/identity/connect/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=openid%20offline_access&state=x",
+      "purpose": "authorize response to fake client",
+      "status": 200,
+      "finalUrl": "https://login.xero.com/identity/error?errorId=CfDJ8MOMn5AHNxVIkNNdLD-L7IGEcqTyHCXE-WDErHybAHzsaa2VQYBUJp4pXTLrPdIIekSwqtbRFAZGE1ft4kwRBDTLKHOeJpoZOb54stQ4wPw14FgQmXer_0EDX9naAEsnJnxTMzgLEaRhrbpUVvPtCyY53-t0IOX-nCNyr2aIysrlmMy3Mxh-rmIrMvITEn4QPfosjsBbSJEdlYY6dufAhJwe6Pe75xyZx3qzC6D7w1nHdmCTOhdHtoK3HfBmMi2ya5Wf2lMK69r0d0JT2msYD3t6EXtovk7EMBe0L-n3L43_7Ftocg_yQck02eACGcTHIhE-Rvk4UstmpCMwnGDiehWA0zbWApK8q92G6KvEFcNk",
+      "redirects": [
+        "https://login.xero.com/identity/error?errorId=CfDJ8MOMn5AHNxVIkNNdLD-L7IGEcqTyHCXE-WDErHybAHzsaa2VQYBUJp4pXTLrPdIIekSwqtbRFAZGE1ft4kwRBDTLKHOeJpoZOb54stQ4wPw14FgQmXer_0EDX9naAEsnJnxTMzgLEaRhrbpUVvPtCyY53-t0IOX-nCNyr2aIysrlmMy3Mxh-rmIrMvITEn4QPfosjsBbSJEdlYY6dufAhJwe6Pe75xyZx3qzC6D7w1nHdmCTOhdHtoK3HfBmMi2ya5Wf2lMK69r0d0JT2msYD3t6EXtovk7EMBe0L-n3L43_7Ftocg_yQck02eACGcTHIhE-Rvk4UstmpCMwnGDiehWA0zbWApK8q92G6KvEFcNk"
+      ],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Xero | Error 500",
+      "error": null,
+      "at": "2026-11-03T11:35:24.236Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://amis.asia/career/xero-certification-career-guide/",
+    "https://codeleap.co.uk/insights/xero-integration/",
+    "https://devblog.xero.com/introducing-our-new-annual-recertification-process-a69629492814?gi=ac01d7affa70",
+    "https://developer.xero.com/",
+    "https://developer.xero.com/app/manage",
+    "https://developer.xero.com/documentation/best-practices/managing-connections/connections/",
+    "https://developer.xero.com/documentation/xero-app-store/app-partner-guides/building-and-growing-your-app",
+    "https://developer.xero.com/faq",
+    "https://developer.xero.com/faq/xero-ecosystem-security-requirements-update",
+    "https://developer.xero.com/pricing",
+    "https://developer.xero.com/static/otherfiles/Grow-with-the-Xero-App-Store.pdf",
+    "https://developers.apideck.com/apis/accounting/xero/configuration",
+    "https://developers.apideck.com/connectors/xero/docs/application_owner+oauth_credentials",
+    "https://identity.xero.com/.well-known/openid-configuration",
+    "https://kenomont.com/blog/xero-api-pricing-2026-integrations",
+    "https://login.xero.com/identity/connect/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=openid%20offline_access&state=x",
+    "https://login.xero.com/identity/error?errorId=CfDJ8MOMn5AHNxVIkNNdLD-L7IGEcqTyHCXE-WDErHybAHzsaa2VQYBUJp4pXTLrPdIIekSwqtbRFAZGE1ft4kwRBDTLKHOeJpoZOb54stQ4wPw14FgQmXer_0EDX9naAEsnJnxTMzgLEaRhrbpUVvPtCyY53-t0IOX-nCNyr2aIysrlmMy3Mxh-rmIrMvITEn4QPfosjsBbSJEdlYY6dufAhJwe6Pe75xyZx3qzC6D7w1nHdmCTOhdHtoK3HfBmMi2ya5Wf2lMK69r0d0JT2msYD3t6EXtovk7EMBe0L-n3L43_7Ftocg_yQck02eACGcTHIhE-Rvk4UstmpCMwnGDiehWA0zbWApK8q92G6KvEFcNk",
+    "https://truto.one/blog/xero-api-pricing-changes-2026-costs-tiers-and-how-to-minimize-egress/",
+    "https://wiki.licenseware.io/wiki/xero-developer-platform-plans-and-api-limits/",
+    "https://www.accountingtoday.com/news/xero-shifts-to-tiered-pricing-model-for-developers",
+    "https://www.apideck.com/blog/xero-api-pricing-and-the-app-partner-program",
+    "https://www.flowmeshai.com/articles/xero-api-pricing-changes-custom-integrations",
+    "https://www.maesn.com/blog/how-to-integrate-with-xero/",
+    "https://www.maesn.com/blog/xero-partnership-guide/"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 19,
+      "uncertain": 5
+    },
+    "changes": []
+  }
+}

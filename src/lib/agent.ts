@@ -17,11 +17,12 @@ Composio context. A toolkit is either "managed" (Composio supplies the OAuth app
 
 How to investigate:
 1. Find the provider's own developer docs for OAuth, app registration, and review, certification or marketplace publishing. Prefer the provider's documentation over blogs, but look for real developer reports (forums, GitHub issues) on how long review actually takes.
-2. Use probe_url to attempt what can be attempted without an account: load the app-registration page and note whether it demands a login; GET /.well-known/oauth-authorization-server or the OpenID configuration; load the documented authorize URL with client_id=test-probe and see how the provider responds; check that the docs you rely on still resolve. Make a few focused probes, not many.
-3. Work out the ladder. Most providers let you create an app in minutes but restrict who can connect until a review. The gap between "it works for me" and "any customer can connect" is what developers cannot see, so make that gap the centre of the guide.
+2. Use probe_url to attempt what can be attempted without an account: load the app-registration page and note whether it demands a login; GET /.well-known/oauth-authorization-server or the OpenID configuration; load the documented authorize URL with client_id=test-probe and see how the provider responds; check that the docs you rely on still resolve. Make a few focused probes, not many. If web_fetch fails on an important page, try probe_url, which returns the page text, or find another page that says the same thing, before you fall back on memory.
+3. Limits change often. Before stating a limit, look for the provider's changelog or developer blog from the past year, because a newer post overrides an older announcement or doc. Say the date of the rule when it matters.
+4. Work out the ladder. Most providers let you create an app in minutes but restrict who can connect until a review. The gap between "it works for me" and "any customer can connect" is what developers cannot see, so make that gap the centre of the guide.
 
 Evidence rules. These are checked by code, and a label that fails the check is downgraded in public.
-- tested: you observed it with probe_url. Cite the probeIds. A probe shows only what an anonymous visitor sees, so never mark a claim about the logged-in flow as tested.
+- tested: you observed it with probe_url. Cite the probeIds. A probe shows only what an anonymous visitor sees, so never mark a claim about the logged-in flow as tested. Steps are never tested, because nobody performed them; give them the sources behind them. Record what you observed as a nuance or requirement instead.
 - sourced: a page you retrieved says so. Cite the URLs exactly as retrieved.
 - uncertain: inference, memory, stale or conflicting sources. Use it freely. A correct "uncertain" is worth more than a confident guess.
 - Providers rarely publish review times. If yours does not, say that and label the estimate uncertain, stating what it is based on.
@@ -62,6 +63,13 @@ function resultUrls(content: Anthropic.Beta.BetaContentBlock[], seen: Set<string
     }
   }
   return found;
+}
+
+function firstSentences(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const end = cut.lastIndexOf(". ");
+  return end > 80 ? cut.slice(0, end + 1) : `${cut.trimEnd()}...`;
 }
 
 type RunOptions = {
@@ -123,7 +131,7 @@ Investigate it and call submit_guide.`,
         betas: ["server-side-fallback-2026-07-01"],
         fallbacks: "default",
         thinking: { type: "adaptive", display: "summarized" },
-        output_config: { effort: "medium" },
+        output_config: { effort: "high" },
         cache_control: { type: "ephemeral" },
         system: SYSTEM,
         tools,
@@ -139,6 +147,10 @@ Investigate it and call submit_guide.`,
       if (event.type === "content_block_start") {
         pendingInput = "";
         pendingName = event.content_block.type === "server_tool_use" ? event.content_block.name : "";
+        // Calls made from dynamic filtering arrive complete here, with no input deltas after them.
+        if (event.content_block.type === "server_tool_use" && event.content_block.input && Object.keys(event.content_block.input).length > 0) {
+          pendingInput = JSON.stringify(event.content_block.input);
+        }
       } else if (event.type === "content_block_delta") {
         if (event.delta.type === "input_json_delta") pendingInput += event.delta.partial_json;
         else if (event.delta.type === "thinking_delta") noteBuffer += event.delta.thinking;
@@ -154,7 +166,7 @@ Investigate it and call submit_guide.`,
           pendingName = "";
         }
         if (noteBuffer.trim()) {
-          emit({ type: "note", text: noteBuffer.trim().slice(0, 400) });
+          emit({ type: "note", text: firstSentences(noteBuffer.trim(), 400) });
           noteBuffer = "";
         }
       }

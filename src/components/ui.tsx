@@ -39,7 +39,7 @@ export function EvidenceTag({ evidence, sourceUrls = [], probeIds = [] }: { evid
       {probeIds.map((id) => (
         <a key={id} href={`#probe-${id}`} className="text-muted underline hover:text-ink">{id}</a>
       ))}
-      {sourceUrls.slice(0, 2).map((url) => (
+      {sourceUrls.filter((url, i) => sourceUrls.findIndex((u) => hostOf(u) === hostOf(url)) === i).slice(0, 2).map((url) => (
         <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="text-muted underline hover:text-ink">{hostOf(url)}</a>
       ))}
     </span>

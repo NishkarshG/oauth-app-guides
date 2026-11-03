@@ -82,9 +82,10 @@ export async function runProbe(id: string, rawUrl: string, purpose: string): Pro
       .replace(/\s+/g, " ")
       .trim();
     const loginWall = LOGIN_PATH.test(current.pathname) || /type=["']password["']/i.test(body);
+    const clientRendered = text.length < 400 && /html/i.test(res.headers.get("content-type") ?? "");
     const probe: Probe = {
       id, url: rawUrl, purpose, status: res.status, finalUrl: current.toString(),
-      redirects, loginWall, title, error: null, at,
+      redirects, loginWall, clientRendered, title, error: null, at,
     };
     return {
       probe,
@@ -95,13 +96,16 @@ export async function runProbe(id: string, rawUrl: string, purpose: string): Pro
         redirects,
         contentType: res.headers.get("content-type"),
         loginWall,
+        ...(clientRendered && {
+          caution: "The page is rendered by JavaScript, so this request saw almost nothing. A 200 here does not show the page is open to anonymous visitors. It only shows the URL resolves.",
+        }),
         title,
         untrustedPageExcerpt: text.slice(0, 3000),
       },
     };
   } catch (err) {
     const error = err instanceof Error ? err.message : "probe failed";
-    const probe: Probe = { id, url: rawUrl, purpose, status: null, finalUrl: null, redirects, loginWall: false, title: null, error, at };
+    const probe: Probe = { id, url: rawUrl, purpose, status: null, finalUrl: null, redirects, loginWall: false, clientRendered: false, title: null, error, at };
     return { probe, forModel: { probeId: id, error, note: "This probe observed nothing, so it cannot support a claim." } };
   }
 }

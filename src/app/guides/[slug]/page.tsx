@@ -6,6 +6,7 @@ import { StepChecklist } from "@/components/StepChecklist";
 import { DifficultyBadge, EvidenceTag, SectionHeading } from "@/components/ui";
 import { COMPOSIO_AUTH_DOCS, COMPOSIO_STEPS } from "@/lib/composio-hookup";
 import { guideToMarkdown } from "@/lib/markdown";
+import verification from "@/data/verification.json";
 import type { Claim, Guide } from "@/lib/schema";
 import { getGuide } from "@/lib/store";
 
@@ -50,6 +51,7 @@ export default async function GuidePage({ params }: Props) {
   const g = await getGuide((await params).slug);
   if (!g) notFound();
   const advice = composioAdvice(g);
+  const checked = verification.entries.filter((e) => e.app === g.app.name);
 
   return (
     <article>
@@ -154,6 +156,7 @@ export default async function GuidePage({ params }: Props) {
       <p className="text-sm">
         {g.audit.counts.tested} tested, {g.audit.counts.sourced} sourced, {g.audit.counts.uncertain} uncertain.{" "}
         <Link href="/evidence" className="underline">What these labels mean</Link>
+        {checked.length > 0 && ` ${checked.length} claim${checked.length === 1 ? " was" : "s were"} also checked separately against the provider's pages, ${checked.filter((e) => e.result === "corrected").length} needing a correction.`}
       </p>
       {g.audit.changes.length > 0 && (
         <details className="mt-3 text-sm">
@@ -171,7 +174,7 @@ export default async function GuidePage({ params }: Props) {
                   <td className="p-2.5 font-mono">{p.id}</td>
                   <td className="break-all p-2.5 font-mono">{p.url}</td>
                   <td className="p-2.5">{p.purpose}</td>
-                  <td className="p-2.5">{p.error ?? `${p.status}${p.loginWall ? ", login wall" : ""}`}</td>
+                  <td className="p-2.5">{p.error ?? `${p.status}${p.loginWall ? ", login wall" : ""}${p.clientRendered ? ", page needs JavaScript so login status is unknown" : ""}`}</td>
                 </tr>
               ))}
             </tbody>

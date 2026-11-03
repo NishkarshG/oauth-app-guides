@@ -54,6 +54,12 @@ export function auditGuide(guide: AgentGuide, probes: Probe[], seen: Set<string>
   check(guide.effort.basis, "Time estimate");
   guide.stages.forEach((s) => check(s.limit, `Stage: ${s.name}`));
   guide.steps.forEach((s) => {
+    // A probe can show a URL resolves, but no one performed the step, so a step is never "tested".
+    if (s.evidence === "tested") {
+      const to = s.sourceUrls.length > 0 ? "sourced" : "uncertain";
+      changes.push({ where: `Step: ${s.title}`, from: "tested", to, reason: "marked tested, but a probe cannot complete a setup step" });
+      s.evidence = to;
+    }
     check(s, `Step: ${s.title}`);
     if (!isHttpUrl(s.url)) s.url = null;
   });

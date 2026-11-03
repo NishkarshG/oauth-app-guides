@@ -1,4 +1,116 @@
 {
-  "summary": "Verification has not been run yet.",
-  "entries": []
+  "summary": "After generation, these claims were checked again in a separate pass outside the agent, by fetching each provider's page directly on 3 November 2026 and comparing the text. This sample covers the claims a developer would plan around. It isn't every claim in every guide. 12 held up or got corrected here, 2 could not be verified.",
+  "entries": [
+    {
+      "app": "Spotify",
+      "result": "corrected",
+      "claim": "New apps get one Development Mode Client ID per developer",
+      "note": "The agent relied on the February 2026 post and missed a July 2026 update that raised the limit to 25 Client IDs sharing one quota. Fixed in the guide, and the agent now has to look for newer changelogs.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.spotify.com/blog/2026-07-23-web-api-quota-updates"
+    },
+    {
+      "app": "Spotify",
+      "result": "corrected",
+      "claim": "The six-week review figure was labelled uncertain, because the agent couldn't read the page",
+      "note": "The quota modes page states it directly: review can take up to six weeks. Relabelled as sourced.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes"
+    },
+    {
+      "app": "Spotify",
+      "result": "confirmed",
+      "claim": "Extended Quota needs a registered business and at least 250k monthly active users",
+      "note": "Stated on the quota modes page.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes"
+    },
+    {
+      "app": "Spotify",
+      "result": "confirmed",
+      "claim": "Development Mode requires Premium and allows up to five authorized users per Client ID",
+      "note": "Stated in Spotify's February 2026 post.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security"
+    },
+    {
+      "app": "Slack",
+      "result": "confirmed",
+      "claim": "Marketplace review: up to 10 business days, then up to 10 weeks for new submissions, after 10 active workspace installs",
+      "note": "All three figures are in the review guide.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.slack.dev/slack-marketplace/slack-marketplace-review-guide/"
+    },
+    {
+      "app": "Slack",
+      "result": "confirmed",
+      "claim": "Non-Marketplace apps are limited to 1 request a minute and 15 objects on conversations.history",
+      "note": "Stated in Slack's May 2025 changelog entry.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps/"
+    },
+    {
+      "app": "Xero",
+      "result": "confirmed",
+      "claim": "Plans allow 5, 50, 1,000 and 10,000 connections at no charge, $35, $245 and $1,445 AUD a month",
+      "note": "Matches the pricing table.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.xero.com/pricing"
+    },
+    {
+      "app": "Gmail",
+      "result": "confirmed",
+      "claim": "Testing mode allows up to 100 test users, and their authorizations expire after seven days",
+      "note": "Stated in Google's OAuth app audience help page.",
+      "method": "Provider page fetched directly",
+      "source": "https://support.google.com/cloud/answer/15549945?hl=en"
+    },
+    {
+      "app": "Gmail",
+      "result": "confirmed",
+      "claim": "Restricted scopes need an annual third-party security assessment, and verification can take several weeks",
+      "note": "Stated by Google. Google gives no exact range, so the guide's 2-8 weeks is an estimate and stays labelled uncertain.",
+      "method": "Provider page fetched directly",
+      "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+    },
+    {
+      "app": "Notion",
+      "result": "confirmed",
+      "claim": "Marketplace submissions get a reply within 5-10 business days",
+      "note": "Stated in the listing FAQ.",
+      "method": "Provider page fetched directly",
+      "source": "https://developers.notion.com/guides/connections-and-tokens/public-integrations/marketplace-listing"
+    },
+    {
+      "app": "Shopify",
+      "result": "confirmed",
+      "claim": "The distribution method can't be changed once selected",
+      "note": "Stated on the distribution page.",
+      "method": "Provider page fetched directly",
+      "source": "https://shopify.dev/docs/apps/launch/distribution/select-distribution-method"
+    },
+    {
+      "app": "Shopify",
+      "result": "confirmed",
+      "claim": "Repeated review failures can pause an app in a cooldown",
+      "note": "Stated on the review submission page.",
+      "method": "Provider page fetched directly",
+      "source": "https://shopify.dev/docs/apps/launch/app-store-review/submit-app-for-review"
+    },
+    {
+      "app": "Shopify",
+      "result": "unverified",
+      "claim": "App Store review takes about 2-5 weeks",
+      "note": "The review page publishes no turnaround time, so this rests on developer forum reports and stays labelled uncertain.",
+      "method": "Provider page fetched directly",
+      "source": "https://shopify.dev/docs/apps/launch/app-store-review/submit-app-for-review"
+    },
+    {
+      "app": "All apps",
+      "result": "unverified",
+      "claim": "The logged-in setup flows and real approval outcomes",
+      "note": "No provider accounts were created and no app was submitted for review. Steps come from documentation, and the live probes only show what an anonymous visitor sees.",
+      "method": "Provider page fetched directly"
+    }
+  ]
 }
