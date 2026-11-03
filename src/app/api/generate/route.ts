@@ -1,6 +1,6 @@
 import { createJob, findActiveJob, runJob, takeQuota } from "@/lib/jobs";
 import { slugify } from "@/lib/schema";
-import { getGuide } from "@/lib/store";
+import { getGuide, onNetlify } from "@/lib/store";
 
 export const runtime = "nodejs";
 
@@ -27,8 +27,8 @@ export async function POST(req: Request) {
   }
 
   const job = await createJob(input, slug);
-  if (process.env.NETLIFY) {
-    const res = await fetch(`${process.env.URL}/.netlify/functions/generate-background`, {
+  if (onNetlify()) {
+    const res = await fetch(`${process.env.URL ?? new URL(req.url).origin}/.netlify/functions/generate-background`, {
       method: "POST",
       body: JSON.stringify({ id: job.id }),
     });

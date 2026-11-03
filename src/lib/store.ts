@@ -5,7 +5,9 @@ import type { Guide } from "./schema";
 
 const LIBRARY_DIR = path.join(process.cwd(), "src/data/guides");
 const LOCAL_DIR = path.join(process.cwd(), ".data");
-const onNetlify = () => Boolean(process.env.NETLIFY);
+// NETLIFY is only set during the build, so at runtime look for what the platform provides to functions.
+export const onNetlify = () =>
+  Boolean(process.env.NETLIFY || process.env.NETLIFY_BLOBS_CONTEXT || process.env.AWS_LAMBDA_FUNCTION_NAME || "Netlify" in globalThis);
 const safeSlug = (slug: string) => /^[a-z0-9-]{1,60}$/.test(slug);
 
 /** Netlify Blobs in production and plain files in local development. */
