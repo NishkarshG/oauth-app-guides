@@ -82,7 +82,9 @@ export function GenerateView() {
     })();
 
     return () => clearTimeout(timer);
-  }, [app, jobParam, router]);
+    // Runs once. Putting the job ID in the URL changes the params, and re-running would cancel the polling.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
