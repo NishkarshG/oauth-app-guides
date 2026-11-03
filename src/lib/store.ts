@@ -10,10 +10,18 @@ export const onNetlify = () =>
   Boolean(process.env.NETLIFY || process.env.NETLIFY_BLOBS_CONTEXT || process.env.AWS_LAMBDA_FUNCTION_NAME || "Netlify" in globalThis);
 const safeSlug = (slug: string) => /^[a-z0-9-]{1,60}$/.test(slug);
 
+// Next.js patches fetch to cache responses, and on Netlify that cache is itself backed by Blobs. A Blobs
+// request going through it hangs until the function times out, so it has to opt out.
+const blobs = () =>
+  getStore({
+    name: "guides",
+    fetch: (input, init) => fetch(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(10_000) }),
+  });
+
 /** Netlify Blobs in production and plain files in local development. */
 export async function readJson<T>(key: string): Promise<T | null> {
   if (onNetlify()) {
-    return (await getStore("guides").get(key, { type: "json", consistency: "strong" })) as T | null;
+    return (await blobs().get(key, { type: "json", consistency: "strong" })) as T | null;
   }
   const raw = await fs.readFile(path.join(LOCAL_DIR, `${key}.json`), "utf8").catch(() => null);
   return raw ? (JSON.parse(raw) as T) : null;
@@ -21,7 +29,7 @@ export async function readJson<T>(key: string): Promise<T | null> {
 
 export async function writeJson(key: string, value: unknown): Promise<void> {
   if (onNetlify()) {
-    await getStore("guides").setJSON(key, value);
+    await blobs().setJSON(key, value);
     return;
   }
   const file = path.join(LOCAL_DIR, `${key}.json`);
