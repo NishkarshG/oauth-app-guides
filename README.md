@@ -52,7 +52,7 @@ npx tsx --env-file=.env.local scripts/generate-library.ts Notion Slack
 
 ## Deploy on Netlify
 
-Import the repo and add `ANTHROPIC_API_KEY` as an environment variable. `netlify.toml` covers the build, and Netlify Blobs needs no setup.
+Import the repo and add `ANTHROPIC_API_KEY` as an environment variable. `netlify.toml` covers the build, and Netlify Blobs needs no setup. Set the key before the first live run: without it, Netlify's AI Gateway supplies its own, and each run uses up your Netlify credits.
 
 ## Limitations
 

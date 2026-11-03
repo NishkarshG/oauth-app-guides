@@ -330,7 +330,7 @@
       "status": 200,
       "finalUrl": "https://slack.com/oauth/v2/authorize?client_id=test-probe&scope=channels:read&redirect_uri=https://example.com/cb",
       "redirects": [],
-      "loginWall": true,
+      "loginWall": false,
       "clientRendered": true,
       "title": null,
       "error": null,

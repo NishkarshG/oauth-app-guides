@@ -8,9 +8,9 @@
   "hasOAuth": "yes",
   "verdict": {
     "difficulty": "involved",
-    "headline": "Unrelated merchants can only connect after Shopify App Store review, which developers report currently takes about 2–4+ weeks.",
+    "headline": "Unrelated merchants can only connect after Shopify App Store review, which developers report currently takes about 2\u20134+ weeks.",
     "rationale": {
-      "text": "Creating the app in the Dev Dashboard takes minutes. The distribution method is the real gate, and you cannot change it after you pick it. 'Custom distribution' needs no review, but it only covers one store, or the stores in a single Plus organization. 'Public distribution' (any merchant) means building a Shopify App Store listing, passing automated checks and a manual review. Shopify's guideline is about 2 weeks, but 2026 forum threads report 3–4+ weeks. Customer name, email, phone and address fields need a separate protected-customer-data approval.",
+      "text": "Creating the app in the Dev Dashboard takes minutes. The distribution method is the real gate, and you cannot change it after you pick it. 'Custom distribution' needs no review, but it only covers one store, or the stores in a single Plus organization. 'Public distribution' (any merchant) means building a Shopify App Store listing, passing automated checks and a manual review. Shopify's guideline is about 2 weeks, but 2026 forum threads report 3\u20134+ weeks. Customer name, email, phone and address fields need a separate protected-customer-data approval.",
       "evidence": "sourced",
       "sourceUrls": [
         "https://shopify.dev/docs/apps/launch/distribution/select-distribution-method",
@@ -28,7 +28,7 @@
     "handsOnMinutesHigh": 960,
     "waitDaysHigh": 35,
     "basis": {
-      "text": "The review submission page publishes no turnaround time. Forum posts from Feb–Apr 2026 quote a Shopify guideline of 2 weeks (some say 2–4 weeks), with real waits of 3+ weeks and one report of about 30 days. Hands-on time is my own estimate.",
+      "text": "The review submission page publishes no turnaround time. Forum posts from Feb\u2013Apr 2026 quote a Shopify guideline of 2 weeks (some say 2\u20134 weeks), with real waits of 3+ weeks and one report of about 30 days. Hands-on time is my own estimate.",
       "evidence": "uncertain",
       "sourceUrls": [
         "https://community.shopify.dev/t/shopify-app-review-taking-more-than-2-weeks-is-this-normal/29646",
@@ -229,7 +229,7 @@
       "probeIds": []
     },
     {
-      "text": "New legacy custom apps (store admin → Develop apps) can no longer be created after January 1, 2026. Use the Dev Dashboard instead.",
+      "text": "New legacy custom apps (store admin \u2192 Develop apps) can no longer be created after January 1, 2026. Use the Dev Dashboard instead.",
       "evidence": "sourced",
       "sourceUrls": [
         "https://shopify.dev/apps/auth/basic-http"
@@ -351,7 +351,7 @@
       "status": 404,
       "finalUrl": "https://example-probe.myshopify.com/admin/oauth/authorize?client_id=test-probe&scope=read_products&redirect_uri=https://example.com/cb",
       "redirects": [],
-      "loginWall": true,
+      "loginWall": false,
       "clientRendered": true,
       "title": "Store unavailable",
       "error": null,

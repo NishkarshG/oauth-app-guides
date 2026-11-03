@@ -51,7 +51,7 @@ async function readCapped(res: Response): Promise<string> {
   return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
-const LOGIN_PATH = /\/(login|signin|sign-in|sign_in|auth|sso|accounts?|oauth\/authorize\/?$)/i;
+const LOGIN_PATH = /\/(login|signin|sign-in|sign_in|auth|sso)(\/|$)/i;
 
 export type ProbeOutcome = { probe: Probe; forModel: Record<string, unknown> };
 
