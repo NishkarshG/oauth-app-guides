@@ -1,0 +1,532 @@
+{
+  "app": {
+    "name": "PayPal",
+    "website": "https://developer.paypal.com",
+    "category": "Payments",
+    "summary": "With PayPal OAuth, an agent can confirm who a user is and read their profile (Log in with PayPal). Working on a user's payments, invoices or transactions instead needs REST client credentials or PayPal partner approval."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "PayPal's consumer OAuth only shares identity data and needs a review of several weeks. Acting on other merchants' accounts requires PayPal partner approval.",
+    "rationale": {
+      "text": "Creating a REST app in the Developer Dashboard is self-serve, and sandbox Log in with PayPal works without review. Live Log in with PayPal is sent for review automatically when you save the settings. PayPal says that review 'typically takes a few weeks', and the scopes it covers are identity only (openid, profile, email, address, phone, paypalattributes). Payments, invoicing and transaction APIs use client-credential tokens from the account owner's own app. To call them on behalf of other merchants you need the Partner Referrals / multiparty flow, which PayPal opens to approved partners only through its partner team.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+        "https://developer.paypal.com/api/partner-referrals/v2",
+        "https://developer.paypal.com/log-in/build"
+      ],
+      "probeIds": [
+        "p1",
+        "p5"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "1-3 hours (Log in with PayPal), plus partner onboarding paperwork if you take the merchant-access route",
+    "approvalWait": "About 2-6 weeks for Log in with PayPal review. Partner approval timing is not published.",
+    "firstConnection": "About 30 minutes, using a sandbox app and a sandbox test account",
+    "handsOnMinutesHigh": 180,
+    "waitDaysHigh": 42,
+    "basis": {
+      "text": "PayPal's own doc says Log in with PayPal review 'typically takes a few weeks'. A community thread reports more than 14 days pending with no reply from the review mailbox. The 6-week upper bound is my inference. PayPal publishes no timeline for partner (Partner Referrals) approval.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+        "https://www.paypal-community.com/t5/Sandbox-Environment/Log-in-with-PayPal-pending-approval/td-p/3060287"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Sandbox app",
+      "whoCanConnect": "Sandbox test accounts you create in the Developer Dashboard",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Sandbox apps need no review. Log in with PayPal is enabled as soon as you configure it and click Save. Sandbox traffic goes to www.sandbox.paypal.com and api-m.sandbox.paypal.com, and real PayPal accounts cannot sign in there.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Live app, Log in with PayPal pending review",
+      "whoCanConnect": "No real users can complete Log in with PayPal yet. You can still call the REST APIs with your own live client credentials against your own account.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "On a live app, saving the Log in with PayPal settings submits the app for review automatically. PayPal states that all scopes require its approval. The privacy and security team checks your Privacy policy URL and User agreement URL.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+          "https://developer.paypal.com/log-in/build"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Live Log in with PayPal approved",
+      "whoCanConnect": "Any PayPal user. You receive only the identity attributes you selected.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "After approval, any PayPal user can consent. The scopes listed in PayPal's OIDC discovery document are email, address, phone, openid, profile and three legacy payment scopes (sendmoney, futurepayments, expresscheckout). None of them gives access to invoices, orders or transaction history.",
+        "evidence": "tested",
+        "sourceUrls": [],
+        "probeIds": [
+          "p1"
+        ]
+      }
+    },
+    {
+      "name": "Act on other merchants' accounts (partner)",
+      "whoCanConnect": "Merchants onboarded through Partner Referrals who grant you third-party permissions such as PAYMENT and REFUND",
+      "reviewRequired": true,
+      "limit": {
+        "text": "The Partner Referrals API is available to approved partners only. You apply through a form, and a PayPal representative follows up. Unapproved callers get AUTHORIZATION_ERROR or 403 responses.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.paypal.com/api/partner-referrals/v2",
+          "https://www.paypal-community.com/t5/REST-APIs/Partner-Referrals-API-call-AUTHORIZATION-ERROR/td-p/1854894"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a PayPal Business account and sign in to the Developer Dashboard",
+      "detail": "Sign in at developer.paypal.com with a PayPal Business account. PayPal's REST quickstart says you need one for live credentials.",
+      "owner": "you",
+      "estimate": "10-30 minutes (longer if PayPal asks for business verification)",
+      "doneWhen": "You can see Apps & Credentials with Sandbox and Live tabs",
+      "url": "https://developer.paypal.com/dashboard/applications/sandbox",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/api/quickstart/environment/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a REST API app (Sandbox first)",
+      "detail": "In Apps & Credentials on the Sandbox tab, click Create App. Choose Merchant, or Platform if you will become a partner. Copy the Client ID and Secret. Later, repeat on the Live tab, which issues separate credentials.",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "You have a sandbox Client ID and Secret",
+      "url": "https://developer.paypal.com/dashboard/applications/sandbox",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/multiparty/accept-payments/",
+        "https://developer.paypal.com/docs/api/quickstart/environment/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Enable Log in with PayPal and set the Return URL",
+      "detail": "Select the app. Under Other features, tick Log in with PayPal, then open Advanced Settings. Enter the Return URL (your Composio callback; it must match redirect_uri exactly). Select the user information to share, and only pick what you need. Enter the Privacy policy URL and User agreement URL; https://example.com is acceptable in sandbox. Click Save.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "The sandbox authorize URL returns a code to your Return URL after a sandbox test user signs in",
+      "url": "https://developer.paypal.com/log-in/build",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+        "https://developer.paypal.com/log-in/build"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test with a sandbox personal account",
+      "detail": "Under Sandbox accounts, create a test buyer account. Open https://www.sandbox.paypal.com/signin/authorize?flowEntry=static&client_id=...&response_type=code&scope=openid%20profile%20email&redirect_uri=..., sign in as the test buyer, and confirm the redirect contains a non-empty code.",
+      "owner": "agent",
+      "estimate": "15 minutes",
+      "doneWhen": "The token exchange at /v1/oauth2/token returns an access token and the userinfo endpoint returns the test user",
+      "url": "https://developer.paypal.com/log-in/build",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Publish real privacy policy and user agreement pages",
+      "detail": "PayPal's privacy and security team reviews both URLs before activating live Log in with PayPal. An agent can draft the text, but a human must approve and publish it.",
+      "owner": "you",
+      "estimate": "30-90 minutes",
+      "doneWhen": "Both URLs are publicly reachable on your domain",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure the Live app, which submits it for review",
+      "detail": "On the Live tab, configure Log in with PayPal with your production Return URL, the attributes you need, and the real policy URLs. Clicking Save automatically submits the app for PayPal review. There is no separate submit button.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "The Live app shows Log in with PayPal as pending approval",
+      "url": "https://developer.paypal.com/dashboard/applications/live",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+        "https://www.paypal-community.com/t5/Sandbox-Environment/Log-in-with-PayPal-pending-approval/td-p/3060287"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for Log in with PayPal approval",
+      "detail": "PayPal says review typically takes a few weeks. If it stalls past about 3 weeks, contact PayPal developer technical support and include your live Client ID.",
+      "owner": "provider",
+      "estimate": "A few weeks (not guaranteed)",
+      "doneWhen": "Log in with PayPal is shown as enabled on the Live app and real accounts can complete consent",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "(Only if the agent must act on other merchants' accounts) Apply to become a PayPal partner",
+      "detail": "Fill out the partner form linked from the Partner Referrals API reference. A PayPal representative follows up. Once approved, create a Platform REST app and onboard each merchant with POST /v2/customer/partner-referrals so they grant permissions such as PAYMENT and REFUND.",
+      "owner": "you",
+      "estimate": "Hours of paperwork; approval time not published",
+      "doneWhen": "Calls to /v2/customer/partner-referrals stop returning AUTHORIZATION_ERROR in live",
+      "url": "https://developer.paypal.com/api/partner-referrals/v2",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/api/partner-referrals/v2",
+        "https://developer.paypal.com/platforms/seller-onboarding/onboarding-checklist"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A PayPal Business account is needed for live REST credentials.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/api/quickstart/environment/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A public Privacy policy URL and User agreement URL are required to activate live Log in with PayPal. PayPal's privacy and security team reviews both.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The Return URL configured on the app must match the encoded redirect_uri exactly. With an unregistered client, the authorize endpoint shows a 'Sorry about that' page with 'invalid client_id or redirect_uri'.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://developer.paypal.com/log-in/build"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "Merchant-level API access for other businesses requires approved partner status, granted by PayPal's partner team.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/api/partner-referrals/v2"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "OIDC discovery at https://www.paypal.com/.well-known/openid-configuration lists authorize https://www.paypal.com/signin/authorize, token https://api.paypal.com/v1/oauth2/token, userinfo /v1/oauth2/token/userinfo and a revoke endpoint. It advertises authorization_code and refresh_token grants, client_secret_basic as the only token auth method, pairwise subject IDs, and S256 PKCE.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Because subject types are pairwise, the user_id a user gets in your app differs from the one other apps see for the same user. Do not try to match users across apps by sub.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Log in with PayPal is identity-only. Its scopes (openid, profile, email, address, phone, https://uri.paypal.com/services/paypalattributes) do not let an agent create invoices, list transactions or send payouts on the user's behalf. Those REST APIs take a bearer token from client_credentials on the account owner's own app, or partner third-party permissions.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/log-in/build",
+        "https://developer.paypal.com/docs/api/quickstart/environment/",
+        "https://developer.paypal.com/platforms/seller-onboarding/onboarding-checklist"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Sandbox and Live are fully separate: different hosts (sandbox.paypal.com and api-m.sandbox.paypal.com versus paypal.com and api-m.paypal.com), different Client ID/Secret pairs, and different test accounts. Swap all of them at go-live.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+        "https://developer.paypal.com/docs/api/quickstart/environment/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The legacy /connect authorize path is replaced by /signin/authorize. Older doc URLs now redirect: /docs/log-in-with-paypal/integrate/ goes to /log-in/build, last updated October 14, 2026.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://developer.paypal.com/log-in/upgrade"
+      ],
+      "probeIds": [
+        "p5",
+        "p4"
+      ]
+    },
+    {
+      "text": "In Advanced Settings you can let customers who have not confirmed their email with PayPal use Log in with PayPal. Without that option, those users cannot complete the flow.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/limited-release/log-in-with-paypal/integrate"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Client-credentials access tokens expire, and you request a new one from /v1/oauth2/token. The exact lifetime is returned in expires_in and is not fixed in the docs I read.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/docs/api/quickstart/environment/"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Log in with PayPal stuck in review",
+      "signal": "The Live app shows Log in with PayPal pending approval, and real users get an error at the authorize step. Developers report waits of more than 14 days with no reply.",
+      "nextMove": "Submit early, because saving the Live config is the submission. Make sure the policy URLs are real and live. Escalate to PayPal developer technical support with your live Client ID.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.paypal-community.com/t5/Sandbox-Environment/Log-in-with-PayPal-pending-approval/td-p/3060287",
+        "https://developer.paypal.com/docs/log-in-with-paypal/integrate/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Partner APIs refused for non-partners",
+      "signal": "AUTHORIZATION_ERROR 'Caller is not authorized to access this resource', or a 403, from /v2/customer/partner-referrals",
+      "nextMove": "Apply through the partner form on the Partner Referrals reference page. Otherwise, have each user connect with their own REST app's Client ID and Secret.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.paypal.com/api/partner-referrals/v2",
+        "https://www.paypal-community.com/t5/REST-APIs/Partner-Referrals-API-call-AUTHORIZATION-ERROR/td-p/1854894"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Redirect URI mismatch",
+      "signal": "PayPal 'Sorry about that ... (invalid client_id or redirect_uri)' page",
+      "nextMove": "Make the Return URL in Apps & Credentials match the redirect_uri character for character, and use the Client ID for the matching environment (sandbox or live).",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p3"
+      ]
+    }
+  ],
+  "agentCan": [
+    "Create the sandbox REST app and configure Log in with PayPal (Return URL, attributes, policy URLs) once given dashboard access",
+    "Build and test the sandbox authorize URL, token exchange and userinfo call with sandbox test accounts",
+    "Draft the privacy policy and user agreement text for PayPal's review",
+    "Fill out the Live app configuration that triggers review",
+    "Draft the partner application and the merchant onboarding (Partner Referrals) payload"
+  ],
+  "youMust": [
+    "Own or open a PayPal Business account and complete any identity or business verification PayPal asks for",
+    "Accept the PayPal Developer Agreement and terms",
+    "Approve and publish the privacy policy and user agreement at public URLs",
+    "Apply for and negotiate PayPal partner status, which involves business details and talking to a PayPal representative, if you need access to merchant accounts"
+  ],
+  "uncertainties": [
+    {
+      "question": "Which credential type does Composio's bring-your-own PayPal auth config expect: an OAuth authorization-code app (Log in with PayPal) or a per-user REST Client ID/Secret (client_credentials)?",
+      "howToResolve": "Open the PayPal auth config form in Composio. If it asks only for client ID/secret and a redirect URL, the Log in with PayPal review applies. If each end user enters credentials, no PayPal review is needed."
+    },
+    {
+      "question": "The actual current turnaround for Log in with PayPal review and for partner approval",
+      "howToResolve": "PayPal publishes only 'a few weeks' for Log in with PayPal and nothing for partners. Ask PayPal developer support or the partner rep when you submit."
+    },
+    {
+      "question": "Whether the legacy scopes in discovery (sendmoney, futurepayments, expresscheckout) can still be granted to new apps",
+      "howToResolve": "Ask PayPal support. They are probably restricted or deprecated for new integrations."
+    },
+    {
+      "question": "Lifetime of Log in with PayPal refresh tokens and access tokens",
+      "howToResolve": "Inspect expires_in in a sandbox token response and check the Identity API reference."
+    }
+  ],
+  "providerContact": {
+    "channel": "PayPal Developer technical support (the Help > Technical support link on developer.paypal.com). For partner access, use the 'fill out this form' link on https://developer.paypal.com/api/partner-referrals/v2. A community thread mentions a help-loginappreview mailbox for Log in with PayPal review, but I could not confirm the full address.",
+    "draftMessage": "Hi, our Live REST app (Client ID: <live client id>) was submitted for Log in with PayPal review on <date> with Return URL <url>, privacy policy <url> and user agreement <url>. We request the openid, profile and email scopes so users can connect their PayPal identity to our AI assistant. Could you confirm the review status and whether you need anything else? Separately, our agent needs to read invoices and transactions on users' business accounts with their consent. Is the Partner Referrals / third-party permissions route the right path for that, and how do we apply?"
+  },
+  "slug": "paypal",
+  "origin": "library",
+  "input": "PayPal",
+  "generatedAt": "2026-11-03T14:15:23.228Z",
+  "durationMs": 120569,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Paypal",
+    "slug": "PAYPAL",
+    "docUrl": "https://docs.composio.dev/toolkits/paypal",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://www.paypal.com/.well-known/openid-configuration",
+      "purpose": "OIDC discovery",
+      "status": 200,
+      "finalUrl": "https://www.paypal.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:13:30.508Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://developer.paypal.com/dashboard/applications/sandbox",
+      "purpose": "App registration page login wall",
+      "status": 200,
+      "finalUrl": "https://developer.paypal.com/dashboard/applications/sandbox",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Developer Dashboard",
+      "error": null,
+      "at": "2026-11-03T14:13:30.508Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://www.paypal.com/signin/authorize?flowEntry=static&client_id=test-probe&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+      "purpose": "Authorize URL with bogus client",
+      "status": 200,
+      "finalUrl": "https://www.paypal.com/signin/authorize?flowEntry=static&client_id=test-probe&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+      "redirects": [],
+      "loginWall": true,
+      "clientRendered": true,
+      "title": "Sorry about that",
+      "error": null,
+      "at": "2026-11-03T14:13:30.508Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://developer.paypal.com/log-in/integrate",
+      "purpose": "Check current Log in with PayPal doc resolves",
+      "status": 404,
+      "finalUrl": "https://developer.paypal.com/log-in/integrate",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "PayPal Developer",
+      "error": null,
+      "at": "2026-11-03T14:13:50.208Z"
+    },
+    {
+      "id": "p6",
+      "url": "https://developer.paypal.com/api/partner-referrals/v2",
+      "purpose": "Partner referrals approved-partner note",
+      "status": 200,
+      "finalUrl": "https://developer.paypal.com/api/partner-referrals/v2",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Partner Referrals v2 | PayPal Developer",
+      "error": null,
+      "at": "2026-11-03T14:14:04.581Z"
+    },
+    {
+      "id": "p5",
+      "url": "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+      "purpose": "Check main LIPP doc still resolves",
+      "status": 200,
+      "finalUrl": "https://developer.paypal.com/log-in/build",
+      "redirects": [
+        "/log-in/build"
+      ],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Integrate Log in with PayPal | PayPal Developer",
+      "error": null,
+      "at": "2026-11-03T14:14:04.581Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://apps.apple.com/us/app/paypal-pay-send-save/id283646709",
+    "https://developer.PayPal.com/docs/log-in-with-paypal/upgrade/",
+    "https://developer.paypal.com/api/partner-referrals/v2",
+    "https://developer.paypal.com/api/rest",
+    "https://developer.paypal.com/dashboard/applications/sandbox",
+    "https://developer.paypal.com/docs/api/partner-referrals/v1/",
+    "https://developer.paypal.com/docs/api/quickstart/environment/",
+    "https://developer.paypal.com/docs/log-in-with-paypal/integrate/",
+    "https://developer.paypal.com/docs/log-in-with-paypal/integrate/build-button/",
+    "https://developer.paypal.com/docs/multiparty/accept-payments/",
+    "https://developer.paypal.com/docs/multiparty/checkout/save-payment-methods/onboarding/platform/",
+    "https://developer.paypal.com/docs/multiparty/create-account/",
+    "https://developer.paypal.com/docs/multiparty/integration-checklist",
+    "https://developer.paypal.com/docs/multiparty/seller-onboarding/before-payment/",
+    "https://developer.paypal.com/docs/platforms/accept-payments",
+    "https://developer.paypal.com/limited-release/commerce-platform/v2/get-started",
+    "https://developer.paypal.com/limited-release/commerce-platform/v2/partner-onboarding",
+    "https://developer.paypal.com/limited-release/commerce-platform/v3/get-started",
+    "https://developer.paypal.com/limited-release/log-in-with-paypal/integrate",
+    "https://developer.paypal.com/limited-release/log-in-with-paypal/integrate.md",
+    "https://developer.paypal.com/limited-release/paypal-provisioning-platform/integrate/setup",
+    "https://developer.paypal.com/log-in/build",
+    "https://developer.paypal.com/log-in/build-button",
+    "https://developer.paypal.com/log-in/integrate",
+    "https://developer.paypal.com/log-in/upgrade",
+    "https://developer.paypal.com/log-in/upgrade.md",
+    "https://developer.paypal.com/platforms/embedded-integration/create-onboarding-credentials",
+    "https://developer.paypal.com/platforms/seller-onboarding/",
+    "https://developer.paypal.com/platforms/seller-onboarding/onboarding-checklist",
+    "https://developer.paypal.com/tools/production",
+    "https://github.com/THEFEYA/feya-commerce/pull/202",
+    "https://github.com/anorsich/paypal-pay",
+    "https://github.com/kbravi/omniauth-paypal-openid",
+    "https://paybis.com/blog/paypal-crypto-id-verification/",
+    "https://play.google.com/store/apps/details?id=com.paypal.android.p2pmobile&hl=en_AU",
+    "https://play.google.com/store/apps/details?id=com.paypal.android.p2pmobile&hl=en_CA",
+    "https://theaitoolsbox.com/business-essentials/paypal-review/",
+    "https://windowsreport.com/paypal-account-login/",
+    "https://www.capterra.com/p/207944/PayPal/reviews/?page=15",
+    "https://www.capterra.com/p/207944/PayPal/reviews/?page=16",
+    "https://www.coursehero.com/tutors-problems/Business-Other/85288572-PayPal-Verification-Timeline-2026-How-Long-It-Takes-amp-How-to/",
+    "https://www.paypal-community.com/t5/REST-APIs/Partner-Referrals-API-call-AUTHORIZATION-ERROR/td-p/1854894",
+    "https://www.paypal-community.com/t5/Sandbox-Environment/Log-in-with-PayPal-pending-approval/td-p/3060287",
+    "https://www.paypal-community.com/t5/Security-and-Fraud-Archives/How-long-do-PayPal-take-to-review-documents/td-p/3054811",
+    "https://www.paypal.com/.well-known/openid-configuration",
+    "https://www.paypal.com/signin/authorize?flowEntry=static&client_id=test-probe&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+    "https://www.paypal.com/us/cshelp/article/how-long-will-it-take-to-lift-my-paypal-account-limitation-help531",
+    "https://www.paypal.com/us/cshelp/article/ive-completed-the-steps-to-remove-my-limitation-why-is-my-account-still-limited-help513",
+    "https://www.paypal.com/us/cshelp/article/where%E2%80%99s-my-withdrawal-help456",
+    "https://www.webseobacklink.com/paypal-login-a-complete-guide-to-secure-access-and-account-management/"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 6,
+      "sourced": 21,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

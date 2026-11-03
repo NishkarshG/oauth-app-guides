@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "app": "GitHub",
+      "step": "Register the OAuth app",
+      "minutes": 1,
+      "date": "2026-11-03",
+      "note": "Registered a test app on a real personal account, with no review. The form now asks for Redirect URIs (up to 10, with optional wildcard matching), not one Authorization callback URL. Expire user access tokens was ticked by default. Loading the authorize URL then showed the consent screen with notices that the app is not owned by GitHub, was created less than a day ago and has few users. It was not authorized, no secret was generated and it was not connected to Composio."
+    },
+    {
+      "app": "Slack",
+      "step": "Sign in and create an app",
+      "minutes": 1,
+      "date": "2026-11-03",
+      "note": "Stopped before creating anything, because the account only belongs to other people's workspaces. The dialog offers AI agent, Starter app, From a manifest and Blank app, and you must pick a workspace, which can't be changed later. A developer without their own workspace has to create one first."
+    }
+  ]
+}

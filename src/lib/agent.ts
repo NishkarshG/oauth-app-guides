@@ -218,7 +218,8 @@ Investigate it and call submit_guide.`,
       emit({ type: "audit", changed: audit.changes.length });
       return {
         ...guide,
-        slug: slugify(guide.app.name) || slugify(input) || "app",
+        // From the input, so entering the same app again finds this guide instead of paying for another.
+        slug: slugify(input) || slugify(guide.app.name) || "app",
         origin,
         input,
         generatedAt: new Date().toISOString(),

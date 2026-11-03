@@ -1,0 +1,458 @@
+{
+  "app": {
+    "name": "Oracle NetSuite",
+    "website": "https://www.netsuite.com",
+    "category": "ERP / accounting",
+    "summary": "OAuth 2.0 access lets an agent read and write a customer's NetSuite records (customers, transactions, items and so on), run SuiteQL through SuiteTalk REST, and call RESTlets, limited to whatever the authorizing user's role allows."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "No app review exists, but you need your own NetSuite account to create the integration record, and refresh tokens last 7 days.",
+    "rationale": {
+      "text": "NetSuite has no central developer portal and no OAuth app review. The 'app' is an integration record created at Setup > Integration > Manage Integrations > New inside a NetSuite account you control, which requires Administrator access. One authorization-code-grant record then auto-installs into each customer's account the first time a user there authorizes, so no review stands between 'works for me' and 'any customer can connect'. What makes this harder than it looks: you can't sign up for a free developer account, so you need a NetSuite account (your company's, or one from an Oracle partner programme). Each customer must also have the OAuth 2.0 and REST Web Services features enabled and a role with the right permissions. Hosts depend on the account ID. A confidential client's refresh token lasts 7 days. The optional SuiteApp marketplace listing requires SDN membership and a Built for NetSuite review, but plain OAuth access does not.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md",
+        "https://www.netsuite.com/portal/developers/application.shtml"
+      ],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "1-3 hours (excluding obtaining a NetSuite account)",
+    "approvalWait": "None for OAuth; getting a NetSuite account, if you don't have one, can take weeks through Oracle sales or partner channels",
+    "firstConnection": "Under 1 hour if you already administer a NetSuite account",
+    "handsOnMinutesHigh": 180,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "The integration record is self-serve and has no review step, so there is no provider approval wait. Hands-on time is an estimate covering feature enablement, record creation, role setup and a test against a second account. Oracle publishes no timeline for getting a partner or developer account, so treat that as uncertain.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Test in the account that owns the integration record",
+      "whoCanConnect": "Users in your own NetSuite account (or sandbox) whose role has the OAuth 2.0 and REST Web Services permissions",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Takes effect as soon as you save the integration record with State = Enabled and Authorization Code Grant checked. No review. Development and partner accounts have a fixed concurrency limit of 5.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+        ],
+        "probeIds": [
+          "p2"
+        ]
+      }
+    },
+    {
+      "name": "Any customer NetSuite account can connect",
+      "whoCanConnect": "Any NetSuite customer whose admin has enabled OAuth 2.0 and REST Web Services and whose user has a suitable role",
+      "reviewRequired": false,
+      "limit": {
+        "text": "The first time a user in a customer account authorizes, NetSuite auto-installs a copy of your record there. The exception is a customer that has set 'Require Approval during Auto-Installation of Integration' to True: the record then arrives as Waiting for Approval and requests are blocked (IntegrationBlocked) until their admin enables it. Sandbox and Release Preview accounts each need their own authorization.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md",
+          "https://www.apideck.com/blog/netsuite-tba-to-oauth-2-migration.md"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Optional: SuiteApp marketplace listing",
+      "whoCanConnect": "Same as above, but you also appear on SuiteApp.com",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Only needed to distribute a SuiteApp or list on the marketplace. SDN partners must complete the Built for NetSuite review for each SuiteApp before going to market. OAuth access does not depend on it.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.netsuite.com/portal/developers/application.shtml",
+          "https://www.netsuite.com/portal/developers/built-for-netsuite.shtml"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Secure a NetSuite account to own the integration record",
+      "detail": "Pick the production or partner/developer account that will own the record permanently. Only that account can reset the client secret, and ownership can't be moved later. Don't use a sandbox for the customer-facing record, because a sandbox refresh wipes it. You need the Administrator role, or a role with the Integration Application permission.",
+      "owner": "you",
+      "estimate": "Minutes if you have one; weeks if you need one from Oracle",
+      "doneWhen": "You can log in as Administrator to the owning account",
+      "url": "https://www.netsuite.com/portal/developers/application.shtml",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md",
+        "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Enable OAuth 2.0 and REST Web Services features",
+      "detail": "Go to Setup > Company > Enable Features > SuiteCloud. Under Manage Authentication check OAuth 2.0, and under SuiteTalk (Web Services) check REST Web Services. Accept the SuiteCloud Terms of Service and Save. Also enable SuiteAnalytics Workbook (Analytics subtab). If you will call RESTlets, enable Client and Server SuiteScript too.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "Setup > Integration > Manage Integrations appears in the menu",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the integration record",
+      "detail": "Go to Setup > Integration > Manage Integrations > New. Set Name (customers see it on the consent screen, and it becomes read-only in installed copies), Description, and State = Enabled. On the Authentication subtab, under OAuth 2.0, check Authorization Code Grant and add every Redirect URI. These must be https or a custom scheme; http is rejected. Check only the scopes you need, usually REST Web Services (rest_webservices), plus RESTlets if needed. Leave Public Client unchecked for a server-side confidential client. Optionally set the OAuth 2.0 Consent Policy and add an Application Logo and Terms of Use / Privacy Policy PDFs from the File Cabinet. Don't check Client Credentials (M2M), because it needs setup in every customer account and doesn't auto-install.",
+      "owner": "agent",
+      "estimate": "15-30 minutes",
+      "doneWhen": "The record saves without redirect URI validation errors",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Copy the Client ID and Client Secret on first save",
+      "detail": "NetSuite shows the Consumer Key/Client ID and Consumer Secret/Client Secret only once, on the confirmation page after saving. If you lose them, you have to reset them, which breaks existing connections.",
+      "owner": "you",
+      "estimate": "2 minutes",
+      "doneWhen": "Both values are stored in your secret manager",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Set up an integration role and test with your own account",
+      "detail": "Create or choose a role (not Administrator) with 'Log in using OAuth 2.0 Access Tokens', 'REST Web Services' (Full), 'SuiteAnalytics Workbook' (Edit) and the record permissions you need. Don't use a role with 'OAuth 2.0 Authorized Applications Management': it can't call REST via OAuth 2.0. Authorize at https://<accountID>.app.netsuite.com/app/login/oauth2/authorize.nl, or at the generic system.netsuite.com host, which returns the account ID in the callback's 'company' parameter. Include a state of 22-1024 characters and an S256 PKCE challenge, then exchange the code at https://<accountID>.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token.",
+      "owner": "agent",
+      "estimate": "30-60 minutes",
+      "doneWhen": "A REST call such as GET /services/rest/record/v1/customer returns 200 with your token",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Verify cross-account auto-install on a second account",
+      "detail": "Authorize from a NetSuite account you don't own, such as a friendly customer or partner sandbox. Confirm the record appears in their Manage Integrations list and that API calls succeed. Write customer onboarding text that tells their admin to enable the OAuth 2.0 and REST Web Services features, use a dedicated integration role, and enable your record if they require approval for auto-installed integrations.",
+      "owner": "you",
+      "estimate": "30 minutes plus coordination",
+      "doneWhen": "A second account authorizes and gets a 200 from REST",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "Administrator access to a NetSuite account you control. NetSuite has no free self-serve developer signup.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Acceptance of the SuiteCloud Terms of Service when you enable the OAuth 2.0 feature.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Redirect URIs that use https:// (or a custom scheme). http:// isn't supported.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html"
+      ],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "On the customer side: the OAuth 2.0 and REST Web Services features enabled, and a role carrying 'Log in using OAuth 2.0 Access Tokens' and 'REST Web Services' plus the record permissions you need.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Every host contains the customer's account ID: <id>.app.netsuite.com handles authorize, and <id>.suitetalk.api.netsuite.com handles token and REST. Sandbox IDs are rewritten, so 1234567_SB1 becomes 1234567-sb1. A generic discovery document at system.netsuite.com lists the authorize, token, revoke and introspect endpoints, S256-only PKCE, and the scopes rest_webservices, restlets, suite_analytics, mcp, openid and email.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "Access tokens last 60 minutes. A confidential client's refresh token lasts 7 days, and Oracle's documented refresh response contains no new refresh token, so users must re-authorize weekly unless you use a Public Client. A public client's refresh token rotates, is single-use, and is configurable from 1 to 720 hours; it has no client secret and requires PKCE.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The state parameter must be 22-1024 characters. If redirect_uri doesn't match the record, NetSuite shows an error page and never redirects to your callback. An unknown client_id on the generic authorize URL returned a bare HTTP 500 'malformed syntax' notice page, not an OAuth error redirect.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Changes in 2027.1: PKCE becomes required for new authorization-code integrations, new integrations can no longer use Token-Based Authentication (TBA), and 'Require 2FA for All Roles' is turned on automatically. Existing TBA support is tentatively removed in 2028.2. Build on OAuth 2.0 with PKCE now.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0525020842.html",
+        "https://www.apideck.com/blog/netsuite-tba-to-oauth-2-migration.md"
+      ],
+      "probeIds": [
+        "p4"
+      ]
+    },
+    {
+      "text": "Scopes are coarse. rest_webservices covers the whole REST record API and SuiteQL, and actual access is set by the role the user picks on the consent screen. A valid token can still return 401/403 if a feature or role permission is missing. The mcp scope (NetSuite AI Connector) must be requested on its own.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "Authorizations don't carry across environments. Production, sandbox and Release Preview each need their own authorization, and a sandbox refresh clears them.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "No NetSuite account to create the integration record in",
+      "signal": "You have no NetSuite login, or your role doesn't show Setup > Integration > Manage Integrations",
+      "nextMove": "Use your company's NetSuite account if it has one. Otherwise apply to the SuiteCloud Developer Network / partner program or ask Oracle for a development account.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md",
+        "https://www.netsuite.com/portal/developers/application.shtml"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Customer account has OAuth 2.0 or REST Web Services disabled",
+      "signal": "FeatureDisabled in the Login Audit Trail, or 401/403 on the first REST call after a successful consent",
+      "nextMove": "Have the customer's admin enable OAuth 2.0 and REST Web Services under Setup > Company > Enable Features > SuiteCloud",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Customer requires approval for auto-installed integrations",
+      "signal": "IntegrationBlocked; your record shows 'Waiting for Approval' in their Manage Integrations",
+      "nextMove": "Customer admin sets your record's State to Enabled",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Role lacks permissions",
+      "signal": "403 permission violation, or 'Invalid login attempt', even though the token was issued",
+      "nextMove": "Re-authorize with a role that has Log in using OAuth 2.0 Access Tokens, REST Web Services (Full) and the needed record permissions. Don't use a role holding OAuth 2.0 Authorized Applications Management.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Draft the integration record values: name, description, redirect URIs and scope checkboxes",
+    "Fill in the integration record form if given an Administrator browser session",
+    "Build per-account authorize and token URLs from the account ID or the callback 'company' parameter, with PKCE S256 and a 22+ character state",
+    "Write customer onboarding instructions covering features to enable, an integration role with the required permissions, and approving auto-installed integrations",
+    "Diagnose failures from the Login Audit Trail codes (InvalidRedirectURI, ScopeMismatched, FeatureDisabled, IntegrationBlocked)",
+    "Draft the Terms of Use and Privacy Policy PDFs for the integration record"
+  ],
+  "youMust": [
+    "Obtain a NetSuite account and Administrator access (commercial relationship with Oracle)",
+    "Accept the SuiteCloud Terms of Service when enabling features",
+    "Complete 2FA logins as Administrator",
+    "Copy the client secret on the one-time display after saving",
+    "Coordinate with a second customer or partner account to verify cross-account auto-install",
+    "If you list on SuiteApp.com: join SDN and go through the Built for NetSuite review"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does it take to get a NetSuite development or partner account if you don't already have one, and what does it cost?",
+      "howToResolve": "Contact NetSuite's SuiteCloud Developer Network team via netsuite.com/portal/developers"
+    },
+    {
+      "question": "Does OAuth 2.0 auto-installation behave the same for every customer account type? Oracle's auto-install doc is mainly written about SOAP/TBA.",
+      "howToResolve": "Authorize against a NetSuite account you don't own and check Manage Integrations there"
+    },
+    {
+      "question": "Can a confidential client's 7-day refresh token be extended or rotated?",
+      "howToResolve": "Test the refresh response in practice, or ask Oracle Support. Otherwise consider a Public Client with a configurable lifetime."
+    },
+    {
+      "question": "Is the HTTP 500 for an unknown client_id the normal response, or an artefact of the anonymous probe?",
+      "howToResolve": "Repeat with a real client_id and compare"
+    }
+  ],
+  "providerContact": {
+    "channel": "Oracle NetSuite Support (SuiteAnswers case from within your NetSuite account), or your SDN partner manager via https://www.netsuite.com/portal/developers/application.shtml",
+    "draftMessage": "We are building a multi-tenant integration that uses one OAuth 2.0 integration record (Authorization Code Grant, rest_webservices scope, PKCE) owned by our account, which customers authorize and auto-install. Can you confirm: (1) auto-installation is supported for OAuth 2.0 records across all customer account types, including sandboxes; (2) whether a confidential client's 7-day refresh token can be extended or rotated; (3) whether any review or SDN membership is required to distribute such a record without a SuiteApp listing?"
+  },
+  "slug": "netsuite",
+  "origin": "library",
+  "input": "NetSuite",
+  "generatedAt": "2026-11-03T14:19:00.877Z",
+  "durationMs": 115267,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Netsuite",
+    "slug": "NETSUITE",
+    "docUrl": "https://docs.composio.dev/toolkits/netsuite",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://system.netsuite.com/app/login/oauth2/authorize.nl?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=rest_webservices&state=abcdefghijklmnopqrstuvwxyz123456",
+      "purpose": "See how the generic authorize endpoint responds to an unknown client_id",
+      "status": 500,
+      "finalUrl": "https://system.netsuite.com/app/login/oauth2/authorize.nl?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=rest_webservices&state=abcdefghijklmnopqrstuvwxyz123456",
+      "redirects": [],
+      "loginWall": true,
+      "clientRendered": true,
+      "title": "Notice",
+      "error": null,
+      "at": "2026-11-03T14:17:57.690Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://system.netsuite.com/.well-known/openid-configuration",
+      "purpose": "Check for OIDC/OAuth discovery metadata",
+      "status": 200,
+      "finalUrl": "https://system.netsuite.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:17:57.691Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+      "purpose": "Confirm Oracle doc on creating OAuth 2.0 integration records resolves",
+      "status": 200,
+      "finalUrl": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "NetSuite Applications Suite - Create Integration Records for Applications to Use OAuth 2.0",
+      "error": null,
+      "at": "2026-11-03T14:17:57.690Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0525020842.html",
+      "purpose": "Confirm TBA end-of-support / 2027.1 page resolves",
+      "status": 200,
+      "finalUrl": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0525020842.html",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "NetSuite Applications Suite - Preparing for Token-based Authentication (TBA) End of Support",
+      "error": null,
+      "at": "2026-11-03T14:17:57.691Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://chamilelle.medium.com/setup-rest-web-service-and-oauth-2-0-in-your-netsuite-account-c4243240bc3f",
+    "https://developers.hubspot.com/changelog/v1-oauth-api-deprecation",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_0907012731.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0525020842.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0602033701.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771733782.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157771863841.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_4389835426.html",
+    "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_4429293934.html",
+    "https://docs.unified.to/guides/netsuite_authentication_setup_for_unified.md",
+    "https://docs.unified.to/skills/netsuite-oauth-app/SKILL.md",
+    "https://docs.useparagon.com/resources/integrations/netsuite",
+    "https://docs.withampersand.com/customer-guides/netsuite",
+    "https://docs.withampersand.com/customer-guides/netsuite.md",
+    "https://docs.workato.com/connectors/netsuite-rest/connect",
+    "https://docs.workato.com/connectors/netsuite-rest/connect.html",
+    "https://erppeers.com/netsuite-tba-oauth-migration/",
+    "https://integrationstars.com/celigo/blog/netsuite-tba-deprecation/",
+    "https://netsuite.folio3.com/blog/a-complete-guide-to-netsuite-suitecloud-features-and-benefits/",
+    "https://prismatic.io/docs/components/netsuite",
+    "https://system.netsuite.com/.well-known/openid-configuration",
+    "https://system.netsuite.com/app/login/oauth2/authorize.nl?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=rest_webservices&state=abcdefghijklmnopqrstuvwxyz123456",
+    "https://unified.to/blog/netsuite_api_integration_what_to_know_before_you_build",
+    "https://www.accordion.com/our-insights/knowledge/guide-to-setting-up-netsuite-integration-record/",
+    "https://www.apideck.com/blog/netsuite-tba-to-oauth-2-migration.md",
+    "https://www.brokenrubik.com/blog/netsuite-developer-certification-guide",
+    "https://www.houseblend.io/articles/netsuite-integration-register-owners-credentials-decommission",
+    "https://www.houseblend.io/articles/netsuite-tba-oauth2-migration-2027",
+    "https://www.houseblend.io/articles/pdfs/netsuite-oauth-2-setup-guide.pdf",
+    "https://www.houseblend.io/articles/pdfs/netsuite-tba-deprecation-oauth2-migration-ec97938f89af26fc.pdf",
+    "https://www.houseblend.io/articles/pdfs/netsuite-tba-deprecation-oauth2-migration.pdf",
+    "https://www.houseblend.io/articles/pdfs/netsuite-tba-oauth2-migration-2027.pdf",
+    "https://www.hyperbots.com/glossary/netsuite-suitecloud-developer-network",
+    "https://www.netsuite.com/portal/developers/application.shtml",
+    "https://www.netsuite.com/portal/developers/built-for-netsuite.shtml",
+    "https://www.netsuite.com/portal/developers/sdn.shtml",
+    "https://www.netsuite.com/portal/resource/articles/erp/suitecloud-developer-tools-offer-multiple-ways-to-deliver-solutions.shtml",
+    "https://www.netsuite.com/portal/resource/articles/erp/the-suitecloud-developer-network-the-first-multi-vertical-ecosystem-in-the-cloud-part-2.shtml",
+    "https://www.zoneandco.com/glossary/suitecloud-developer-network-sdn"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 4,
+      "sourced": 20,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

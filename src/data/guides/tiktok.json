@@ -1,0 +1,448 @@
+{
+  "app": {
+    "name": "TikTok (TikTok for Developers)",
+    "website": "https://developers.tiktok.com",
+    "category": "Social video",
+    "summary": "Through Login Kit (TikTok's OAuth 2.0), an agent can read a creator's basic profile and video list, and with Content Posting API scopes it can upload drafts or publish videos for that creator."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "Even after app review, every API post stays private until a second Content Posting audit passes. Plan for 1\u20134 weeks.",
+    "rationale": {
+      "text": "Creating an app and testing in a sandbox is self-serve. Production then needs two separate human reviews. The first is app review for each product and scope. TikTok's FAQ says it may take several days to two weeks. The second is a Content Posting API audit, which you need before Direct Post can publish anything visible to the public. Until then, unaudited clients can only post with SELF_ONLY privacy, to private accounts, for at most 5 creators per 24 hours. Developers report rejections over their website and posting UI, with total timelines of 13 days to about 3 weeks.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers",
+        "https://postwire.io/platforms/tiktok/approval/",
+        "https://www.breakreach.com/developers/tiktok-api",
+        "https://www.postzen.dev/blog/tiktok-api"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "4-10 hours (app setup, website/policy pages, demo video, compliant posting UI, resubmissions)",
+    "approvalWait": "Several days to 2 weeks for app review; Content Posting audit adds roughly 1-2 weeks; each rejection adds more",
+    "firstConnection": "Under 1 hour in a sandbox, using your own TikTok account",
+    "handsOnMinutesHigh": 600,
+    "waitDaysHigh": 28,
+    "basis": {
+      "text": "The app-review estimate is from TikTok's getting-started FAQ, which third parties quote as 'several days to two weeks'. I did not read the FAQ directly. TikTok publishes no audit duration. Developer reports from 2026: PostWire was approved in about 3 weeks after two rejections and an audit rejection. Breakreach's audit took 13 days with one resubmission. Some guides say 1\u20134 weeks.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers",
+        "https://postwire.io/platforms/tiktok/approval/",
+        "https://www.breakreach.com/developers/tiktok-api",
+        "https://bundle.social/blog/tiktok-api-integration-cost"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Sandbox testing",
+      "whoCanConnect": "Only TikTok accounts you add as target users of the sandbox",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You can create sandboxes inside the app and test Login Kit and APIs before review. Each app can have up to five sandboxes. The exact cap on target users per sandbox is not confirmed here.",
+        "evidence": "uncertain",
+        "sourceUrls": [
+          "https://www.blotato.com/blog/tiktok-api-pricing"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "App live after app review (Login Kit, user.info, video.list, draft upload)",
+      "whoCanConnect": "Any TikTok user can authorize the scopes that were approved",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Each product and scope is reviewed by a human. TikTok's FAQ says this may take several days to two weeks. Changing URLs or scopes after approval can send the app back to review.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers",
+          "https://www.postzen.dev/blog/tiktok-api"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Unaudited Content Posting (Direct Post)",
+      "whoCanConnect": "Up to 5 creators per 24 hours, and their accounts must be private",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Direct Post only allows SELF_ONLY privacy. Posting to a public account fails with unaudited_client_can_only_post_to_private_accounts, and hitting the user limit returns reached_active_user_cap. Draft upload (MEDIA_UPLOAD to the creator's inbox) still works.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.postzen.dev/blog/tiktok-api",
+          "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Audited Content Posting: public posts",
+      "whoCanConnect": "Any creator. The active-user cap is set from the usage estimates in your audit form.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You pass the Content Posting API audit by submitting a demo of your real OAuth and posting flow, built to TikTok's content sharing guidelines. TikTok publishes no duration.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.postzen.dev/blog/tiktok-api",
+          "https://qpost.dev/guides/publishing-api-access/",
+          "https://www.bulkpublish.com/blog/tiktok-content-posting-api/"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create a TikTok for Developers account and an app",
+      "detail": "Sign in at developers.tiktok.com (organisation/individual developer account), go to Manage apps and create an app. Fill in app name, icon, category, description, Terms of Service URL, Privacy Policy URL and platform (Web). The client key (TikTok's client ID) and client secret appear on the app page.",
+      "owner": "you",
+      "estimate": "20-30 min",
+      "doneWhen": "The app page shows a Client key and Client secret",
+      "url": "https://developers.tiktok.com/apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.tiktok.com/docs/en/login-kit-overview?enter_method=left_navigation",
+        "https://developers.tiktok.com/doc/login-kit-qr-code-authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Add Login Kit and register the redirect URI",
+      "detail": "Under Products, add Login Kit. Add your callback, for example Composio's redirect URL, as a redirect URI. It must match exactly. Add the other products you need (Content Posting API, Display/user info) and select scopes such as user.info.basic, video.list, video.upload and video.publish.",
+      "owner": "agent",
+      "estimate": "15 min",
+      "doneWhen": "Login Kit is listed under products, the redirect URI is saved, and the scopes are added",
+      "url": "https://developers.tiktok.com/apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.tiktok.com/docs/en/login-kit-overview?enter_method=left_navigation",
+        "https://docs.unified.to/skills/tiktok-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test in a sandbox with your own account",
+      "detail": "Create a sandbox for the app, add your TikTok account as a target user, then run the authorize \u2192 code \u2192 token flow. Authorize is at https://www.tiktok.com/v2/auth/authorize/ and takes client_key, not client_id.",
+      "owner": "agent",
+      "estimate": "30 min",
+      "doneWhen": "Your account authorizes and you receive an access_token, refresh_token and open_id",
+      "url": "https://developers.tiktok.com/doc/legacy-user-access-guide",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.tiktok.com/doc/legacy-user-access-guide",
+        "https://www.blotato.com/blog/tiktok-api-pricing"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Prepare a public website, legal pages and a demo video",
+      "detail": "Reviewers require an externally facing, fully developed website that describes your service, plus a privacy policy and ToS on your domain. Record a screen capture of the real product doing the full OAuth flow and every requested scope in use. For posting, show the consent UX the content sharing guidelines require: creator info, privacy selector, interaction toggles and commercial-content disclosure. An agent can draft the copy and the UI. A human records the demo.",
+      "owner": "you",
+      "estimate": "2-6 hours",
+      "doneWhen": "The site, policies and a demo video showing every requested scope are ready",
+      "url": "https://developers.tiktok.com/doc/content-sharing-guidelines",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://postwire.io/platforms/tiktok/approval/",
+        "https://qpost.dev/guides/publishing-api-access/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Submit the app for review",
+      "detail": "On the app page, explain in the review notes how each product and scope is used, attach the demo, and click Submit for review. Expect a rejection. Fix only the field that was flagged and resubmit.",
+      "owner": "you",
+      "estimate": "30 min plus several days to 2 weeks of waiting",
+      "doneWhen": "The app status shows Live/approved",
+      "url": "https://developers.tiktok.com/apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers",
+        "https://postwire.io/platforms/tiktok/approval/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Apply for the Content Posting API audit (only if you need public posts)",
+      "detail": "Once the integration works, submit the Content Posting API audit application. Give usage estimates, which set your post-audit active-user cap, and a demo recorded against the real product.",
+      "owner": "you",
+      "estimate": "1 hour plus 1-2+ weeks of waiting",
+      "doneWhen": "Direct Post with PUBLIC_TO_EVERYONE succeeds for a public creator account",
+      "url": "https://developers.tiktok.com/doc/content-sharing-guidelines",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.postzen.dev/blog/tiktok-api",
+        "https://www.breakreach.com/developers/tiktok-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for TikTok's decision",
+      "detail": "TikTok emails approval or rejection reasons. It offers no expedited track.",
+      "owner": "provider",
+      "estimate": "Several days to 2 weeks for each round",
+      "doneWhen": "An approval email arrives, or the status changes in the portal",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://posteverywhere.ai/blog/post-to-tiktok-api",
+        "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A TikTok for Developers account, made by signing in with a TikTok or developer login. The portal is JavaScript-rendered and answered the anonymous probe with a 503, so I could not see the registration flow without logging in.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "An externally facing, fully developed website describing your service, plus Privacy Policy and Terms URLs. A thin landing page is a common reason for rejection.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://postwire.io/platforms/tiktok/approval/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A demo video of the complete OAuth and feature flow for every requested scope. For Content Posting, a posting UI that follows TikTok's content sharing guidelines.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://qpost.dev/guides/publishing-api-access/",
+        "https://www.bulkpublish.com/blog/tiktok-content-posting-api/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Exact-match redirect URIs registered under Login Kit, and URL-prefix/domain ownership verification if you use PULL_FROM_URL uploads.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/tiktok-oauth-app/SKILL.md",
+        "https://www.blotato.com/blog/tiktok-api-pricing"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "TikTok calls the client ID 'client_key', both in the authorize URL and in the token request. Map it to the client ID field.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/tiktok-oauth-app/SKILL.md",
+        "https://developers.tiktok.com/doc/login-kit-qr-code-authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Access tokens expire after 24 hours (86,400 s). Refresh tokens last 365 days. Refresh with grant_type=refresh_token, or users will drop off every day.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.blotato.com/blog/tiktok-api-pricing",
+        "https://posteverywhere.ai/blog/post-to-tiktok-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "TikTok is geo-blocked in some regions. An anonymous request to the v2 authorize URL from the probe's network was redirected to tiktok.com/in/about, the India block notice, and no OAuth screen appeared. Users and servers in blocked countries cannot complete the OAuth flow.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "Unaudited Content Posting clients get API success responses, but the posts are private (SELF_ONLY), so you can 'finish' the integration and still have nothing visible to the public.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://qpost.dev/guides/publishing-api-access/",
+        "https://www.postzen.dev/blog/tiktok-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Editing URLs or scopes on a live app can trigger another review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.postzen.dev/blog/tiktok-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "TikTok API for Business (business-api.tiktok.com) is a separate portal with its own apps and gates. Since March 20, 2026, its Accounts API needs an access application form. Make sure the toolkit uses developers.tiktok.com credentials.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Each creator can make about 15 posts a day, and that limit is shared across every app posting for them.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.breakreach.com/developers/tiktok-api"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "App review rejection over the website",
+      "signal": "A review email or portal status that flags a single field, such as the website URL, often with no free-text explanation",
+      "nextMove": "Build a full, multi-page public site about the product with privacy and terms pages, then resubmit",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://postwire.io/platforms/tiktok/approval/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Public posts blocked before the audit",
+      "signal": "Error unaudited_client_can_only_post_to_private_accounts, or reached_active_user_cap once more than 5 creators post within 24 hours",
+      "nextMove": "Use draft mode (MEDIA_UPLOAD) or SELF_ONLY for now, and apply for the Content Posting API audit",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.postzen.dev/blog/tiktok-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Content Posting audit rejection",
+      "signal": "Audit rejected because the posting UI or demo doesn't meet the content sharing guidelines",
+      "nextMove": "Implement every required UI element: creator nickname, a privacy selector with no default, interaction toggles and commercial-content disclosure. Re-record the demo against the real product.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://postwire.io/platforms/tiktok/approval/"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Read the Login Kit, Content Posting and content sharing guideline docs and map the scopes the agent needs",
+    "Fill in the Login Kit redirect URI and scope configuration once a human is logged in",
+    "Draft the app description, per-scope justifications for review, privacy policy and terms",
+    "Build the posting-consent UI the content sharing guidelines require",
+    "Run the sandbox OAuth test and token refresh checks",
+    "Prepare the audit application text and usage estimates"
+  ],
+  "youMust": [
+    "Create and own the TikTok developer account and accept TikTok's developer terms (a legal agreement)",
+    "Publish the public website and legal pages on your domain",
+    "Record the demo video of the real product flow",
+    "Submit for app review and the Content Posting audit, and respond to rejections"
+  ],
+  "uncertainties": [
+    {
+      "question": "What is the exact maximum number of target users per sandbox?",
+      "howToResolve": "Check the sandbox page in the developer portal, or https://developers.tiktok.com/doc/add-a-sandbox"
+    },
+    {
+      "question": "Does the official review FAQ still say 'several days to two weeks'? I could not fetch TikTok's docs pages directly, so I relied on third-party quotes.",
+      "howToResolve": "Read the getting-started FAQ on developers.tiktok.com"
+    },
+    {
+      "question": "Does read-only use (user.info.basic, video.list) face the same review strictness as posting scopes?",
+      "howToResolve": "Submit a read-only app first and watch for reviewer feedback, or ask TikTok developer support"
+    },
+    {
+      "question": "Which countries block the OAuth flow? I only observed a redirect from the probe's network, which appears to be in India.",
+      "howToResolve": "Test the authorize URL from your users' target regions"
+    }
+  ],
+  "providerContact": {
+    "channel": "TikTok for Developers support form (developers.tiktok.com \u2192 Support / Contact us, while logged in)",
+    "draftMessage": "Hi, our app (client key: XXXX) is an AI assistant that lets creators connect TikTok through Login Kit to read their profile and videos and upload drafts or publish. Before we submit: (1) Which scopes need the separate Content Posting API audit beyond app review? (2) What is the target-user limit for sandboxes? (3) What is the current typical turnaround for app review and for the audit? Thanks."
+  },
+  "slug": "tiktok",
+  "origin": "library",
+  "input": "TikTok",
+  "generatedAt": "2026-11-03T14:13:33.602Z",
+  "durationMs": 90123,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Tiktok",
+    "slug": "TIKTOK",
+    "docUrl": "https://docs.composio.dev/toolkits/tiktok",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://developers.tiktok.com/apps",
+      "purpose": "Check whether app registration requires login",
+      "status": 503,
+      "finalUrl": "https://developers.tiktok.com/apps",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "TikTok",
+      "error": null,
+      "at": "2026-11-03T14:12:14.396Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://www.tiktok.com/v2/auth/authorize/?client_key=test-probe&response_type=code&scope=user.info.basic&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&state=x",
+      "purpose": "See how authorize endpoint handles unknown client_key",
+      "status": 200,
+      "finalUrl": "https://www.tiktok.com/in/about",
+      "redirects": [
+        "https://www.tiktok.com/in/about"
+      ],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "TikTok",
+      "error": null,
+      "at": "2026-11-03T14:12:14.396Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://bundle.social/blog/tiktok-api-integration-cost",
+    "https://developers.tiktok.com/apps",
+    "https://developers.tiktok.com/doc/display-api-get-started",
+    "https://developers.tiktok.com/doc/getting-started-faq?from_seo_redirect=1",
+    "https://developers.tiktok.com/doc/legacy-user-access-guide",
+    "https://developers.tiktok.com/doc/login-kit-manage-user-access-tokens",
+    "https://developers.tiktok.com/doc/login-kit-qr-code-authorization",
+    "https://developers.tiktok.com/docs/en/add-a-sandbox",
+    "https://developers.tiktok.com/docs/en/content-posting-api-reference-direct-post",
+    "https://developers.tiktok.com/docs/en/content-posting-api-reference-photo-post?enter_method=left_navigation",
+    "https://developers.tiktok.com/docs/en/getting-started-faq?enter_method=left_navigation",
+    "https://developers.tiktok.com/docs/en/legacy-user-access-guide?enter_method=left_navigation",
+    "https://developers.tiktok.com/docs/en/login-kit-overview?enter_method=left_navigation",
+    "https://developers.tiktok.com/docs/en/login-kit-web",
+    "https://developers.tiktok.com/docs/en/obtain-access-token-for-apis",
+    "https://docs.unified.to/skills/tiktok-oauth-app/SKILL.md",
+    "https://posteverywhere.ai/blog/post-to-tiktok-api",
+    "https://postwire.io/platforms/tiktok/approval/",
+    "https://qpost.dev/guides/publishing-api-access/",
+    "https://schedulenchill.com/blog/does-tiktok-have-an-api",
+    "https://vorplabs.com/agent-tools/tiktok-content-posting-api",
+    "https://www.blotato.com/blog/tiktok-api-pricing",
+    "https://www.breakreach.com/developers/tiktok-api",
+    "https://www.bulkpublish.com/blog/tiktok-content-posting-api/",
+    "https://www.postpeer.dev/blog/best-tiktok-posting-api",
+    "https://www.postzen.dev/blog/tiktok-api",
+    "https://www.postzen.dev/blog/tiktok-content-posting-api-errors",
+    "https://www.tiktok.com/in/about",
+    "https://www.tiktok.com/v2/auth/authorize/?client_key=test-probe&response_type=code&scope=user.info.basic&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&state=x",
+    "https://www.tryadeli.com/blog/tiktok-api-for-business-vs-developers"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 23,
+      "uncertain": 2
+    },
+    "changes": []
+  }
+}

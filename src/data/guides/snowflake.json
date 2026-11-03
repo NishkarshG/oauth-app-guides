@@ -1,0 +1,446 @@
+{
+  "app": {
+    "name": "Snowflake",
+    "website": "https://www.snowflake.com",
+    "category": "Cloud data warehouse",
+    "summary": "Lets an agent run SQL and read or write warehouse data in a user's Snowflake account, acting as one of that user's roles, through a Snowflake OAuth access token."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "Snowflake has no central app or review. Each customer's admin must run CREATE SECURITY INTEGRATION in their own account.",
+    "rationale": {
+      "text": "Snowflake OAuth is configured per account. You register a client by creating a SECURITY INTEGRATION object (OAUTH_CLIENT = CUSTOM) inside a Snowflake account, and only ACCOUNTADMIN or a role with the global CREATE INTEGRATION privilege can do that. Each account has its own authorization server on its own hostname, so a client ID made in your account cannot authorize users in a customer's account. Snowflake runs no marketplace review, but every customer org needs an admin to create an integration and give you its client ID and secret. Privileged roles (ACCOUNTADMIN, SECURITYADMIN, ORGADMIN, GLOBALORGADMIN) are blocked by default.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+        "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md",
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+      ],
+      "probeIds": [
+        "p4",
+        "p5",
+        "p3",
+        "p6"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "15-60 minutes per Snowflake account",
+    "approvalWait": "None from Snowflake. You wait on each customer's Snowflake admin.",
+    "firstConnection": "Under 30 minutes if you already have a Snowflake account with ACCOUNTADMIN",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "Snowflake documents no review step. Registration is one SQL statement that an admin runs in their own account. The time estimates are my inference from that workflow, and the real elapsed time depends on how quickly each customer's admin acts.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": [
+        "p4"
+      ]
+    }
+  },
+  "stages": [
+    {
+      "name": "Test on your own Snowflake account",
+      "whoCanConnect": "Users in the one Snowflake account where you created the integration, using roles that are not blocked",
+      "reviewRequired": false,
+      "limit": {
+        "text": "The integration exists only in your account. Each account has its own authorize host, https://<account_identifier>.snowflakecomputing.com/oauth/authorize. An account identifier that does not exist returns a 404.",
+        "evidence": "tested",
+        "sourceUrls": [
+          "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+        ],
+        "probeIds": [
+          "p6",
+          "p4"
+        ]
+      }
+    },
+    {
+      "name": "Each customer account onboarded by its admin",
+      "whoCanConnect": "Users in a customer account whose ACCOUNTADMIN (or a role with CREATE INTEGRATION) created a CUSTOM OAuth integration with your redirect URI and handed you its client ID and secret",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Each tenant needs its own integration, client ID and secret, and its own authorize and token URLs. Snowflake runs no review, but the customer's security team decides on the redirect URI, the allowed roles, the network policy and the refresh-token settings.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+          "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Privileged-role access (optional)",
+      "whoCanConnect": "Users who want to consent with ACCOUNTADMIN, SECURITYADMIN, ORGADMIN or GLOBALORGADMIN",
+      "reviewRequired": true,
+      "limit": {
+        "text": "These roles are on BLOCKED_ROLES_LIST by default. Unblocking them takes an account parameter change, and the custom-client doc tells you to contact Snowflake Support.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+          "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a Snowflake account with ACCOUNTADMIN",
+      "detail": "Sign in to Snowsight (app.snowflake.com) as a user who has ACCOUNTADMIN, or a role with the global CREATE INTEGRATION privilege. If you do not have an account, sign up for a trial.",
+      "owner": "you",
+      "estimate": "5-15 minutes",
+      "doneWhen": "A Snowsight worksheet runs with ACCOUNTADMIN as the active role.",
+      "url": "https://app.snowflake.com/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the CUSTOM OAuth security integration",
+      "detail": "Run CREATE SECURITY INTEGRATION <name> TYPE = OAUTH OAUTH_CLIENT = CUSTOM OAUTH_CLIENT_TYPE = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = '<your callback>' ENABLED = TRUE OAUTH_ISSUE_REFRESH_TOKENS = TRUE. You can also set OAUTH_REFRESH_TOKEN_VALIDITY, OAUTH_ENFORCE_PKCE, ALLOWED_ROLES_LIST, PRE_AUTHORIZED_ROLES_LIST, NETWORK_POLICY and IS_AGENTIC.",
+      "owner": "agent",
+      "estimate": "5-10 minutes",
+      "doneWhen": "SHOW INTEGRATIONS lists the integration as enabled.",
+      "url": "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md",
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Retrieve the client ID, secret and endpoints",
+      "detail": "Run SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('<INTEGRATION_NAME>') to get OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET. Run DESCRIBE SECURITY INTEGRATION <name> to get OAUTH_AUTHORIZATION_ENDPOINT (…/oauth/authorize) and OAUTH_TOKEN_ENDPOINT (…/oauth/token-request).",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "You have the client ID, secret, authorize URL and token URL for this account.",
+      "url": "https://docs.snowflake.com/en/user-guide/oauth-custom",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the flow with a non-admin role",
+      "detail": "Send the authorization request with scope session:role:<ROLE> (or session:role-any if you need role switching) plus refresh_token. Log in and consent as a user whose default or requested role is not blocked, then exchange the code at the token endpoint.",
+      "owner": "agent",
+      "estimate": "10-20 minutes",
+      "doneWhen": "An access token runs a query, and a refresh returns a new access token.",
+      "url": "https://docs.snowflake.com/en/user-guide/oauth-custom",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+        "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Write customer onboarding instructions",
+      "detail": "Write a SQL snippet and admin guide for customers. It should contain the CREATE SECURITY INTEGRATION statement with your redirect URI, a recommended ALLOWED_ROLES_LIST, and instructions for sending you the account identifier, client ID and secret securely. Each customer's admin runs it in their own account.",
+      "owner": "agent",
+      "estimate": "30-60 minutes once",
+      "doneWhen": "A customer admin can onboard without your help.",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Customer admin creates their integration",
+      "detail": "In each customer org, an ACCOUNTADMIN (or a role with CREATE INTEGRATION) runs the snippet and shares the credentials.",
+      "owner": "you",
+      "estimate": "Depends on the customer",
+      "doneWhen": "You hold credentials and the account identifier for that tenant.",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Snowflake account, and a user with ACCOUNTADMIN or the global CREATE INTEGRATION privilege in every account that will connect.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The customer's account identifier, because the OAuth endpoints are hosted per account at <account_identifier>.snowflakecomputing.com.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": [
+        "p6"
+      ]
+    },
+    {
+      "text": "A redirect URI that matches the one registered in the integration. Non-TLS redirects work only if OAUTH_ALLOW_NON_TLS_REDIRECT_URI is set.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Access tokens last about 10 minutes, so plan on refreshing them. Refresh tokens are issued only if OAUTH_ISSUE_REFRESH_TOKENS is on, and their lifetime is OAUTH_REFRESH_TOKEN_VALIDITY. As I recall, the default is 90 days and the maximum is configurable, after which the user must re-consent. I did not verify those figures on a page.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Users cannot consent with ACCOUNTADMIN, SECURITYADMIN, GLOBALORGADMIN or ORGADMIN. Those roles are on BLOCKED_ROLES_LIST by default, cannot be removed from it, and stay blocked even if added to ALLOWED_ROLES_LIST. If a user's default role is one of them, the connection fails unless the scope requests a different role.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": [
+        "p4"
+      ]
+    },
+    {
+      "text": "The token is bound to the role the user consented to. In-session role switching needs the session:role-any scope plus OAUTH_ANY_ROLE_MODE, and secondary roles are controlled separately by OAUTH_USE_SECONDARY_ROLES.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "Custom integrations accept an IS_AGENTIC flag, and the integration can enforce single-use refresh tokens. If a customer enables single-use tokens, your token store must keep the new refresh token returned on every refresh.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "A customer's NETWORK_POLICY on the integration, or on the account, can block your servers' egress IPs, so publish static IPs for customers to allowlist.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Customers who use an outside IdP such as Okta or Entra may prefer External OAuth (a different integration type) over Snowflake OAuth. That changes which server issues the tokens.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Integration is missing in the customer's account",
+      "signal": "Authorization fails with an invalid or unknown client error because the client ID belongs to a different account. A wrong account host returns HTTP 404 'File not Found'.",
+      "nextMove": "Have the customer's admin create their own integration and use their account-specific endpoints.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": [
+        "p6"
+      ]
+    },
+    {
+      "title": "User's role is blocked",
+      "signal": "Consent or the token request fails when the requested or default role is ACCOUNTADMIN, SECURITYADMIN, ORGADMIN or GLOBALORGADMIN, or is outside ALLOWED_ROLES_LIST.",
+      "nextMove": "Request a specific non-admin role with scope=session:role:<ROLE>, or have the admin adjust ALLOWED_ROLES_LIST.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "No admin available to create the integration",
+      "signal": "The SQL fails with 'Insufficient privileges to operate on account' or similar for the CREATE INTEGRATION command.",
+      "nextMove": "Ask the customer's ACCOUNTADMIN to run it, or to grant CREATE INTEGRATION to a delegate role.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Draft the CREATE SECURITY INTEGRATION SQL for each tenant, with the redirect URI, role lists and refresh-token settings",
+    "Run the integration SQL and SYSTEM$SHOW_OAUTH_CLIENT_SECRETS when given a session with a suitable role",
+    "Build per-tenant authorize and token URLs from the account identifier",
+    "Write customer-facing admin onboarding docs and an allowlist IP notice",
+    "Test the code exchange and refresh flow with a non-admin role"
+  ],
+  "youMust": [
+    "Create or sign in to a Snowflake account and accept its terms (account ownership and billing)",
+    "Hold or obtain ACCOUNTADMIN, or get each customer's admin to run the integration SQL (only their admin can authorize it)",
+    "Contact Snowflake Support if you need privileged roles unblocked for OAuth"
+  ],
+  "uncertainties": [
+    {
+      "question": "Exact default and maximum values for OAUTH_REFRESH_TOKEN_VALIDITY and OAUTH_ACCESS_TOKEN_VALIDITY today",
+      "howToResolve": "Read the parameter section of https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md"
+    },
+    {
+      "question": "Whether Snowflake publishes a standard OAuth discovery document (/.well-known/oauth-authorization-server) per account. I did not probe it, because it needs a real account host.",
+      "howToResolve": "In your own account, GET https://<account>.snowflakecomputing.com/.well-known/oauth-authorization-server, and compare it with DESCRIBE SECURITY INTEGRATION output."
+    },
+    {
+      "question": "What IS_AGENTIC changes in behaviour or limits for agent clients",
+      "howToResolve": "Read the IS_AGENTIC description in the CREATE SECURITY INTEGRATION doc and the 'Agent identity' security pages."
+    },
+    {
+      "question": "Whether a multi-tenant SaaS can avoid per-customer integrations through Snowflake's partner-application program",
+      "howToResolve": "Ask Snowflake's partner team. The documented partner OAUTH_CLIENT values (Tableau, Looker and others) are fixed by Snowflake."
+    }
+  ],
+  "providerContact": {
+    "channel": "Snowflake Support (https://docs.snowflake.com/user-guide/contacting-support) or the Snowflake Partner Network for ISV questions",
+    "draftMessage": "We are building a multi-tenant AI agent that connects to customers' Snowflake accounts through Snowflake OAuth (OAUTH_CLIENT = CUSTOM). Is there any way to avoid each customer creating their own security integration, for example a partner OAUTH_CLIENT value? Also, what does IS_AGENTIC = TRUE change for an agent client, and what are the current maximum refresh-token validity and the rules on single-use refresh tokens?"
+  },
+  "slug": "snowflake",
+  "origin": "library",
+  "input": "Snowflake",
+  "generatedAt": "2026-11-03T14:17:05.608Z",
+  "durationMs": 104712,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Snowflake",
+    "slug": "SNOWFLAKE",
+    "docUrl": "https://docs.composio.dev/toolkits/snowflake",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://app.snowflake.com/",
+      "purpose": "Check whether the Snowsight console (where integrations are created) requires login",
+      "status": 200,
+      "finalUrl": "https://app.snowflake.com/",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Snowflake",
+      "error": null,
+      "at": "2026-11-03T14:15:28.366Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://docs.snowflake.com/en/user-guide/oauth-custom",
+      "purpose": "Confirm custom OAuth client docs resolve",
+      "status": 200,
+      "finalUrl": "https://docs.snowflake.com/en/user-guide/oauth-custom",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Configure Snowflake OAuth for custom clients | Snowflake Documentation",
+      "error": null,
+      "at": "2026-11-03T14:15:28.366Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md",
+      "purpose": "Read CREATE SECURITY INTEGRATION (Snowflake OAuth) parameters: refresh token validity, blocked roles, PKCE",
+      "status": 200,
+      "finalUrl": "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:50.626Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+      "purpose": "Read endpoints and privileges in custom-client OAuth doc (markdown)",
+      "status": 200,
+      "finalUrl": "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:58.544Z"
+    },
+    {
+      "id": "p5",
+      "url": "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md",
+      "purpose": "Read Snowflake OAuth overview: endpoints, token lifetimes",
+      "status": 200,
+      "finalUrl": "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:16:07.849Z"
+    },
+    {
+      "id": "p6",
+      "url": "https://abc12345.snowflakecomputing.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+      "purpose": "See how a per-account authorize endpoint responds to an unknown client",
+      "status": 404,
+      "finalUrl": "https://abc12345.snowflakecomputing.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "File not Found",
+      "error": null,
+      "at": "2026-11-03T14:16:07.850Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://abc12345.snowflakecomputing.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb",
+    "https://app.snowflake.com/",
+    "https://docs.coalesce.io/docs/setup-your-project/connection-guides/snowflake/snowflake-oauth",
+    "https://docs.getdbt.com/docs/platform/manage-access/set-up-snowflake-oauth",
+    "https://docs.gumloop.com/nodes/integrations/snowflake-oauth-config",
+    "https://docs.snowflake.com/En/sql-reference/sql/create-security-integration-oauth-snowflake.html",
+    "https://docs.snowflake.com/de/en/sql-reference/sql/create-security-integration-oauth-snowflake",
+    "https://docs.snowflake.com/de/sql-reference/sql/create-security-integration-oauth-snowflake",
+    "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.html",
+    "https://docs.snowflake.com/en/sql-reference/sql/create-security-integration-oauth-snowflake.md",
+    "https://docs.snowflake.com/en/user-guide/oauth-custom",
+    "https://docs.snowflake.com/en/user-guide/oauth-custom.md",
+    "https://docs.snowflake.com/en/user-guide/oauth-custom?lang=it",
+    "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview",
+    "https://docs.snowflake.com/en/user-guide/oauth-snowflake-overview.md",
+    "https://docs.snowflake.com/fr/ja/sql-reference/sql/create-security-integration-oauth-snowflake",
+    "https://docs.snowflake.com/ko/en/sql-reference/sql/create-security-integration-oauth-snowflake",
+    "https://docs.snowflake.com/sql-reference/sql/alter-security-integration-oauth-snowflake",
+    "https://docs.snowflake.com/sql-reference/sql/alter-security-integration-oauth-snowflake.html",
+    "https://docs.snowflake.com/sql-reference/sql/create-security-integration-oauth-snowflake",
+    "https://help.alteryx.com/smc/r92/en/connect/configure-connectivity/enable-oauth-2-0-authentication/oauth-2-0-for-snowflake.html"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 3,
+      "sourced": 14,
+      "uncertain": 6
+    },
+    "changes": []
+  }
+}

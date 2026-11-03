@@ -1,0 +1,407 @@
+{
+  "app": {
+    "name": "Datadog",
+    "website": "https://www.datadoghq.com",
+    "category": "Observability monitoring",
+    "summary": "With access, an agent can query and write to a customer's Datadog org through its APIs: metrics, logs, monitors, dashboards, incidents and events, within the scopes granted."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "severe",
+    "headline": "Datadog OAuth is partner-only: you need an approved Technology Partner listing and a published integration. Standalone OAuth clients aren't supported.",
+    "rationale": {
+      "text": "Datadog's docs say OAuth is available only to approved Technology Partners building official Datadog integrations, and that standalone OAuth clients are not supported. You must join the Datadog Partner Network (Technology Partner track) and work in a partner developer organization. You create the OAuth client as part of an integration listing in the Developer Platform. Until Datadog publishes that integration, only your own partner developer org can authorize the client. Production credentials are issued only when you submit the listing. Users are also expected to start the flow from the Datadog integration tile. A generic AI agent product that isn't a Datadog integration may never qualify. The usual fallback is customer-supplied API key and Application key pairs.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration",
+        "https://docs.datadoghq.com/developers/integrations/"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "1-3 days of engineering plus partner-program paperwork",
+    "approvalWait": "Several weeks (unpublished; estimate)",
+    "firstConnection": "After partner approval and sandbox org access, usually days to weeks. You can't test before that.",
+    "handsOnMinutesHigh": 1440,
+    "waitDaysHigh": 60,
+    "basis": {
+      "text": "Datadog publishes no timeline for approving Technology Partner applications or reviewing integration listings. The docs only say that after approval a Technology Partner team member reaches out to schedule an introductory call. The wait estimate is inferred from that multi-step human process (application, intro call, sandbox org provisioning, listing review and publication) and was not observed.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/developers/integrations/"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Apply to the Datadog Partner Network",
+      "whoCanConnect": "Nobody. Until you're approved there is no access to OAuth client creation.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You must apply to the Technology Partner track and be approved. After approval, Datadog's Technology Partner team schedules an introductory call. You then request a dedicated sandbox (partner developer) organization.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.datadoghq.com/developers/integrations/"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Test in your partner developer organization",
+      "whoCanConnect": "Only users in the partner developer org where the OAuth client was created",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Until Datadog publishes the integration, the client can only be authorized from the partner developer org it was created in. Any other org gets 'invalid_request - Invalid client_id parameter value'.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.datadoghq.com/extend/integrations/api_integration"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Submit listing, then published integration",
+      "whoCanConnect": "Any Datadog customer, on any Datadog site, starting from your integration tile",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Production client credentials are issued when you submit the listing in the Developer Platform, and the client works for customers once Datadog publishes the integration. The production client ID and secret differ from the testing client.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.datadoghq.com/extend/integrations/api_integration"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Decide whether you qualify as a Datadog integration",
+      "detail": "OAuth is only for official Datadog integrations built by Technology Partners; standalone OAuth clients are not supported. If your agent is not something Datadog would list as an integration, skip OAuth. Have each customer create an API key and an Application key, ideally scoped or tied to a service account, and enter them in your product.",
+      "owner": "you",
+      "estimate": "30 minutes",
+      "doneWhen": "You have chosen between the partner OAuth path and API key plus Application key auth.",
+      "url": "https://docs.datadoghq.com/extend/integrations/api_integration",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Apply to the Datadog Partner Network (Technology Partner track)",
+      "detail": "Submit the Technology Partner application through the Datadog Partner Network / Partner Portal. Once you're approved, Datadog's Technology Partner team contacts you to schedule an introductory call.",
+      "owner": "you",
+      "estimate": "1 hour to apply, plus an unpublished wait",
+      "doneWhen": "You receive the approval email and the intro call is scheduled.",
+      "url": "https://partners.datadoghq.com/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/developers/integrations/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Request the sandbox (partner developer) organization",
+      "detail": "Ask for the dedicated Datadog sandbox account used for integration development. This is where your OAuth client will live and where testing happens.",
+      "owner": "provider",
+      "estimate": "Unknown",
+      "doneWhen": "You can log in to the partner developer org.",
+      "url": "https://docs.datadoghq.com/developers/integrations/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/developers/integrations/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a listing in the Developer Platform and add OAuth details",
+      "detail": "In the partner org, create an integration listing in the Developer Platform. Add the OAuth details: Onboarding URL and Redirect URIs. Select the minimum scopes; include api_keys_write if you will send metrics, logs or events. Click Save Changes and copy the testing client ID and secret.",
+      "owner": "agent",
+      "estimate": "1-2 hours",
+      "doneWhen": "The listing shows a testing OAuth client with scopes saved.",
+      "url": "https://docs.datadoghq.com/extend/integrations/api_integration",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Implement the Datadog-specific OAuth flow",
+      "detail": "Use authorization code with PKCE. Your Onboarding URL receives `domain` (region, e.g. datadoghq.com, ap1.datadoghq.com) and `site` (custom subdomain) when the user starts from the Datadog tile. Use `domain` for both the OAuth handshake and API calls, and `site` only for the handshake. To send data, call the API key creation endpoint during the handshake.",
+      "owner": "agent",
+      "estimate": "0.5-2 days",
+      "doneWhen": "The flow completes against your sandbox org and an API call succeeds.",
+      "url": "https://docs.datadoghq.com/extend/authorization/oauth2_in_datadog",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test Authorization in the partner org",
+      "detail": "Click Test Authorization in the Developer Platform. This simulates a launch from the integration tile with domain and site parameters. Complete the flow and confirm that data can be submitted and queried.",
+      "owner": "agent",
+      "estimate": "1-2 hours",
+      "doneWhen": "End-to-end OAuth works in the partner developer org.",
+      "url": "https://docs.datadoghq.com/extend/integrations/api_integration",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Submit the listing and store the production credentials",
+      "detail": "Remove testing URLs from Onboarding URL and Redirect URIs, then submit. Production client credentials appear on submission and the secret is shown only once. Put these, not the testing client, into your auth config.",
+      "owner": "you",
+      "estimate": "1 hour",
+      "doneWhen": "You hold the production client ID and secret and the listing is under Datadog review.",
+      "url": "https://docs.datadoghq.com/extend/integrations/api_integration",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for Datadog to publish the integration",
+      "detail": "Datadog reviews and publishes the integration tile. Until it is published, customer orgs get 'Invalid client_id'.",
+      "owner": "provider",
+      "estimate": "Unpublished; plan for weeks",
+      "doneWhen": "Your tile is live and an external org can authorize.",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "Approved membership in the Datadog Partner Network's Technology Partner track, plus a partner developer (sandbox) organization.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/developers/integrations/",
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An integration listing in the Developer Platform. The OAuth client only exists as part of an official integration.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An Onboarding URL that Datadog redirects to from the integration tile, plus a single-domain redirect URI. Per-customer subdomain redirect setups are not supported.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "The flow is multi-region. The `domain` parameter (datadoghq.com, us3/us5/ap1, datadoghq.eu, etc.) changes both the OAuth endpoints and the API base URL. Datadog only provides it when the flow starts from the Datadog tile, not when it starts from your product.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Refresh tokens do not expire unless the user or partner revokes them. If the partner revokes a token, the user must reauthorize.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The OAuth scopes do not cover sending metrics, logs or events. You need api_keys_write and must create an API key on the user's behalf during the handshake.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The testing client and the production client are different credentials. The production secret is shown once, at submission.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An anonymous request to https://app.datadoghq.com/oauth2/v1/authorize with client_id=test-probe returned HTTP 401 with JSON {\"errors\":[\"Unauthorized\"]}. It does not redirect to a login page, so the endpoint requires a Datadog session before it validates the client.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Datadog publishes no RFC 8414 discovery document: /.well-known/oauth-authorization-server on app.datadoghq.com returns 404. Endpoints must be configured by hand for each region.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Not an approved Technology Partner",
+      "signal": "The OAuth client UI is not available outside a partner developer org. The docs state that standalone OAuth clients are not supported.",
+      "nextMove": "Apply to the Technology Partner track, or ship with customer-provided API key and Application key auth instead.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Customers can't authorize before publication",
+      "signal": "invalid_request - Invalid client_id parameter value when authorizing from any org other than your partner developer org",
+      "nextMove": "Test only in the partner org until Datadog publishes the integration, and switch to the production client ID and secret given at submission.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Flow started from your product, not from Datadog",
+      "signal": "Tokens or API calls fail for EU, US3, US5 or AP1 customers because `domain` and `site` were never passed to your onboarding URL",
+      "nextMove": "Send users to your Datadog integration tile to start the connection, or collect the customer's site yourself.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.datadoghq.com/extend/integrations/api_integration"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Draft the Technology Partner application and the integration listing copy",
+    "Pick the minimal Datadog API scopes for the agent's tools",
+    "Fill in the Onboarding URL, Redirect URIs and scopes in the Developer Platform once given access",
+    "Implement PKCE OAuth with per-region domain handling and API key creation via api_keys_write",
+    "Run Test Authorization in the partner sandbox org and verify API calls",
+    "Build the API key plus Application key fallback for customers who connect before publication"
+  ],
+  "youMust": [
+    "Apply to the Datadog Partner Network and accept the partner agreement (a legal commitment)",
+    "Attend the introductory call with Datadog's Technology Partner team",
+    "Submit the listing for publication and store the one-time production client secret",
+    "Decide whether a Datadog integration fits your business at all, since OAuth is unavailable otherwise"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long do partner application approval and integration publication take?",
+      "howToResolve": "Ask the Technology Partner team on the intro call, or via the Partner Portal."
+    },
+    {
+      "question": "Will Datadog accept an AI-agent or automation product, rather than a data-source integration, as a Technology Partner integration using OAuth?",
+      "howToResolve": "Describe the use case in your partner application and ask directly before investing in the build."
+    },
+    {
+      "question": "Are there partner-program fees or tier requirements for Technology Partners?",
+      "howToResolve": "Check the Partner Portal program guide or ask the partner team."
+    },
+    {
+      "question": "Can a published OAuth client be launched from your own product, not just the Datadog tile, if you collect the user's site yourself?",
+      "howToResolve": "Confirm with Datadog partner support."
+    }
+  ],
+  "providerContact": {
+    "channel": "Datadog Partner Network / Partner Portal (https://partners.datadoghq.com/), Technology Partner track application",
+    "draftMessage": "Hi. We're building an AI agent product that would let mutual Datadog customers connect their org through OAuth, to query monitors, logs and metrics and to create incidents. Does this qualify for the Technology Partner track and an OAuth-based API integration? What are the typical timelines for application approval and for integration publication? Can the flow be started from our product as well as from the integration tile? Thanks."
+  },
+  "slug": "datadog",
+  "origin": "library",
+  "input": "Datadog",
+  "generatedAt": "2026-11-03T14:18:06.934Z",
+  "durationMs": 77379,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Datadog",
+    "slug": "DATADOG",
+    "docUrl": "https://docs.composio.dev/toolkits/datadog",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://app.datadoghq.com/oauth2/v1/authorize?client_id=test-probe&response_type=code&redirect_uri=https://example.com/cb",
+      "purpose": "See how the authorize endpoint responds to an unknown client",
+      "status": 401,
+      "finalUrl": "https://app.datadoghq.com/oauth2/v1/authorize?client_id=test-probe&response_type=code&redirect_uri=https://example.com/cb",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:16:57.559Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://app.datadoghq.com/.well-known/oauth-authorization-server",
+      "purpose": "Check for OAuth metadata",
+      "status": 404,
+      "finalUrl": "https://app.datadoghq.com/.well-known/oauth-authorization-server",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:16:57.559Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://app.datadoghq.com/.well-known/oauth-authorization-server",
+    "https://app.datadoghq.com/oauth2/v1/authorize?client_id=test-probe&response_type=code&redirect_uri=https://example.com/cb",
+    "https://docs.datadoghq.com/developers/integrations/",
+    "https://docs.datadoghq.com/developers/integrations/api_integration/",
+    "https://docs.datadoghq.com/developers/integrations/oauth_for_integrations/",
+    "https://docs.datadoghq.com/es/extend/integrations/build_integration",
+    "https://docs.datadoghq.com/extend/authorization/oauth2_endpoints/",
+    "https://docs.datadoghq.com/extend/authorization/oauth2_in_datadog",
+    "https://docs.datadoghq.com/extend/integrations/api_integration",
+    "https://docs.datadoghq.com/extend/integrations/api_integration.md",
+    "https://docs.datadoghq.com/extend/integrations/build_integration",
+    "https://docs.datadoghq.com/extend/integrations/build_integration/",
+    "https://docs.datadoghq.com/extend/integrations/marketplace_offering/",
+    "https://hector-lopez-scadadog.medium.com/building-an-integration-for-the-datadog-marketplace-164838f41566",
+    "https://nango.dev/docs/api-integrations/datadog-oauth/how-to-register-your-own-datadog-oauth-api-oauth-app",
+    "https://nango.dev/docs/api-integrations/datadog-oauth/how-to-register-your-own-datadog-oauth-api-oauth-app.md",
+    "https://partners.datadoghq.com/resource/1765384087000/PRM_SolutionProviders",
+    "https://partners.datadoghq.com/resource/1765384088000/PRM_TechnologyPartners",
+    "https://partners.datadoghq.com/s/login/?ec=302&startURL=%2Fs%2F",
+    "https://partnerxperience.com/programs/datadog/datadog-technology",
+    "https://prismatic.io/docs/components/datadog/",
+    "https://www.apmdigest.com/datadog-launches-partner-network",
+    "https://www.datadoghq.com/about/latest-news/press-releases/datadog-partner-network/",
+    "https://www.datadoghq.com/blog/datadog-marketplace/",
+    "https://www.datadoghq.com/blog/oauth/",
+    "https://www.datadoghq.com/case-studies/rapdev/",
+    "https://www.datadoghq.com/partner/datadog-for-startups/"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 21,
+      "uncertain": 2
+    },
+    "changes": []
+  }
+}

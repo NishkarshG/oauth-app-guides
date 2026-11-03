@@ -1,0 +1,392 @@
+{
+  "app": {
+    "name": "Workday",
+    "website": "https://www.workday.com",
+    "category": "HR & finance (HCM)",
+    "summary": "OAuth access to one customer's Workday tenant: workers, staffing, HR, custom objects, WQL and reports, limited by the scopes and domain security that tenant's admin grants."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "Workday has no central OAuth app. Each customer's own Workday admin registers a client inside their tenant.",
+    "rationale": {
+      "text": "There is no developer portal where you register one OAuth app for all customers. Each customer's Workday administrator runs the 'Register API Client' task in their own tenant and gives you that tenant's client ID, secret and hosts. You also can't sign up for a tenant to test with: you need access through a customer or a partner agreement. Workday doesn't review anything for basic OAuth. The friction is per-customer admin work plus commercial access to a tenant. Marketplace and partner certification are optional and come later.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md",
+        "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "1-3 hours per customer tenant (admin runbook + verification)",
+    "approvalWait": "None from Workday; depends on each customer's admin and on getting tenant access",
+    "firstConnection": "Same day once you have admin access to a Workday tenant; days to weeks if you must first arrange tenant access",
+    "handsOnMinutesHigh": 180,
+    "waitDaysHigh": 30,
+    "basis": {
+      "text": "Workday publishes no review timeline because basic API client registration has no review. The hands-on time is an estimate built from the number of admin tasks involved: register the client, set security groups and domains, and activate security changes. How long it takes to get a tenant depends on commercial terms and is a guess.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Test on a tenant you can access",
+      "whoCanConnect": "Users of one Workday tenant (Implementation, Sandbox or a customer's) where an admin registered your client",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You can't sign up for a tenant yourself. Tenants belong to Workday customers or come with a partner agreement.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Each customer connects their own tenant",
+      "whoCanConnect": "Any Workday customer whose admin runs Register API Client with your redirect URI and hands over their credentials and hosts",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Each tenant needs its own client ID and secret, and its own authorize, token and REST hosts. Your connect flow has to accept these values per customer. Workday does no review, but every customer's admin has to do the setup.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.unified.to/skills/workday-oauth-app/SKILL.md",
+          "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Optional: Workday partner / Marketplace listing",
+      "whoCanConnect": "Same as above. A listing adds discoverability and the 'Design Approved' credential but does not remove per-tenant registration.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "The partner and Marketplace programs are commercial agreements, not a signup form. In a 'Design Approved' review, Workday checks the integration's use case, architecture and data mapping.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Secure access to a Workday tenant",
+      "detail": "Arrange admin access to a customer's Implementation or Sandbox tenant, or join a Workday partner agreement. There is no free self-serve tenant.",
+      "owner": "you",
+      "estimate": "Days to weeks (commercial)",
+      "doneWhen": "You can log in to a Workday tenant and run tasks as an administrator, or a customer admin agrees to do it for you",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Write the customer admin runbook",
+      "detail": "Write instructions for each customer's admin. Include your exact redirect URI, Grant Type 'Authorization Code Grant', Access Token Type 'Bearer', 'Non-Expiring Refresh Tokens' ticked, the functional-area scopes you need (for example Staffing, HRIS, System - Workday Query Language, Custom Objects) and the domain security policies to grant.",
+      "owner": "agent",
+      "estimate": "1 hour",
+      "doneWhen": "The runbook lists the redirect URI, scopes, domains and the values to send back",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app",
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Admin runs 'Register API Client'",
+      "detail": "In the Workday search bar, type 'Register API Client' and open that task. Use the plain task, not 'Register API Client for Integrations', which is for ISU and non-interactive use. Fill in Client Name, Client Grant Type, Access Token Type, Redirection URI, Non-Expiring Refresh Tokens and Scope (Functional Areas), then click OK.",
+      "owner": "you",
+      "estimate": "15-30 minutes",
+      "doneWhen": "Workday shows the Client ID and Client Secret (the secret is shown once), plus the tenant's authorization, token and REST endpoints",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app",
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Grant domain security and activate it",
+      "detail": "Add the user or security group that will authorize to the required domain security policies. Then run 'Activate Pending Security Policy Changes'. Until that runs, the changes have no effect.",
+      "owner": "you",
+      "estimate": "15-45 minutes",
+      "doneWhen": "The security policy changes show as activated",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Collect per-tenant values and verify",
+      "detail": "Record the tenant name, the authorize URL (https://<host>/<tenant>/authorize, which has no /ccx/oauth2/), the token URL (https://<host>/ccx/oauth2/<tenant>/token) and the REST base (/api/... or /ccx/api/...). Authorize as a real user and call a worker endpoint. Check that it returns rows, not just HTTP 200.",
+      "owner": "agent",
+      "estimate": "30 minutes",
+      "doneWhen": "A real API call returns the expected non-empty data for that tenant",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Workday tenant and an administrator there who can run 'Register API Client' and edit security policies. You can't get a tenant by signing up.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md",
+        "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A connect flow that accepts each customer's own client ID and secret, tenant name and hosts. One global app won't work.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "You can read the public developer docs at developer.workday.com without logging in. The console, App Builder and admin tools need a Workday developer account.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1",
+        "p3"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Access tokens have no fixed lifetime. Each one is tied to the session timeout the admin set for that user, so use expires_in and treat a 401 as the signal to refresh.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Unless 'Non-Expiring Refresh Tokens' is ticked, the refresh token has an absolute window that starts at the first authorization and doesn't extend when you refresh. The connection dies on a fixed date.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Permissions come in two layers: the client's functional-area scopes and the domain security policies on the user's group. If the domain grant is missing, Workday returns empty results instead of an error.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A tenant refresh copies Production's configuration over Sandbox and Implementation tenants. Clients registered there can disappear, so the customer may have to re-run the runbook.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The authorization host and the REST host differ (e.g. wd3.myworkday.com vs wd3-services1.myworkday.com). An anonymous GET to a made-up tenant path on a Workday services host returned a JSON 404 'The requested resource is not available', so there is no global endpoint to discover.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "title": "No tenant to test against",
+      "signal": "You find no signup for a Workday developer tenant. Sandboxes belong only to customers or partners.",
+      "nextMove": "Ask a design-partner customer for access to their Implementation or Sandbox tenant, or talk to Workday about a partner agreement.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Valid token returns no data",
+      "signal": "HTTP 200 with empty results, or 403 Not Authorized, after a successful OAuth flow",
+      "nextMove": "Have the admin grant the right domain security policies to the user's security group and run 'Activate Pending Security Policy Changes'.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Connections die after a fixed period",
+      "signal": "invalid_grant on refresh, or 401 Invalid Access Token weeks after connecting",
+      "nextMove": "Have the admin edit the API client, tick 'Non-Expiring Refresh Tokens', and reconnect.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Draft the per-customer admin runbook: redirect URI, grant type, scopes, domains, and the values to send back",
+    "Build the per-tenant authorize, token and REST URLs from host and tenant name",
+    "Check a new connection by calling worker or WQL endpoints and flagging empty results as a security-domain problem",
+    "Find doc pages through developer.workday.com/llms.txt and the /doc/{id}.md Markdown endpoints",
+    "Draft Marketplace or partner listing copy if you pursue a listing"
+  ],
+  "youMust": [
+    "Get access to a Workday tenant, which takes a customer relationship or a partner agreement and may cost money",
+    "Have each customer's Workday admin run 'Register API Client' and grant security inside their own tenant, because only they hold those permissions",
+    "Sign any Workday partner or Marketplace agreement if you want a listing"
+  ],
+  "uncertainties": [
+    {
+      "question": "Does Workday's own documentation (doc.workday.com, behind a login) confirm every field name and default on the Register API Client form for the current release?",
+      "howToResolve": "Check against the live form in a tenant, or against Workday Community's admin guide while logged in."
+    },
+    {
+      "question": "What does a partner agreement or Marketplace listing cost, and how long does 'Design Approved' review take?",
+      "howToResolve": "Ask Workday's partner team through the Workday Marketplace / partner pages. No timeline is public."
+    },
+    {
+      "question": "Does a tenant refresh invalidate refresh tokens that were already issued?",
+      "howToResolve": "Test in a customer sandbox before and after a scheduled refresh."
+    },
+    {
+      "question": "Is there a publicly reachable OIDC discovery document for each tenant?",
+      "howToResolve": "Ask a customer admin, or try /.well-known/openid-configuration on a real tenant host."
+    }
+  ],
+  "providerContact": {
+    "channel": "Workday partner program / Workday Marketplace contact (via workday.com partners pages), or the customer's Workday account team",
+    "draftMessage": "We're building an AI agent product that connects to our customers' Workday tenants over OAuth 2.0 (Register API Client, Authorization Code Grant). Can we get a non-production tenant for development through a partner agreement, and what are the cost and timeline? Separately, what does Marketplace 'Design Approved' review involve, and how long does it usually take?"
+  },
+  "slug": "workday",
+  "origin": "library",
+  "input": "Workday",
+  "generatedAt": "2026-11-03T14:16:57.231Z",
+  "durationMs": 120531,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Workday",
+    "slug": "WORKDAY",
+    "docUrl": "https://docs.composio.dev/toolkits/workday",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://developer.workday.com/",
+      "purpose": "Check whether Workday developer site requires login / partner access",
+      "status": 200,
+      "finalUrl": "https://developer.workday.com/about",
+      "redirects": [
+        "/about"
+      ],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Workday Developers | Build on the Workday Platform",
+      "error": null,
+      "at": "2026-11-03T14:15:03.814Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://wd2-impl-services1.workday.com/ccx/oauth2/test/authorize?client_id=test-probe&response_type=code",
+      "purpose": "See how a per-tenant Workday authorize endpoint responds to an unknown client",
+      "status": 404,
+      "finalUrl": "https://wd2-impl-services1.workday.com/ccx/oauth2/test/authorize?client_id=test-probe&response_type=code",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:03.814Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://developer.workday.com/llms.txt",
+      "purpose": "Get index of Workday developer docs to find OAuth/API client docs",
+      "status": 200,
+      "finalUrl": "https://developer.workday.com/llms.txt",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:21.853Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://cdn.cdata.com/help/JWH/py/pg_oauthcustomappcreate.htm",
+    "https://composio.dev/auth/workday",
+    "https://dev.to/zuplo/workday-api-guide-rest-soap-and-oauth-setup-ec8",
+    "https://developer.fieldnation.com/apireference/auth",
+    "https://developer.incode.com/ecosystem-workforce/workday/",
+    "https://developer.interactsoftware.com/docs/workday",
+    "https://developer.workday.com/",
+    "https://developer.workday.com/about",
+    "https://developer.workday.com/llms.txt",
+    "https://developers.frontegg.com/agen-for-work/connectors/marketplace/workday",
+    "https://doc.workday.com/admin-guide/en-us/workday-studio/integration-deployment/multifactor-authentication-in-workday-studio/kuh1623937418623.html",
+    "https://doc.workday.com/peakon/en-us/workday-peakon-employee-voice/integrations/workday-integration/nfa1667304944189.html",
+    "https://docs-snaplogic.atlassian.net/wiki/spaces/SD/pages/2672492559/Application+Configuration+in+Workday+Portal+for+Workday+Rest+OAuth2+Account",
+    "https://docs.jitterbit.com/integration-studio/design/connectors/workday/prerequisites",
+    "https://docs.oracle.com/en/cloud/paas/process-automation/rest-api-proca/OAuth_refreshtoken.html",
+    "https://docs.uipath.com/integration-service/automation-cloud/latest/user-guide/uipath-workday-workdayrest-authentication",
+    "https://docs.unified.to/guides/how_to_register_a_workday_developer_app_and_get_oauth2_credentials",
+    "https://docs.unified.to/skills/workday-oauth-app/SKILL.md",
+    "https://docs.workato.com/connectors/workday-rest/connection-setup.html",
+    "https://docs.workato.com/connectors/workday.html",
+    "https://documentation.sailpoint.com/connectors/workday/help/integrating_workday/connection_settings.html",
+    "https://getknit.dev/blog/workday-api-integration-in-depth/",
+    "https://help.alteryx.com/AAC/en/platform/connections/configure-connectivity/enable-oauth-2-0-authentication/oauth-2-0-for-workday.html",
+    "https://help.alteryx.com/AAC/it/platform/connections/configure-connectivity/enable-oauth-2-0-authentication/oauth-2-0-for-workday.html",
+    "https://help.claritysecurity.com/docs/workday-api",
+    "https://help.merge.dev/en/articles/8106565-accessing-time-off-data-from-workday",
+    "https://help.merge.dev/en/articles/9891389-workday-how-do-i-link-using-oauth",
+    "https://helpcenter.veeam.com/archive/vbo365/30/rest/authorization.html",
+    "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app",
+    "https://nango.dev/docs/api-integrations/workday-oauth/how-to-register-your-own-workday-oauth-app.md",
+    "https://nango.dev/docs/api-integrations/workday-refresh-token/connect",
+    "https://support.activtrak.com/hc/en-us/articles/47674876332699-Setup-Guide-Workday",
+    "https://support.freshservice.com/support/solutions/articles/50000009624-how-to-authenticate-and-connect-workday-app-with-freshservice",
+    "https://support.upwork.com/hc/en-us/articles/115015933448-API-authentication-and-security",
+    "https://wd2-impl-services1.workday.com/ccx/oauth2/test/authorize?client_id=test-probe&response_type=code",
+    "https://www.c1.ai/docs/product/admin/mcp-server/workday",
+    "https://www.elastic.co/docs/reference/kibana/connectors-kibana/workday-action-type",
+    "https://www.merge.dev/blog/workday-api-integration",
+    "https://www.servicenow.com/docs/r/integrate-applications/integration-hub/rest-wd-hr-spoke.html",
+    "https://www.stitchflow.com/user-management/workday/api"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 18,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

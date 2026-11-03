@@ -1,0 +1,472 @@
+{
+  "app": {
+    "name": "Vercel",
+    "website": "https://vercel.com",
+    "category": "Cloud deployment platform",
+    "summary": "OAuth access lets an agent act on a user's Vercel team, for example projects, environment variables and team data, to whatever extent the app's permissions allow."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "Creating an OAuth app is instant, but the API permissions for 'Sign in with Vercel' apps are still a private beta.",
+    "rationale": {
+      "text": "Vercel runs a standards-based OAuth 2.0/OIDC server, and the discovery document is public: the authorize endpoint is vercel.com/oauth/authorize, the token endpoint is api.vercel.com/login/oauth/token, PKCE uses S256, and there is a dynamic registration endpoint. You create apps in the dashboard. By default anyone with a Vercel account can sign in, and no review is documented. The catch is in the docs: permissions that let an access token call APIs and act on team resources are 'currently in private beta', and the permission list is narrow (env vars, team, team members, audit logs, KMS, schedules, protection bypass, trusted sources). An agent that needs broad REST API coverage such as deployments or domains may still need Vercel's older Integration (Integrations Console) OAuth flow. I'm describing that flow from memory; I couldn't re-check it this session.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions",
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+        "https://vercel.com/changelog/sign-in-with-vercel"
+      ],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "30-90 minutes",
+    "approvalWait": "None for sign-in. API permissions beta access: unknown (Vercel publishes no timeline)",
+    "firstConnection": "About 15-30 minutes",
+    "handsOnMinutesHigh": 90,
+    "waitDaysHigh": 30,
+    "basis": {
+      "text": "Creating an app, adding a client secret and a callback URL, and choosing permissions are all self-serve dashboard steps, according to Vercel's docs. Vercel publishes no timeline for admitting apps to the API-permissions private beta. The 30-day upper bound is a guess, not a sourced figure.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Create a Vercel App and test with your own account",
+      "whoCanConnect": "You, and any Vercel user (sign-in access defaults to 'Anyone with a Vercel account')",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Self-serve. Out of the box you get identity scopes (openid, email, profile) plus offline_access for refresh tokens. Permissions that let the token call APIs are listed separately and are in private beta.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+          "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+        ],
+        "probeIds": [
+          "p1"
+        ]
+      }
+    },
+    {
+      "name": "API permissions (private beta)",
+      "whoCanConnect": "Any Vercel user who approves the permissions shown on the consent page",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Permissions for API requests and team resources are in private beta. You need Vercel to enable them, and even then only the listed team and project permissions exist. The docs don't describe how to get in. A Vercel Community thread from roughly October 2026 shows developers asking for beta access to further permission areas.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Alternative: Integration OAuth for broad REST API access",
+      "whoCanConnect": "Any Vercel user who installs the integration through its install URL. A public Marketplace listing is optional.",
+      "reviewRequired": false,
+      "limit": {
+        "text": "From memory, not re-checked: integrations created in the Integrations Console get a client ID and secret. Users connect by installing the integration, the code is exchanged at api.vercel.com/v2/oauth/access_token, and the token is scoped to the installing team. Listing on the Vercel Marketplace goes through Vercel review.",
+        "evidence": "uncertain",
+        "sourceUrls": [],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Decide which Vercel OAuth surface you need",
+      "detail": "Compare the Vercel tools your agent will call with the permission tables on the Scopes and Permissions page. If you only need identity, or the listed permissions (env vars, team, members, schedules, KMS and so on), use a Sign in with Vercel App. If you need deployments, projects or domains broadly, plan on the Integration (Integrations Console) flow, or ask Vercel about the beta.",
+      "owner": "agent",
+      "estimate": "15 minutes",
+      "doneWhen": "You have a written list of the permissions you need and the surface you chose.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create an App in the Vercel dashboard",
+      "detail": "Sign in to Vercel and create an App from your team's settings (Settings → Apps). Give it a name and logo, which appear on the consent page.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The app's Manage page shows a client ID.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+        "https://vercel.com/docs/sign-in-with-vercel/getting-started"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Choose client authentication and generate a client secret",
+      "detail": "On the app's Manage page, pick the client authentication method (client secret, private key JWT, or OIDC token). For Composio, generate a client secret and copy it right away.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "You have the client ID and client secret saved.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+        "https://vercel.com/docs/sign-in-with-vercel/getting-started"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure the authorization callback URL",
+      "detail": "On the Manage page, add the exact callback URL your OAuth broker uses (Composio's redirect URI).",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "The callback URL is saved on the app.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Set Sign-In Access and Permissions",
+      "detail": "On the General page, check that Sign-In Access is 'Anyone with a Vercel account'. Open Permissions in the sidebar and turn on openid, offline_access (for refresh tokens), and any team or project permissions available to you.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "The consent page you see in a test lists the permissions you expect.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Request API-permissions beta access if you need it",
+      "detail": "Ask Vercel, through Vercel Community or your account contact, to enable the private-beta API permissions your agent needs for the app.",
+      "owner": "provider",
+      "estimate": "Unknown",
+      "doneWhen": "The beta permissions show up as selectable on the app's Permissions page.",
+      "url": "https://community.vercel.com",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the full flow with your own account",
+      "detail": "Run the authorize, consent, token exchange and API call cycle with your own Vercel account and confirm the token can reach the endpoints you need.",
+      "owner": "you",
+      "estimate": "15 minutes",
+      "doneWhen": "An API call made with the user's access token succeeds.",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/getting-started",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/getting-started"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Vercel account with access to a team where you can create Apps. Your users also need Vercel accounts to connect.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel",
+        "https://vercel.com/docs/sign-in-with-vercel/getting-started"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A pre-registered callback URL. Vercel sends the code only to a callback URL configured on the app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "PKCE with S256 is supported, and the discovery document lists it as the only code challenge method.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Public OIDC discovery at https://vercel.com/.well-known/openid-configuration: authorization_endpoint https://vercel.com/oauth/authorize, token_endpoint https://api.vercel.com/login/oauth/token, plus revocation, introspection and userinfo endpoints. Scopes listed: openid, email, profile, offline_access. Grants: authorization_code, refresh_token, client_credentials, device_code, jwt-bearer.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "The discovery document advertises a dynamic client registration endpoint (https://api.vercel.com/login/oauth/register) and client_id_metadata_document_supported. Some clients may be able to register without the dashboard, but I don't know which permissions those clients get.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Scopes and permissions are separate. Scopes control the ID token contents and whether a refresh token is issued (offline_access). Permissions control which APIs and team resources the access token can use, and users grant them per team or per project on the consent page.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Changing Sign-In Access does not end sessions that already exist, and it doesn't control who can install the Vercel App.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Sending an unknown client_id=test-probe to the authorize endpoint returned HTTP 200 with an 'Authorize App' page rather than an immediate error. Expect client errors to appear inside the rendered page, not as a redirect.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "text": "Sign in with Vercel became generally available around December 2025. The API permissions under it are still private beta according to the current docs.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/changelog/sign-in-with-vercel",
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "API permissions are private beta",
+      "signal": "Your app's Permissions page offers only identity scopes, or API calls with the user's access token return 403 or permission errors.",
+      "nextMove": "Ask Vercel to enable the beta for your app, or use the Integration (Integrations Console) OAuth flow for broad REST API access.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Permission catalogue may not cover the agent's tools",
+      "signal": "Endpoints you need, such as deployments, domains or logs, don't appear in the Team Permissions or Project Permissions tables.",
+      "nextMove": "Map each Composio Vercel action to a listed permission. Anything without a match needs the Integration flow or a user-supplied access token.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Read Vercel's Sign in with Vercel and permissions docs and map each agent action to a required permission",
+    "Fill in callback URLs and permission selections once the human has created the app",
+    "Run the authorize → token exchange → API call test and check token contents through the introspection endpoint",
+    "Draft the request to Vercel for API-permissions beta access",
+    "Prepare the app name, logo and description shown on the consent page"
+  ],
+  "youMust": [
+    "Sign in to Vercel and create the App under a team you control, because it requires an authenticated account",
+    "Generate and safely hand over the client secret, which only a logged-in team member can see",
+    "Accept any Vercel terms tied to beta access or a Marketplace listing",
+    "Complete the consent screen during testing with a real Vercel account"
+  ],
+  "uncertainties": [
+    {
+      "question": "How do you join the API-permissions private beta, and how long does it take?",
+      "howToResolve": "Ask in Vercel Community or through your account manager. The docs give no process or timeline."
+    },
+    {
+      "question": "Does Composio's Vercel toolkit expect a Sign in with Vercel App or a classic Integration (client ID and secret from the Integrations Console, token from api.vercel.com/v2/oauth/access_token)?",
+      "howToResolve": "Check the token URL in the Composio Vercel auth config. If it's the v2 integration endpoint, register an integration in the Integrations Console instead."
+    },
+    {
+      "question": "Do access tokens expire, and how long do refresh tokens last?",
+      "howToResolve": "Read https://vercel.com/docs/sign-in-with-vercel/tokens (I couldn't retrieve it this session)."
+    },
+    {
+      "question": "Do Integration installs need Marketplace review, or are unlisted integrations installable by anyone with the link?",
+      "howToResolve": "Read Vercel's Integrations docs on creating and submitting an integration."
+    }
+  ],
+  "providerContact": {
+    "channel": "Vercel Community (https://community.vercel.com), where existing threads request Sign in with Vercel API-permissions beta access, or your Vercel account team",
+    "draftMessage": "Hi, we're building an AI agent that lets our users connect their Vercel accounts through OAuth (Sign in with Vercel App, client ID <id>). We need the private-beta API permissions for <list, e.g. Projects read, Deployments read, Env Vars read/write>. How do we get into the beta, what's the usual turnaround, and should we use a Marketplace Integration instead for broad REST API access?"
+  },
+  "slug": "vercel",
+  "origin": "library",
+  "input": "Vercel",
+  "generatedAt": "2026-11-03T14:17:47.679Z",
+  "durationMs": 144449,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Vercel",
+    "slug": "VERCEL",
+    "docUrl": "https://docs.composio.dev/toolkits/vercel",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://vercel.com/dashboard/integrations/console",
+      "purpose": "Check whether integration console requires login",
+      "status": 200,
+      "finalUrl": "https://vercel.com/dashboard/integrations/console",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:30.086Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://vercel.com/.well-known/openid-configuration",
+      "purpose": "Check OIDC discovery for Sign in with Vercel",
+      "status": 200,
+      "finalUrl": "https://vercel.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:15:30.086Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "purpose": "Read app creation, callback URL, and permissions config docs",
+      "status": 200,
+      "finalUrl": "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Manage Sign in with Vercel from the Dashboard",
+      "error": null,
+      "at": "2026-11-03T14:16:13.288Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions",
+      "purpose": "Read scopes and API permissions for Vercel OAuth apps",
+      "status": 200,
+      "finalUrl": "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Scopes and Permissions",
+      "error": null,
+      "at": "2026-11-03T14:16:13.288Z"
+    },
+    {
+      "id": "p5",
+      "url": "https://vercel.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=openid&code_challenge=abc&code_challenge_method=S256",
+      "purpose": "See how authorize endpoint handles unknown client",
+      "status": 200,
+      "finalUrl": "https://vercel.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=openid&code_challenge=abc&code_challenge_method=S256",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Authorize App",
+      "error": null,
+      "at": "2026-11-03T14:16:13.288Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://auth0.com/blog/add-sign-in-vercel-auth0/",
+    "https://better-auth.com/docs/authentication/vercel",
+    "https://better-auth.com/docs/authentication/vercel.md",
+    "https://clerk.com/docs/guides/configure/auth-strategies/social-connections/vercel",
+    "https://clerk.com/docs/guides/configure/auth-strategies/social-connections/vercel?dub_id=67ufTsue8QMvy6ha",
+    "https://community.vercel.com/t/how-to-create-a-vercel-oauth-integration-for-account-authentication/7337",
+    "https://community.vercel.com/t/how-to-get-access-token-using-the-rest-api/8539",
+    "https://community.vercel.com/t/integration-installation-access-token/30847",
+    "https://community.vercel.com/t/request-sign-in-with-vercel-api-permissions-beta-projects-web-analytics-read-only/50346",
+    "https://community.vercel.com/t/sign-in-with-vercel-now-generally-available/28565",
+    "https://community.vercel.com/tag/changelog/107",
+    "https://docs.secureauth.com/ai/resources/vercel/",
+    "https://docs.weweb.io/database-and-apis/auth/providers/vercel.html",
+    "https://github.com/Fyennyi/oauth2-vercel",
+    "https://github.com/LambdaTest/browsercloud_vercel_integration",
+    "https://github.com/OneUptime/oneuptime/pull/5039",
+    "https://github.com/vezlo/vercel-integration-server",
+    "https://medium.com/@tony.infisical/guide-to-using-oauth-2-0-to-access-vercel-api-f2f101d33341",
+    "https://nango.dev/docs/api-integrations/vercel-mcp/how-to-register-your-own-vercel-mcp-oauth-app",
+    "https://nango.dev/docs/api-integrations/vercel-mcp/how-to-register-your-own-vercel-mcp-oauth-app.md",
+    "https://neon.com/docs/auth/guides/setup-oauth.md",
+    "https://notifire.in/infra/vercel-opens-its-integration-directory-to-everyone",
+    "https://packagist.org/packages/fyennyi/oauth2-vercel",
+    "https://vercel.com/.well-known/openid-configuration",
+    "https://vercel.com/changelog/page/75",
+    "https://vercel.com/changelog/sign-in-with-vercel",
+    "https://vercel.com/changelog/vercel-connect-ga",
+    "https://vercel.com/changelog/vercel-passport-generally-available",
+    "https://vercel.com/dashboard/integrations/console",
+    "https://vercel.com/docs/accounts/access-tokens",
+    "https://vercel.com/docs/accounts/access-tokens.md",
+    "https://vercel.com/docs/cli/oauth-apps",
+    "https://vercel.com/docs/cli/release-notes",
+    "https://vercel.com/docs/integrations/create-integration",
+    "https://vercel.com/docs/integrations/create-integration/approval-checklist",
+    "https://vercel.com/docs/integrations/create-integration/approval-checklist.md",
+    "https://vercel.com/docs/integrations/create-integration/marketplace-api",
+    "https://vercel.com/docs/integrations/create-integration/marketplace-flows",
+    "https://vercel.com/docs/integrations/create-integration/marketplace-product",
+    "https://vercel.com/docs/integrations/create-integration/submit-integration",
+    "https://vercel.com/docs/integrations/create-integration/vercel-api-integrations",
+    "https://vercel.com/docs/integrations/marketplace-api",
+    "https://vercel.com/docs/integrations/marketplace-product",
+    "https://vercel.com/docs/integrations/using-an-integration/install-integration",
+    "https://vercel.com/docs/rest-api/authentication/sso-token-exchange",
+    "https://vercel.com/docs/scopes",
+    "https://vercel.com/docs/sign-in-with-vercel",
+    "https://vercel.com/docs/sign-in-with-vercel.graph.md",
+    "https://vercel.com/docs/sign-in-with-vercel/agent-quickstart",
+    "https://vercel.com/docs/sign-in-with-vercel/getting-started",
+    "https://vercel.com/docs/sign-in-with-vercel/getting-started.graph.md",
+    "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard",
+    "https://vercel.com/docs/sign-in-with-vercel/manage-from-dashboard.graph.md",
+    "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions",
+    "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions\"",
+    "https://vercel.com/docs/sign-in-with-vercel/scopes-and-permissions.graph.md",
+    "https://vercel.com/marketplace/program",
+    "https://vercel.com/oauth/authorize?client_id=test-probe&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=openid&code_challenge=abc&code_challenge_method=S256",
+    "https://workos.com/blog/add-sign-in-with-vercel-nextjs-workos",
+    "https://workos.com/docs/integrations/vercel-oauth",
+    "https://workos.com/docs/integrations/vercel-oauth.md",
+    "https://www.altftool.com/backlinks/vercel-integrations-marketplace",
+    "https://www.platformappstores.com/categories/cloud-infra-marketplaces/vercel-marketplace",
+    "https://www.pulumi.com/registry/packages/vercel/api-docs/oauthapp/",
+    "https://www.pulumi.com/registry/packages/vercel/api-docs/oauthappclientsecret/",
+    "https://www.stitchflow.com/user-management/vercel/api",
+    "https://x.com/vercel_dev",
+    "https://x.com/vercel_dev/status/2105382468782370950"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 4,
+      "sourced": 16,
+      "uncertain": 3
+    },
+    "changes": []
+  }
+}

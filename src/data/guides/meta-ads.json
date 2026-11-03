@@ -1,0 +1,407 @@
+{
+  "app": {
+    "name": "Meta Ads (Marketing API)",
+    "website": "https://developers.facebook.com/documentation/ads-commerce/marketing-api",
+    "category": "Advertising platform",
+    "summary": "With access, an agent can read ad performance reports and create or manage campaigns, ad sets, ads and creatives in the Meta (Facebook/Instagram) ad accounts a user authorizes."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "Before App Review, your app must make 500 successful Marketing API calls in 15 days, plus pass Business Verification.",
+    "rationale": {
+      "text": "You can create a Business app and test on your own ad accounts within an hour. To manage other people's ad accounts you need advanced access to ads_read and/or ads_management through App Review. To upgrade the Marketing API Access Tier from Limited to Full, the app must first have made at least 500 Marketing API calls in the last 15 days, with an error rate under 15% across the last 500 calls. Meta also requires Business Verification for advanced access. So the path to production has three waits: building up call volume, verification, and review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+        "https://developers.facebook.com/docs/marketing-api/access",
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "6-12 hours (app setup, test integration, screencasts, review and verification forms)",
+    "approvalWait": "2-6 weeks (at least 15 days of call history, plus Business Verification and App Review)",
+    "firstConnection": "Under 1 hour with your own Facebook account and ad account",
+    "handsOnMinutesHigh": 720,
+    "waitDaysHigh": 45,
+    "basis": {
+      "text": "The 500-calls-in-15-days threshold comes from Meta's authorization doc. Meta does not publish review or verification times on the pages I read. One third-party 2026 guide reports about 10 days for advanced access and about 10 more after a rejection, and says Meta itself quotes about 20 days. Treat the total as an estimate.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+        "https://www.saurabhdhar.com/blog/meta-app-approval-guide"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Development: your own ad accounts",
+      "whoCanConnect": "People with an app role (Admin, Developer or Tester), using ad accounts they own or have been given access to",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Business apps get standard access to ads_read and ads_management automatically, and the Marketing API Access Tier starts at Limited access. Limited access is heavily rate-limited per ad account and is meant for development only. You get 1 system user, and Business Manager access is restricted. All calls run against production data.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Build up call history",
+      "whoCanConnect": "Same as above",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Before you can upgrade to Full access, or keep advanced access once you have it, the app must have made at least 500 successful Marketing API calls in the last 15 days, with an error rate under 15% across the last 500 calls. Meta lowered this from 1,500 calls.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Any advertiser can connect",
+      "whoCanConnect": "Any Facebook user who grants the scopes for ad accounts they control",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Requires App Review approval for advanced access to ads_read, ads_management (and business_management if you need it), plus the Full access upgrade to the Marketing API Access Tier and Business Verification. Full access is only lightly rate-limited per ad account and allows 10 system users. You must keep meeting the call-volume rule to stay at this tier.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+          "https://developers.facebook.com/docs/marketing-api/access",
+          "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Register as a Meta developer",
+      "detail": "Log in at developers.facebook.com with a Facebook account and accept the Meta Platform Terms and Developer Policies.",
+      "owner": "you",
+      "estimate": "10 min",
+      "doneWhen": "The 'My Apps' dashboard loads.",
+      "url": "https://developers.facebook.com/apps/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a Business app with the Marketing API",
+      "detail": "Create an app of the Business type (or pick the ads/Marketing API use case), then add the Marketing API product. Adding the product grants Limited access to the Marketing API Access Tier automatically. Connect the app to the Business portfolio you will verify later.",
+      "owner": "you",
+      "estimate": "15 min",
+      "doneWhen": "Marketing API appears under Products, and App Review > Permissions and Features shows ads_read and ads_management with standard access.",
+      "url": "https://developers.facebook.com/apps/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/docs/marketing-api/access",
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure Facebook Login and redirect URIs",
+      "detail": "Add Facebook Login for Business and enter your callback in Valid OAuth Redirect URIs. Meta's docs say the redirect URL should include a trailing '/'. Copy the App ID and App Secret from App settings > Basic. The authorize endpoint is https://www.facebook.com/v26.0/dialog/oauth with scope=ads_read,ads_management (add business_management if you need it).",
+      "owner": "agent",
+      "estimate": "20 min",
+      "doneWhen": "An app admin completes the consent dialog and receives a code.",
+      "url": "https://developers.facebook.com/apps/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Run real traffic to reach 500 calls",
+      "detail": "Using your own or team members' ad accounts, make at least 500 successful Marketing API calls within 15 days, keeping the error rate under 15% across the last 500 calls. Regular insights reads work well for this.",
+      "owner": "agent",
+      "estimate": "1-2 hours of setup, then up to 15 days of elapsed time",
+      "doneWhen": "The requirements for Marketing API Access Tier in the App Dashboard show as met.",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Complete Business Verification",
+      "detail": "In Meta Business Settings, verify the legal business: legal name, registration documents, address, phone and domain/email. This is required for advanced access.",
+      "owner": "you",
+      "estimate": "1 hour hands-on, then days of waiting",
+      "doneWhen": "The Business portfolio shows Verified.",
+      "url": "https://developers.facebook.com/docs/apps/business-verification",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md",
+        "https://admanage.ai/blog/meta-ads-api"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Submit App Review for advanced access",
+      "detail": "Go to App Review > Permissions and Features. Click 'Request advanced access' for ads_read, ads_management (and business_management if needed), and click '+Upgrade' on Marketing API Access Tier. For each item, give a specific use-case description and a screencast of the full login and use flow. Also answer the data handling questions and provide a privacy policy URL. An agent can draft the descriptions and the privacy text.",
+      "owner": "you",
+      "estimate": "3-5 hours",
+      "doneWhen": "The submission status reads 'Submitted'.",
+      "url": "https://developers.facebook.com/docs/app-review",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for review, then switch the app to Live",
+      "detail": "Meta approves or denies each permission. If any are denied, fix the issues and resubmit. Once approved, set App Mode to Live.",
+      "owner": "provider",
+      "estimate": "About 1-3 weeks (unpublished)",
+      "doneWhen": "Permissions show Advanced access, the tier shows Full access, and a user without an app role can connect.",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://www.saurabhdhar.com/blog/meta-app-approval-guide"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Facebook account registered as a Meta developer, and an ad account to test with.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A Business-type app. Other app types cannot use the Marketing API.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/docs/marketing-api/access"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A legal business entity that can pass Meta Business Verification (required for advanced access since February 2023).",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "500 successful Marketing API calls in the last 15 days, with an error rate under 15%, both before upgrading and on an ongoing basis.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A public privacy policy URL, screencasts for each permission, and answers to the data handling questions for App Review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "There are two separate ladders. Standard vs advanced access applies per permission, and Limited vs Full access applies to the Marketing API Access Tier. Meta renamed the tier labels from 'Standard Access' to 'Limited Access' and from 'Advanced Access' to 'Full Access'. The permission identifiers did not change, and older blog posts use the old names.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "There is no sandbox. Meta warns that calls at every access level hit production data.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "User access tokens are short-lived. They can be exchanged once for a long-lived token of about 60 days, and that token cannot be refreshed the way an OAuth refresh token can. Plan for users to re-authorize, or use system-user tokens for your own assets.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://unified.to/blog/how_to_get_your_meta_ads_api_key",
+        "https://docs.unified.to/skills/meta-ads-oauth-app/SKILL.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "When the authorize endpoint receives a bogus client_id, it returns a localized Facebook page saying 'App ID is not valid' rather than an OAuth error redirect.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "The current docs use Graph API v26.0 in the dialog URL. Older versions are deprecated on a rolling schedule, so pin a version and keep it current.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Not enough call volume to upgrade the tier",
+      "signal": "In the App Dashboard, the '+Upgrade' option for Marketing API Access Tier shows unmet requirements (500 calls in 15 days, error rate under 15%).",
+      "nextMove": "Run steady, low-error calls such as insights reads against your own ad accounts for up to 15 days before you submit.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Customers cannot grant ads permissions",
+      "signal": "Users without an app role cannot authorize ads_management or ads_read, or their calls fail with permission errors, because the app only has standard access.",
+      "nextMove": "Get advanced access through App Review. Standard access only covers ad accounts managed by people with an app role.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/docs/marketing-api/access"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "App Review rejection",
+      "signal": "A permission is denied with notes such as an unclear use case or a screencast that does not show the permission in use.",
+      "nextMove": "Re-record the screencast to show the full login flow and the exact feature that uses each permission, then resubmit. Expect roughly another review cycle.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://www.saurabhdhar.com/blog/meta-app-approval-guide",
+        "https://singhamandeep.com/facebook-ads-api-permission-app-review/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Business Verification not completed",
+      "signal": "The advanced access request is blocked, or the dashboard asks you to verify your business.",
+      "nextMove": "Verify the Business portfolio linked to the app with legal documents that match the business name exactly.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Read the Marketing API docs and map the agent's features to ads_read, ads_management and business_management",
+    "Fill in the redirect URIs and app settings once given dashboard access",
+    "Write a script that runs low-error insights calls to reach the 500-call threshold",
+    "Draft the App Review use-case descriptions, screencast scripts, data handling answers and privacy policy text",
+    "Build the short-lived to long-lived token exchange and a reminder for users to re-authorize"
+  ],
+  "youMust": [
+    "Log in with a real Facebook account and accept the Meta Platform Terms (legal acceptance)",
+    "Complete Business Verification with company documents (identity of the legal entity)",
+    "Record and submit the App Review screencasts and submission under the app admin account",
+    "Provide ad accounts for testing, and pay for them if any test ads actually run"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long do Business Verification and App Review take right now?",
+      "howToResolve": "Meta does not publish turnaround times on the pages I read. Check the status in App Review > Requests after you submit, or ask in the Meta Developer Community forum."
+    },
+    {
+      "question": "Is business_management needed in addition to ads_management, and does it also need advanced access?",
+      "howToResolve": "Check App Review > Permissions and Features in your dashboard against the endpoints you call. Business Manager endpoints need Full access."
+    },
+    {
+      "question": "What exactly are the Limited access rate limits?",
+      "howToResolve": "See the Marketing API rate-limiting page and the X-Business-Use-Case-Usage response headers."
+    }
+  ],
+  "providerContact": {
+    "channel": "Meta for Developers support (developers.facebook.com/support) or the Meta Developer Community forum",
+    "draftMessage": "Our Business app (App ID <ID>) uses the Marketing API with ads_read and ads_management so our customers can connect their own ad accounts. We have completed Business Verification. Can you confirm which permissions and features need advanced access for this use case, whether business_management is required, and the expected review time for the Marketing API Access Tier Full access upgrade?"
+  },
+  "slug": "meta-ads",
+  "origin": "library",
+  "input": "Meta Ads",
+  "generatedAt": "2026-11-03T14:13:22.655Z",
+  "durationMs": 79176,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Meta Ads",
+    "slug": "METAADS",
+    "docUrl": "https://docs.composio.dev/toolkits/metaads",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://www.facebook.com/v21.0/dialog/oauth?client_id=test-probe&redirect_uri=https://example.com/cb&scope=ads_read",
+      "purpose": "See how the authorize endpoint responds to an invalid client_id",
+      "status": 200,
+      "finalUrl": "https://www.facebook.com/v21.0/dialog/oauth?client_id=test-probe&redirect_uri=https://example.com/cb&scope=ads_read",
+      "redirects": [],
+      "loginWall": true,
+      "clientRendered": false,
+      "title": "Facebook",
+      "error": null,
+      "at": "2026-11-03T14:12:10.846Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://developers.facebook.com/apps/",
+      "purpose": "Check whether app registration requires login",
+      "status": 200,
+      "finalUrl": "https://developers.facebook.com/apps/",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Page Not Found - Meta for Developers",
+      "error": null,
+      "at": "2026-11-03T14:12:10.846Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://admanage.ai/blog/meta-ads-api",
+    "https://agrowth.io/blogs/facebook-ads/verify-facebook-ad-account",
+    "https://apps.shopify.com/reviews/1517605",
+    "https://community.shopify.com/t/i-just-opened-a-business-manager-account-on-meta-and-got-my-ad-account-restricted-right-after-i-made/402684",
+    "https://developers.facebook.com/apps/",
+    "https://developers.facebook.com/docs/features-reference",
+    "https://developers.facebook.com/docs/marketing-api/access",
+    "https://developers.facebook.com/docs/marketing-apis/overview",
+    "https://developers.facebook.com/documentation/ads-commerce/marketing-api/brand-safety-and-suitability/brand-safety-partners.md",
+    "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization",
+    "https://developers.meta.com/blog/updates-to-ads-management-standard-access-feature/",
+    "https://docs.unified.to/skills/meta-ads-oauth-app/SKILL.md",
+    "https://singhamandeep.com/facebook-ads-api-permission-app-review/",
+    "https://unified.to/blog/how_to_get_your_meta_ads_api_key",
+    "https://www.adamigo.ai/blog/meta-ads-api-key-creation-workflow-explained",
+    "https://www.facebook.com/v21.0/dialog/oauth?client_id=test-probe&redirect_uri=https://example.com/cb&scope=ads_read",
+    "https://www.get-ryze.ai/blog/meta-marketing-api-free-tier-limitations-and-quotas",
+    "https://www.lilachbullock.com/meta-marketing-api/",
+    "https://www.saurabhdhar.com/blog/meta-app-approval-guide"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 22,
+      "uncertain": 3
+    },
+    "changes": []
+  }
+}

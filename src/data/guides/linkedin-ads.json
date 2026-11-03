@@ -1,0 +1,453 @@
+{
+  "app": {
+    "name": "LinkedIn Ads (LinkedIn Marketing API \u2013 Advertising API)",
+    "website": "https://www.linkedin.com/developers/apps",
+    "category": "Advertising platform",
+    "summary": "Lets an agent read ad accounts, campaigns and ad reporting for the connected LinkedIn member, and create or edit campaigns, using 3-legged OAuth scopes such as r_ads, rw_ads and r_ads_reporting."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "Creating the app is instant, but r_ads/rw_ads only arrive after LinkedIn approves your Advertising API access form. Editing beyond 5 ad accounts needs a separate Standard tier ticket with a demo video.",
+    "rationale": {
+      "text": "Anyone can create an app in the LinkedIn Developer Portal, but the Advertising API is a product you apply for on the app's Products tab. LinkedIn reserves access for supported use cases. All apps start in Development tier: they can read data for every ad account the member administers, but can edit only up to 5 ad accounts. Standard tier (unlimited edits) is requested through a Developer Support ticket with a video showing how your platform creates, edits or optimizes campaigns. LinkedIn says it may refuse an upgrade even when you meet the requirements. LinkedIn publishes no review timeline.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "3-6 hours (app + Page + access form + building a demo and recording the Standard-tier video)",
+    "approvalWait": "Days to several weeks per review (two reviews: Advertising API access, then Standard tier). Not published.",
+    "firstConnection": "Same day for the app itself; real Ads-scope connections only after Advertising API access is approved (typically days, unpublished)",
+    "handsOnMinutesHigh": 360,
+    "waitDaysHigh": 42,
+    "basis": {
+      "text": "LinkedIn does not publish review times for the Advertising API access form or the Standard tier ticket. The docs say restricted APIs are evaluated 'case-by-case basis with no fixed timeline'. The wait estimates are inference from that wording and from general developer experience, not from a source.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "App created, no Advertising API product",
+      "whoCanConnect": "Any LinkedIn member can complete OAuth, but only for default self-serve products (e.g. Sign In with LinkedIn). No ads scopes yet.",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Ads permissions (r_ads, rw_ads, r_ads_reporting and others) are granted only after your Advertising API access is approved. Approval adds them to the app automatically.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Advertising API \u2013 Development tier",
+      "whoCanConnect": "Any LinkedIn member who holds a role on an ad account. Reads are unlimited; writes are limited to 5 ad accounts mapped to the app.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Read: no limit for ad accounts the authenticated member administers. Edit: up to 5 ad accounts, which you add under Products > View Ad Accounts > Add Ad Account. Create: 1 test ad account through the API; real accounts must be created in Campaign Manager. All calls hit production data.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07",
+          "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Advertising API \u2013 Standard tier",
+      "whoCanConnect": "Any customer with an ad account role; edits on unlimited ad accounts",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You request it with a support ticket on the Developer Support Portal, including a video that shows your platform creating, editing or optimizing LinkedIn campaigns. LinkedIn may decline even if you meet the minimum requirements.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10",
+          "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create a LinkedIn Page for your company",
+      "detail": "A LinkedIn (company) Page is required, because every developer app must be associated with one. A Page admin has to verify the app association.",
+      "owner": "you",
+      "estimate": "10-20 min",
+      "doneWhen": "Your company Page is live and you are an admin",
+      "url": "https://www.linkedin.com/help/linkedin/answer/a543852",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Check your use case against LinkedIn's restrictions",
+      "detail": "Read the 'API and data restrictions' (restricted use cases) page and the Advertising API integration requirements, so the application isn't rejected for a restricted use case. Pay particular attention to how your AI agent stores or uses LinkedIn data.",
+      "owner": "agent",
+      "estimate": "20-30 min",
+      "doneWhen": "Use case confirmed as supported; notes ready for the access form",
+      "url": "https://learn.microsoft.com/en-us/linkedin/marketing/restricted-use-cases",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the developer app",
+      "detail": "In the Developer Portal choose Create app. Enter the app name, the LinkedIn Page, a privacy policy URL and a logo, and accept the API Terms of Use. Then have the Page admin verify the app on the Settings tab. On the Auth tab, add your OAuth 2.0 redirect URL(s) and copy the Client ID and Primary Client Secret.",
+      "owner": "you",
+      "estimate": "15 min",
+      "doneWhen": "App exists, shows as verified, and has a Client ID and secret",
+      "url": "https://www.linkedin.com/developers/apps/new",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Apply for the Advertising API product",
+      "detail": "On the app's Products tab, request access to Advertising API and complete the access form, which covers your company, use case and how you will use ads data. An agent can draft the answers, but a human must submit and accept the LinkedIn Marketing API Program Terms.",
+      "owner": "you",
+      "estimate": "30-60 min",
+      "doneWhen": "Advertising API shows under Added products, and the r_ads, rw_ads and r_ads_reporting scopes appear on the Auth tab",
+      "url": "https://www.linkedin.com/developers/apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for LinkedIn's access review",
+      "detail": "LinkedIn reviews the form, with no published SLA. If it is rejected or stalls, open a ticket on the Developer Support Portal.",
+      "owner": "provider",
+      "estimate": "Days to weeks (unpublished)",
+      "doneWhen": "Approval email arrives, or the product status changes to added",
+      "url": "https://www.linkedin.com/help/linkedin/ask/dsapi",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Build and test in Development tier",
+      "detail": "Create test tokens with the Token Generator, or run the OAuth authorization code flow with the ads scopes. Copy the 9-digit Ad Account IDs from Campaign Manager, then under Products > View Ad Accounts > Add Ad Account map up to 5 accounts you will write to. Use /adAccountUsers to check the member's role on each account.",
+      "owner": "agent",
+      "estimate": "1-3 hours",
+      "doneWhen": "Reads and writes succeed against your mapped ad accounts",
+      "url": "https://www.linkedin.com/developers/apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Request the Standard tier",
+      "detail": "Record a video showing your platform creating, editing or optimizing LinkedIn campaigns. Then open a ticket on the Developer Support Portal asking for the Advertising API Standard tier, and attach the video and a description of your app. You only need this if customers must write to more than 5 ad accounts; read-only reporting agents may be able to stay in Development tier.",
+      "owner": "you",
+      "estimate": "1-2 hours",
+      "doneWhen": "Ticket submitted with the demo video",
+      "url": "https://www.linkedin.com/help/linkedin/ask/dsapi",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for the Standard tier decision",
+      "detail": "LinkedIn decides at its discretion and may decline even if you meet the requirements. No timeline is published.",
+      "owner": "provider",
+      "estimate": "Unpublished; plan for weeks",
+      "doneWhen": "Support confirms the upgrade and write limits are lifted",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A LinkedIn company Page, linked to the developer app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A use case that LinkedIn supports for the Advertising API. Access is reserved for applications building supported use cases.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Acceptance of the LinkedIn Marketing API Program Terms, which govern campaign management API use.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "For Standard tier: a working integration and a demo video of creating, editing or optimizing campaigns.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Connecting users need an ad account role. For rw_ads that means ACCOUNT_BILLING_ADMIN, ACCOUNT_MANAGER, CAMPAIGN_MANAGER or CREATIVE_MANAGER on the account.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The app-creation page (linkedin.com/developers/apps/new) returned HTTP 200 to an anonymous request with no redirect to a login page. Actually creating an app still requires signing in to LinkedIn.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "The Development tier is not limited to your own accounts. It can read data for unlimited ad accounts the authenticated member administers, but edits are capped at 5 ad accounts. A read-only reporting agent may therefore work for customers before Standard tier.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10",
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "There is no sandbox. All API calls at every tier run on production data, and in Development tier you can create only 1 test ad account through the API.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The API is versioned monthly (e.g. 202511), and old versions are retired on a schedule. Version 202511 is sunset on November 16, 2026. Send a current LinkedIn-Version header.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The new boost scopes (r_member_boost, rw_member_boost, r_organization_boost, rw_organization_boost) are available only from API version 202610.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The authorize endpoint (https://www.linkedin.com/oauth/v2/authorization) shows an inline error page saying 'The passed in client_id is invalid' for an unknown client_id. It does not redirect.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "Access tokens typically last 60 days. Programmatic refresh tokens (about 365 days) are generally enabled only for approved Marketing API partners, so early integrations may need users to re-authorize.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Matched Audiences, Audience Insights and Media Planning all require Advertising API access first. Community Management API is a separate product and is reviewed separately.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Advertising API access form rejected",
+      "signal": "The Products tab shows the request denied, or a rejection email arrives, often citing an unsupported or restricted use case",
+      "nextMove": "Re-check the restricted use cases page, make the description specific (an advertiser-facing campaign management or reporting tool, with no data resale or profiling), and reapply or open a Developer Support ticket",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Write calls fail on customer ad accounts in Development tier",
+      "signal": "Edit or create calls are refused for ad accounts beyond the 5 mapped under View Ad Accounts, while reads work",
+      "nextMove": "Request the Standard tier through a Developer Support ticket with a demo video",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Standard tier declined at LinkedIn's discretion",
+      "signal": "Support replies that the upgrade was not granted",
+      "nextMove": "Ask Support for the reason, strengthen the video and use case, or keep a read-only product within Development tier limits",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Scope not authorized at the consent step",
+      "signal": "OAuth returns unauthorized_scope_error for r_ads, rw_ads or r_ads_reporting",
+      "nextMove": "Confirm the Advertising API is approved and the scopes are listed on the app's Auth tab before requesting them",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Check the use case against LinkedIn's restricted-use-cases and integration-requirements pages",
+    "Draft the answers for the Advertising API access form and the Standard tier support ticket",
+    "Write the privacy policy text covering LinkedIn ads data",
+    "Configure redirect URLs and test the OAuth flow with r_ads, rw_ads and r_ads_reporting",
+    "Call /adAccountUsers to list the ad accounts and roles a connected member has",
+    "Script the demo flow (create, edit, optimize a campaign) for the Standard tier video",
+    "Keep track of LinkedIn-Version sunsets and plan upgrades"
+  ],
+  "youMust": [
+    "Sign in to LinkedIn, create the company Page and the developer app, and verify the app as Page admin. This needs a real member identity.",
+    "Accept the LinkedIn API Terms and the Marketing API Program Terms (a legal agreement).",
+    "Submit the Advertising API access form and the Standard tier ticket, speaking for your company.",
+    "Record the demo video, using a real ad account that has Campaign Manager access.",
+    "Provide a real ad account (which may involve billing) for testing writes."
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does approval of the Advertising API access form and the Standard tier ticket actually take?",
+      "howToResolve": "Ask in the Developer Support Portal ticket when you submit; LinkedIn publishes no SLA."
+    },
+    {
+      "question": "Are refresh tokens enabled for your app at Development tier, or only after partner approval?",
+      "howToResolve": "After approval, check whether the token response includes refresh_token, or inspect a token with the Token Inspector in the Developer Portal."
+    },
+    {
+      "question": "Is the 5-account edit cap in Development tier enforced only on accounts mapped under View Ad Accounts, or on any 5 accounts?",
+      "howToResolve": "Test writes against an unmapped account after approval, or ask Developer Support."
+    },
+    {
+      "question": "What exactly goes into the Standard tier ticket beyond the video (e.g. test credentials, company details)?",
+      "howToResolve": "Open the Developer Support Portal ticket form and review the required fields."
+    }
+  ],
+  "providerContact": {
+    "channel": "LinkedIn Developer Support Portal: https://www.linkedin.com/help/linkedin/ask/dsapi",
+    "draftMessage": "Hi, our app [App name, Client ID] has Advertising API Development tier access. We are building an AI assistant that lets advertisers manage and report on their own LinkedIn campaigns. Their members authenticate via 3-legged OAuth with r_ads, rw_ads and r_ads_reporting. We'd like to request the Standard tier. A demo video of campaign creation, editing and optimization is attached. Could you confirm what else you need and the typical review time?"
+  },
+  "slug": "linkedin-ads",
+  "origin": "library",
+  "input": "LinkedIn Ads",
+  "generatedAt": "2026-11-03T14:13:40.947Z",
+  "durationMs": 97467,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Linkedin Ads",
+    "slug": "LINKEDIN_ADS",
+    "docUrl": "https://docs.composio.dev/toolkits/linkedin_ads",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=r_ads",
+      "purpose": "See provider response to unknown client_id on authorize endpoint",
+      "status": 200,
+      "finalUrl": "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=r_ads",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Authorize | LinkedIn",
+      "error": null,
+      "at": "2026-11-03T14:12:11.656Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://www.linkedin.com/developers/apps/new",
+      "purpose": "Check whether app registration requires login",
+      "status": 200,
+      "finalUrl": "https://www.linkedin.com/developers/apps/new",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Developers | LinkedIn",
+      "error": null,
+      "at": "2026-11-03T14:12:11.656Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://connectsafely.ai/articles/linkedin-api-complete-guide-2026",
+    "https://developer.linkedin.com/product-catalog/marketing/advertising-api",
+    "https://docs.unified.to/skills/linkedin-oauth-app/SKILL.md",
+    "https://elfsight.com/blog/linkedin-api-access-and-pricing/",
+    "https://learn.microsoft.com/en-us/linkedin/consumer/integrations/verified-on-linkedin/guides/quickstart",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/?view=li-lms-2026-06",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview?view=li-lms-2026-09",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access?view=li-lms-2026-10",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/marketing-tiers?view=li-lms-2026-07",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/lms-faq?view=li-lms-2026-07",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/lms-faq?view=li-lms-2026-10&viewFallbackFrom=li-lms-2025-04",
+    "https://learn.microsoft.com/en-us/linkedin/marketing/quick-start?view=li-lms-2025-11",
+    "https://learn.microsoft.com/en-us/linkedin/shared/linkedin-api-partner-support-guide",
+    "https://learn.microsoft.com/eu-es/linkedin/marketing/increasing-access",
+    "https://learn.microsoft.com/it-it/linkedin/marketing/increasing-access",
+    "https://linkedapi.io/guides/linkedin-api-access",
+    "https://sociavault.com/blog/linkedin-api-free-2026",
+    "https://unified.to/blog/how_to_get_your_linkedin_ads_api_key",
+    "https://www.blotato.com/blog/linkedin-api-pricing",
+    "https://www.getphyllo.com/post/linkedin-api-access-in-2026-partner-program-approval-timeline-alternatives",
+    "https://www.getphyllo.com/post/linkedin-api-paid-vs-free-plans-iv",
+    "https://www.linkedin.com/developers/apps/new",
+    "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=test-probe&redirect_uri=https%3A%2F%2Fexample.com%2Fcb&scope=r_ads",
+    "https://www.outstand.so/blog/linkedin-api-pricing",
+    "https://www.outstand.so/blog/linkedin-api-restrictions",
+    "https://zenabm.com/blog/linkedin-ads-api"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 23,
+      "uncertain": 5
+    },
+    "changes": []
+  }
+}

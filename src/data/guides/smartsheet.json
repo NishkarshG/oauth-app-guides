@@ -1,0 +1,394 @@
+{
+  "app": {
+    "name": "Smartsheet",
+    "website": "https://www.smartsheet.com",
+    "category": "Work management",
+    "summary": "OAuth access lets an agent read and modify a user's Smartsheet sheets, rows, reports, dashboards and workspaces, limited to the scopes the user grants."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "No app review, but only a licensed Business-plan (or higher) Smartsheet user can register as a developer.",
+    "rationale": {
+      "text": "The public Developer Tools Registration page says the registering email must belong to an existing licensed Smartsheet user on a Business plan or higher, and that you agree to the Smartsheet Developer Agreement. Third-party setup guides say Smartsheet then activates Developer Tools for that account once it approves the request. After that you create a developer profile and an app in Developer Tools, and you get the client ID and secret straight away. No source we read describes a review before other Smartsheet users can authorize an app. The 'Publish App?' option seems to affect only whether the app is listed publicly. The paid-plan requirement and the activation wait are the only gates.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup",
+        "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes",
+    "approvalWait": "None to a few days (Developer Tools activation; no published timeline)",
+    "firstConnection": "Same day once Developer Tools is activated",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 3,
+    "basis": {
+      "text": "Smartsheet does not say how long Developer Tools activation takes. Third-party guides only say Smartsheet activates it after approving the request. The 0-3 day estimate is an inference. App creation itself is a single form that returns credentials straight away.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup",
+        "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Developer Tools activated on a Business+ account",
+      "whoCanConnect": "Nobody yet. You only have the ability to create apps.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You register a licensed Business-plan (or higher) user's email at developers.smartsheet.com/register and accept the Developer Agreement. Smartsheet then activates Developer Tools for that account. Free accounts cannot register OAuth apps.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html",
+          "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup"
+        ],
+        "probeIds": [
+          "p3"
+        ]
+      }
+    },
+    {
+      "name": "App created, test with your own account",
+      "whoCanConnect": "You and any Smartsheet user you send through the authorize URL",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Clicking Create New App and then Save returns the App client ID and App secret straight away. No source mentions a test-user allowlist or a cap on how many users can connect.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+          "https://docs.stackone.com/connectors/smartsheet/guides/connector-profile/oauth-2-0"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Any customer can connect",
+      "whoCanConnect": "Any Smartsheet user whose plan and admin settings allow API/third-party app access",
+      "reviewRequired": false,
+      "limit": {
+        "text": "No documented review step stands between your app and production use. Customers' own org admins or plan limits may still block third-party apps. This is inferred and was not confirmed in the docs we read.",
+        "evidence": "uncertain",
+        "sourceUrls": [],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Choose a service Smartsheet account on Business plan or higher",
+      "detail": "Pick or buy a licensed Smartsheet seat on Business, Enterprise or Advanced Work Management. Smartsheet suggests using an email address that isn't tied to one person, so the app survives staff changes.",
+      "owner": "you",
+      "estimate": "10 minutes (plus purchasing if needed)",
+      "doneWhen": "You can log in to app.smartsheet.com as a licensed user on a Business+ plan",
+      "url": "https://developers.smartsheet.com/register",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Register for Developer Tools",
+      "detail": "On the Developer Tools Registration page, enter the account email, accept the Smartsheet Developer Agreement and click Register User Account. Then wait for Smartsheet to activate Developer Tools.",
+      "owner": "you",
+      "estimate": "5 minutes plus activation wait",
+      "doneWhen": "A Developer Tools entry appears under the Account icon in Smartsheet",
+      "url": "https://developers.smartsheet.com/register",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup",
+        "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create Developer Profile",
+      "detail": "In Smartsheet, open Account icon → Developer Tools and click Create Developer Profile. Fill in the profile modal.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The Developer Tools window shows a Create New App button",
+      "url": "https://app.smartsheet.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create New App",
+      "detail": "Click Create New App and fill in App Name, App Description (users see it on the consent screen, so make it polished), App URL, App Contact/Support, App Redirect URL (your Composio callback URL) and the 'Publish App?' toggle. Adding a logo is optional. An agent can draft the copy. Click Save.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "A confirmation window shows the App client ID and App secret",
+      "url": "https://app.smartsheet.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup",
+        "https://github.com/smartsheet-samples/oauth-flow-sample-node"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Pick scopes and test the flow",
+      "detail": "Ask only for the scopes you need, for example READ_SHEETS, WRITE_SHEETS, CREATE_SHEETS, CREATE_SIGHTS, SHARE_SHEETS, ADMIN_WORKSPACES. The authorize endpoint is https://app.smartsheet.com/b/authorize and the token endpoint is https://api.smartsheet.com/2.0/token. Connect your own account end to end.",
+      "owner": "agent",
+      "estimate": "15-30 minutes",
+      "doneWhen": "An API call such as GET /2.0/users/me succeeds with the issued access token",
+      "url": "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+        "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "The registering email must belong to an existing licensed Smartsheet user on a Business plan or higher. Free and Pro accounts cannot register OAuth apps.",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "You must accept the Smartsheet Developer Agreement when you register.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "You need a public App URL, a support contact and an exact App Redirect URL for the app form.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "The Developer Tools Registration page loads without logging in. It also says apps that call Smartsheet directly without user authorization don't need Developer Tools; they can use an API access token instead.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "text": "Smartsheet publishes no OAuth discovery metadata: /.well-known/openid-configuration on app.smartsheet.com returns 404. Configure the endpoints by hand.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "Sending an unknown client_id to /b/authorize returned a 403 Forbidden after a redirect to /b/, with no descriptive OAuth error. A bad client ID or redirect URL can therefore look like a generic block.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Access tokens are short-lived (about 7 days, from memory) and come with a refresh token. Smartsheet also uses its own token-exchange details, so check that the token request matches the OAuth guide.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Smartsheet runs separate regional instances (EU at smartsheet.eu, Smartsheetgov). These have different hosts and probably need a separate app registration. A US app won't authorize EU-region users.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Registering through some older flows created a new, separate Smartsheet account. Use the email of the licensed account you intend to manage the app from.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://github.com/smartsheet-samples/oauth-flow-sample-node"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Account is not on a Business+ plan",
+      "signal": "The Developer Tools menu never appears, or registration is refused, because the email isn't a licensed user on Business or higher",
+      "nextMove": "Upgrade the service account, or register with a licensed seat in your company's Business/Enterprise org",
+      "evidence": "tested",
+      "sourceUrls": [
+        "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html"
+      ],
+      "probeIds": [
+        "p3"
+      ]
+    },
+    {
+      "title": "Developer Tools activation pending",
+      "signal": "You registered, but Account → Developer Tools isn't visible yet",
+      "nextMove": "Wait for Smartsheet to activate it. If it takes more than a few days, contact Smartsheet Support",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Redirect URL mismatch",
+      "signal": "The authorize step fails, or returns a 403 or an error instead of the consent screen",
+      "nextMove": "Make the App Redirect URL in Developer Tools exactly match the callback URL you use",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://github.com/smartsheet-samples/oauth-flow-sample-node"
+      ],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "agentCan": [
+    "Draft the App Name, App Description (shown on the consent screen) and support contact text",
+    "Choose the minimal Smartsheet scopes (READ_SHEETS, WRITE_SHEETS, etc.) for the agent's features",
+    "Configure the authorize and token endpoints and test the OAuth flow end to end",
+    "Check that tokens refresh before they expire"
+  ],
+  "youMust": [
+    "Provide or buy a licensed Business-plan (or higher) Smartsheet seat, because a free account cannot register apps",
+    "Accept the Smartsheet Developer Agreement, which is a legal term",
+    "Log in to Smartsheet to create the developer profile and the app, and copy the client secret, because both happen in the logged-in UI"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does Developer Tools activation take, and is it a manual approval?",
+      "howToResolve": "Register and time it, or ask Smartsheet Support"
+    },
+    {
+      "question": "What exactly does the 'Publish App?' toggle do, and does it trigger any review?",
+      "howToResolve": "Read the toggle's help text in the Create New App form, or ask Smartsheet developer support"
+    },
+    {
+      "question": "What is the current access-token lifetime and refresh-token behaviour?",
+      "howToResolve": "Check the 'Get an access token' section of the OAuth guide, or look at expires_in in a test token response"
+    },
+    {
+      "question": "Do EU and Gov-region users need a separately registered app on smartsheet.eu or smartsheetgov.com?",
+      "howToResolve": "Check the Smartsheet API docs on regional base URLs and test with an EU account"
+    },
+    {
+      "question": "Can customer org admins block third-party OAuth apps, or do customer plans restrict API access?",
+      "howToResolve": "Check Smartsheet Help Center articles on admin controls for third-party integrations"
+    }
+  ],
+  "providerContact": {
+    "channel": "Smartsheet Support (Help Center → Contact Support), or the Smartsheet Community API & Developers forum at community.smartsheet.com",
+    "draftMessage": "Hi, I registered <email> (Business plan) for Developer Tools on <date> to build an OAuth integration. Could you confirm (1) when Developer Tools will be activated, (2) whether the 'Publish App?' setting or anything else requires a review before users from other organizations can authorize our app, and (3) whether EU/Gov-region users need a separate app registration? Thanks."
+  },
+  "slug": "smartsheet",
+  "origin": "library",
+  "input": "Smartsheet",
+  "generatedAt": "2026-11-03T14:18:09.446Z",
+  "durationMs": 72212,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Smartsheet",
+    "slug": "SMARTSHEET",
+    "docUrl": "https://docs.composio.dev/toolkits/smartsheet",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://app.smartsheet.com/.well-known/openid-configuration",
+      "purpose": "Check for OIDC/OAuth discovery metadata",
+      "status": 404,
+      "finalUrl": "https://app.smartsheet.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Error 404 | Smartsheet",
+      "error": null,
+      "at": "2026-11-03T14:17:08.286Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://app.smartsheet.com/b/authorize?response_type=code&client_id=test-probe&scope=READ_SHEETS&state=x",
+      "purpose": "See how the authorize endpoint handles an unknown client_id",
+      "status": 403,
+      "finalUrl": "https://app.smartsheet.com/b/",
+      "redirects": [
+        "/b/"
+      ],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "403 Forbidden",
+      "error": null,
+      "at": "2026-11-03T14:17:08.286Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://developers.smartsheet.com/register",
+      "purpose": "Check whether Developer Tools registration page loads anonymously",
+      "status": 200,
+      "finalUrl": "https://developers.smartsheet.com/register",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Register for Smartsheet Developer Tools",
+      "error": null,
+      "at": "2026-11-03T14:17:18.424Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+      "purpose": "Read OAuth guide for token expiry, Publish App, regions",
+      "status": 200,
+      "finalUrl": "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "OAuth",
+      "error": null,
+      "at": "2026-11-03T14:17:25.742Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://app.smartsheet.com/.well-known/openid-configuration",
+    "https://app.smartsheet.com/b/",
+    "https://app.smartsheet.com/b/authorize?response_type=code&client_id=test-probe&scope=READ_SHEETS&state=x",
+    "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+    "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth.md",
+    "https://developers.smartsheet.com/register",
+    "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html",
+    "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.html?tag=itechguides04-20",
+    "https://docs.aws.amazon.com/quick/latest/userguide/smartsheet-integration.md",
+    "https://docs.databricks.com/gcp/en/ingestion/lakeflow-connect/smartsheet-source-setup",
+    "https://docs.stackone.com/connectors/smartsheet/guides/connector-profile/oauth-2-0",
+    "https://github.com/smartsheet-samples/oauth-flow-sample-node",
+    "https://learn.microsoft.com/en-ie/Azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup",
+    "https://learn.microsoft.com/en-us/azure/databricks/ingestion/lakeflow-connect/smartsheet-source-setup"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 6,
+      "sourced": 11,
+      "uncertain": 5
+    },
+    "changes": []
+  }
+}

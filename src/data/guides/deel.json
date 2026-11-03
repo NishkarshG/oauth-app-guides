@@ -1,0 +1,462 @@
+{
+  "app": {
+    "name": "Deel",
+    "website": "https://www.deel.com",
+    "category": "HR & payroll",
+    "summary": "An OAuth2 app lets an agent act on a customer's Deel organization, for example contracts, people, timesheets and invoice adjustments, within the scopes the customer grants."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "Creating the app takes minutes, but you can't market it as a Deel integration until it passes a 1–2 week App Store review.",
+    "rationale": {
+      "text": "You create the OAuth2 app yourself in the Deel dashboard (More → Developer → Apps → Create new app) and get a Client ID and Secret straight away. Deel's App Store review is published as about 1–2 weeks in total: a completeness check (1–2 business days), a technical review (3–5) and a listing review (2–3). It needs a demo video, a test account, a privacy policy, terms and a help article. The docs say you can't publicly market an unlisted app as a Deel integration. They don't say whether an unlisted app can be authorized by other Deel organizations, so it's unclear whether review is required or only needed for distribution.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth",
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": [
+        "p4",
+        "p5"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "3-8 hours (app setup plus App Store submission materials and demo video)",
+    "approvalWait": "1-2 weeks (Deel's published estimate) if you submit to the App Store",
+    "firstConnection": "Under 1 hour",
+    "handsOnMinutesHigh": 480,
+    "waitDaysHigh": 14,
+    "basis": {
+      "text": "Deel publishes its review stages: a completeness check (1-2 business days), a technical review (3-5 business days) and an App Store listing review (2-3 business days). It says a decision typically comes in 1-2 weeks in total and that timing varies with the queue. No developer reports of real review times were found. The hands-on estimate is inferred from the submission checklist.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    }
+  },
+  "stages": [
+    {
+      "name": "Test on your own Deel organization (or sandbox)",
+      "whoCanConnect": "Users in the Deel organization that created the app",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You create the app yourself under More → Developer → Apps and get a Client ID and Secret immediately. Deel's partner guide tells you to build and test in sandbox before you submit.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.deel.com/api/oauth",
+          "https://developer.deel.com/api/partners/getting-started"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Unlisted app used by other customers' organizations",
+      "whoCanConnect": "Possibly any Deel org you send the authorize link to. Not confirmed.",
+      "reviewRequired": false,
+      "limit": {
+        "text": "The docs only say you cannot publicly market an unlisted or unapproved app as a Deel integration. They don't say whether other organizations are blocked from authorizing it. Test this with a second Deel org before relying on it.",
+        "evidence": "uncertain",
+        "sourceUrls": [
+          "https://developer.deel.com/api/partners/publishing-to-app-store"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Published on the Deel App Store",
+      "whoCanConnect": "All Deel customers (Deel cites 40,000+ companies), with discovery in the in-app marketplace",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Submit from Organization settings → Developer → Apps → Submit for Review. Deel reviews completeness, does a technical evaluation (the demo video matters most) and reviews the listing. A decision typically comes in 1-2 weeks.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developer.deel.com/api/partners/publishing-to-app-store"
+        ],
+        "probeIds": [
+          "p5"
+        ]
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Optionally contact Deel's partnership team",
+      "detail": "Deel's partner Getting Started guide recommends contacting the partnership team before you start building. Do this if you plan to list on the App Store.",
+      "owner": "you",
+      "estimate": "15 min to send; reply time unknown",
+      "doneWhen": "You have a partnerships contact or a reply",
+      "url": "https://developer.deel.com/api/partners/getting-started",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/getting-started"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the OAuth2 app",
+      "detail": "Sign in to your Deel dashboard and go to More → Developer → Apps. Some docs call this Settings → Developer Center or Organization settings → Developer → Apps. Click Create new app. Choose Organization App for org-level tokens (contracts, timesheets, invoice adjustments, accounting, SCIM) or Personal App for user-level tokens limited to what the authorizing user can access. Fill in App Name (shown on the consent screen), Description, Redirect URI (your Composio callback URL) and an optional Logo.",
+      "owner": "you",
+      "estimate": "10-15 min",
+      "doneWhen": "The app appears under Apps and shows a Client ID and Client Secret",
+      "url": "https://app.deel.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Pick scopes",
+      "detail": "Decide on the smallest set of scopes your agent needs, for example contracts:read contracts:write organizations:read. Use the Scopes Reference in the OAuth2 doc. Scopes are sent space-separated in the authorize URL https://app.deel.com/oauth2/authorize, with response_type=code and state. Tokens come from https://app.deel.com/oauth2/tokens.",
+      "owner": "agent",
+      "estimate": "20-30 min",
+      "doneWhen": "You have a scope list that matches the agent's tools",
+      "url": "https://developer.deel.com/api/oauth",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth",
+        "https://developer.deel.com/v2.3.0/docs/getting-started-1"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the full flow, including refresh",
+      "detail": "Authorize with your own account or a sandbox account, call the API, and check the refresh path. Refresh tokens are single-use and rotate on every refresh.",
+      "owner": "agent",
+      "estimate": "30-60 min",
+      "doneWhen": "A connection survives at least one token refresh",
+      "url": "https://developer.deel.com/api/oauth",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Prepare App Store submission materials",
+      "detail": "Required: a 512x512 PNG logo, short description, app name and tagline, long description, features, landing page URL, category, at least 3 screenshots, a help article, a support email, a help center URL, an integration demo video (following Deel's demo recording requirements), an escalation email, a test account URL and credentials, a privacy policy URL, a terms of service URL, a data usage disclosure and compliance statements (GDPR and others).",
+      "owner": "agent",
+      "estimate": "2-6 hours (the video needs a human to record)",
+      "doneWhen": "Every required item on Deel's submission checklist is ready",
+      "url": "https://developer.deel.com/api/partners/publishing-to-app-store",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Submit for Review",
+      "detail": "Go to Organization settings → Developer → Apps, select the app, click Submit for Review, then review and submit.",
+      "owner": "you",
+      "estimate": "15 min",
+      "doneWhen": "You get the immediate submission confirmation",
+      "url": "https://developer.deel.com/api/partners/publishing-to-app-store",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for Deel's review",
+      "detail": "The completeness check takes 1-2 business days, the technical review 3-5 and the App Store review 2-3. Then you get an approval or feedback asking for revisions.",
+      "owner": "provider",
+      "estimate": "1-2 weeks",
+      "doneWhen": "Approval email; the app is live in the Deel App Store",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Deel account with access to the Developer section (More → Developer → Apps). There's no standalone developer portal: app registration happens inside the logged-in Deel web app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "For the App Store: a privacy policy URL, terms of service URL, data usage disclosure and compliance statements, plus a test account for Deel's reviewers and an integration demo video.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "text": "Deel publishes no OAuth discovery document: /.well-known/openid-configuration on app.deel.com returns 404. Configure the authorize (https://app.deel.com/oauth2/authorize) and token (https://app.deel.com/oauth2/tokens) endpoints by hand.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Refresh tokens are single-use. Each refresh invalidates the previous refresh token and returns a new pair, and access tokens last 30 days. If two workers refresh at the same time, one gets a 'refresh token already used' error and the user has to reconnect.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The app type is a real choice. Organization App tokens reach all org resources within the granted scopes. Personal App tokens are limited to what the authorizing user can access. An agent acting for an HR admin across the company usually wants an Organization App.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Marketing restriction: only apps reviewed and published to the App Store may be promoted as official Deel integrations.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "text": "The authorize endpoint is a JavaScript single-page app. An anonymous request with client_id=test-probe returned HTTP 200 with only a JS shell, so a bad client_id doesn't produce a visible server-side error. You only see failures in a browser.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "The API uses header-based date versioning: pin requests with the X-Version header. The current stable version in the docs is 2026-01-01.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p4"
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Review rejection for an incomplete demo video",
+      "signal": "Deel replies with feedback asking for revisions after the technical review",
+      "nextMove": "Record the demo exactly as Deel's 'Demo recording requirements' section describes. Deel calls it the most crucial part of the technical review. Then resubmit.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/partners/publishing-to-app-store"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "title": "Refresh token reuse breaks connections",
+      "signal": "Token endpoint error: refresh token expired or already used",
+      "nextMove": "Make sure only one process refreshes a given connection and that the new refresh token is always saved. Otherwise the user has to re-authorize.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developer.deel.com/api/oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Other organizations may not be able to authorize an unpublished app",
+      "signal": "A customer from another Deel org gets an error on the consent screen",
+      "nextMove": "Test with a second Deel org early. If it's blocked, submit to the App Store or ask the partnerships team.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Read Deel's OAuth2 and partner docs, including the .md versions and llms.txt index",
+    "Select the minimum scope list and build the authorize URL",
+    "Draft App Store listing copy: short and long descriptions, features, tagline and category",
+    "Draft the help article, privacy policy, terms and data usage disclosure for human review",
+    "Write a demo video script that covers Deel's demo recording requirements",
+    "Implement and test token refresh handling with single-use refresh tokens"
+  ],
+  "youMust": [
+    "Sign in to Deel and create the app in More → Developer → Apps (needs a Deel account login)",
+    "Choose Organization App or Personal App, which sets the data access you're offering customers",
+    "Approve the legal documents (privacy policy, terms, compliance statements) your company publishes",
+    "Record the integration demo video and provide test account credentials to Deel",
+    "Click Submit for Review and handle any revision requests from Deel"
+  ],
+  "uncertainties": [
+    {
+      "question": "Can users from other Deel organizations authorize an OAuth app that hasn't been published to the App Store?",
+      "howToResolve": "Create the app, then try the authorize URL while logged in to a different Deel org, or ask Deel's partnerships team."
+    },
+    {
+      "question": "How long do App Store reviews actually take in practice?",
+      "howToResolve": "No public developer reports were found. Ask the partnerships team for current queue times when you submit."
+    },
+    {
+      "question": "How long is a refresh token valid, and are there rate limits for unlisted apps?",
+      "howToResolve": "Read the Token Rotation and rate-limit sections of developer.deel.com, or ask Deel support."
+    },
+    {
+      "question": "How do you get a Deel sandbox account, and is it free?",
+      "howToResolve": "Follow the sandbox section of the partner Getting Started guide at developer.deel.com/api/partners/getting-started."
+    }
+  ],
+  "providerContact": {
+    "channel": "Deel partnership team (linked from 'Get in touch' on https://developer.deel.com/api/partners/getting-started), or Support from the developer docs header",
+    "draftMessage": "Hi, we're building an AI agent product that lets our customers connect their Deel organization over OAuth2 (Organization App, scopes: contracts:read, organizations:read, ...). Before we submit for App Store review: 1) Can users in other Deel organizations authorize our app while it's unpublished, and is there a cap? 2) What is the current review queue time? 3) Can we get a sandbox account for testing and for your reviewers? Thanks."
+  },
+  "slug": "deel",
+  "origin": "library",
+  "input": "Deel",
+  "generatedAt": "2026-11-03T14:19:52.740Z",
+  "durationMs": 105804,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Deel",
+    "slug": "DEEL",
+    "docUrl": "https://docs.composio.dev/toolkits/deel",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://app.deel.com/oauth2/authorize?client_id=test-probe&redirect_uri=https://example.com/callback&scope=contracts:read&response_type=code&state=xyz",
+      "purpose": "See how Deel responds to an unknown client_id at the authorize endpoint",
+      "status": 200,
+      "finalUrl": "https://app.deel.com/oauth2/authorize?client_id=test-probe&redirect_uri=https://example.com/callback&scope=contracts:read&response_type=code&state=xyz",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Deel - Your forever people platform",
+      "error": null,
+      "at": "2026-11-03T14:18:29.651Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://app.deel.com/.well-known/openid-configuration",
+      "purpose": "Check for OAuth discovery metadata",
+      "status": 404,
+      "finalUrl": "https://app.deel.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:18:29.651Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://developer.deel.com/api/oauth",
+      "purpose": "Read Deel OAuth2 doc: app types, token expiry, sandbox",
+      "status": 200,
+      "finalUrl": "https://developer.deel.com/api/oauth",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "OAuth2 | Deel | Documentation",
+      "error": null,
+      "at": "2026-11-03T14:18:43.554Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://developer.deel.com/api/partners/publishing-to-app-store",
+      "purpose": "Read Deel App Store review requirements and timelines",
+      "status": 200,
+      "finalUrl": "https://developer.deel.com/api/partners/publishing-to-app-store",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Publishing to App Store | Deel | Documentation",
+      "error": null,
+      "at": "2026-11-03T14:18:43.553Z"
+    },
+    {
+      "id": "p5",
+      "url": "https://developer.deel.com/api/partners/publishing-to-app-store.md",
+      "purpose": "Markdown version to read review timeline and rejection reasons",
+      "status": 200,
+      "finalUrl": "https://developer.deel.com/api/partners/publishing-to-app-store.md",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:18:51.314Z"
+    },
+    {
+      "id": "p6",
+      "url": "https://developer.deel.com/api/oauth.md",
+      "purpose": "Markdown version for token expiry, rotation, sandbox",
+      "status": 200,
+      "finalUrl": "https://developer.deel.com/api/oauth.md",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:18:51.314Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://app.deel.com/.well-known/openid-configuration",
+    "https://app.deel.com/oauth2/authorize?client_id=test-probe&redirect_uri=https://example.com/callback&scope=contracts:read&response_type=code&state=xyz",
+    "https://community.shopify.com/t/review-process-timeline/399738",
+    "https://developer.apple.com/forums/tags/app-review?page=16",
+    "https://developer.apple.com/forums/topics/app-store-distribution-and-marketing/app-store-distribution-and-marketing-general?page=2",
+    "https://developer.atlassian.com/cloud/confluence/oauth-2-3lo-apps/",
+    "https://developer.atlassian.com/platform/marketplace/dc-apps-submitting-your-app/",
+    "https://developer.deel.com/api/oauth",
+    "https://developer.deel.com/api/oauth.md",
+    "https://developer.deel.com/api/oauth.mdx",
+    "https://developer.deel.com/api/partners/getting-started",
+    "https://developer.deel.com/api/partners/publishing-to-app-store",
+    "https://developer.deel.com/api/partners/publishing-to-app-store.md",
+    "https://developer.deel.com/docs/token-rotation",
+    "https://developer.deel.com/mcp/guides/best-practices",
+    "https://developer.deel.com/v2.3.0/docs/getting-started-1",
+    "https://developer.deel.com/v2.6.1/docs/oauth2",
+    "https://developers.apideck.com/connectors/deel/docs/application_owner+oauth_credentials",
+    "https://developers.make.com/api-documentation/authentication/oauth-flow/token-expiration",
+    "https://docs.cdp.coinbase.com/coinbase-app/oauth2-integration/scopes",
+    "https://docs.celigo.com/hc/en-us/articles/24366883736091-Set-up-a-connection-to-Deel",
+    "https://docs.clover.com/docs/refresh-access-tokens",
+    "https://docs.discord.com/developers/topics/oauth2",
+    "https://docs.slack.dev/authentication/using-token-rotation",
+    "https://docs.slack.dev/tools/bolt-python/concepts/token-rotation",
+    "https://ezscreenshots.com/blog/app-store-review-time",
+    "https://help.letsdeel.com/hc/en-gb/articles/18603247898641-How-to-list-your-app-to-Deel-App-Store",
+    "https://launchshots.app/blog/app-store-review-process-2026",
+    "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/add-in-submission-guide",
+    "https://learn.microsoft.com/en-us/partner-center/marketplace-offers/review-publish-offer",
+    "https://orshot.com/docs/developers/token-management",
+    "https://partnershipleaders.com/post/the-secrets-behind-deel-partner-program/",
+    "https://stack.deel.com/t/get-your-app-listed-in-the-deel-app-store/73",
+    "https://storedeveloper.microsoft.com/",
+    "https://www.agicent.com/blog/how-long-does-it-take-to-get-an-app-into-the-app-store/",
+    "https://www.capterra.com/p/205015/Deel/reviews/",
+    "https://www.publishmymobileapp.com/blog/how-long-does-it-take-to-publish-an-app/",
+    "https://www.quora.com/How-long-does-it-take-to-deploy-an-app-to-the-appstore"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 3,
+      "sourced": 18,
+      "uncertain": 2
+    },
+    "changes": []
+  }
+}

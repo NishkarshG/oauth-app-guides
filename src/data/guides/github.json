@@ -1,0 +1,355 @@
+{
+  "app": {
+    "name": "GitHub",
+    "website": "https://github.com",
+    "category": "Code hosting",
+    "summary": "Lets an agent read and act on a user's repositories, issues, pull requests and org resources through the GitHub REST/GraphQL APIs, on that user's behalf."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "quick",
+    "headline": "No app review exists: any GitHub user can connect at once, but each org's owners may have to approve your app.",
+    "rationale": {
+      "text": "An OAuth app is registered in a few minutes under Settings > Developer settings > OAuth apps, and GitHub publishes no review or verification step before other users can authorize it. The real gate sits on the customer's side. When an organization has OAuth app access restrictions turned on, members must ask an org owner to approve your app before it can reach that org's private resources.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+        "https://docs.github.com/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "15-45 minutes",
+    "approvalWait": "None from GitHub; per-org owner approval varies by customer",
+    "firstConnection": "About 10 minutes",
+    "handsOnMinutesHigh": 45,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "GitHub's docs describe a one-form registration with no review. How long org-owner approval takes depends entirely on each customer, and GitHub publishes no figure for it.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Use Composio's managed app",
+      "whoCanConnect": "Any GitHub user",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Composio manages GitHub, so users see Composio's app name on the consent screen and share its quota. Restricted orgs still have to approve Composio's app.",
+        "evidence": "uncertain",
+        "sourceUrls": [],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Your own OAuth app, personal repos",
+      "whoCanConnect": "Any GitHub user, including you right away",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You get no review and no test-user list. Limits: at most 10 tokens per user/app/scope combination, and at most 10 new tokens per hour.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.github.com/articles/authorizing-oauth-apps"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Access to restricted organizations",
+      "whoCanConnect": "Members of orgs whose owner has approved your app",
+      "reviewRequired": true,
+      "limit": {
+        "text": "If an org has OAuth app access restrictions enabled, members must request approval and an org owner approves or denies it. Until then the app cannot reach that org's private resources.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.github.com/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization",
+          "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Choose OAuth app or GitHub App",
+      "detail": "GitHub recommends a GitHub App: it has fine-grained permissions, lets users pick repositories, and uses short-lived tokens. A classic OAuth app is simpler and always acts as the user, using scopes such as repo. Choose the type that matches what your Composio auth config expects (usually a classic OAuth app).",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "You have chosen an app type",
+      "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Register the OAuth app",
+      "detail": "Sign in. Go to profile picture > Settings > Developer settings > OAuth apps > New OAuth App (shown as 'New OAuth app'). To own the app under an organization, use that org's settings instead. Fill in Application name, Homepage URL, an optional Application description, and a Redirect URI (your Composio callback; you can add up to 10, and leave wildcard matching off). Tick Enable Device Flow only if you need it. Click Register application. Expire user access tokens is ticked by default, which gives you refresh tokens, so decide whether you want that.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The app page shows a Client ID",
+      "url": "https://github.com/settings/applications/new",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Generate a client secret and add a logo",
+      "detail": "On the app page, click Generate a new client secret and copy it at once. You can also upload a logo so the consent screen shows your branding.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "You have the client ID and secret",
+      "url": "https://github.com/settings/developers",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Test with your own account and an org",
+      "detail": "Connect your own account. Then connect from an org that has OAuth app access restrictions on, to see the 'request approval' flow customers will meet.",
+      "owner": "agent",
+      "estimate": "10-20 minutes",
+      "doneWhen": "API calls succeed against both personal and org repos",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "You need a GitHub account (or admin rights on an org, if the org will own the app). The registration page redirects anonymous visitors to the login page.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Each user or organization can own at most 100 OAuth apps.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "You can get at most 10 tokens per user/application/scope combination, with a rate limit of 10 tokens created per hour. Going over revokes the oldest tokens, which matters if your agent reconnects often.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/articles/authorizing-oauth-apps"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "GitHub App user access tokens expire after 8 hours by default and come with a refresh token. OAuth apps can now also issue expiring tokens. A 2026 community thread reports classic OAuth app tokens dying after about 8 hours, so implement refresh handling either way.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app",
+        "https://github.com/orgs/community/discussions/210540"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Classic OAuth scopes cannot limit source-code access to read-only: the 'repo' scope grants read and write.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/articles/authorizing-oauth-apps"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "GitHub publishes no OAuth discovery document: /.well-known/oauth-authorization-server returns 404. The endpoints are fixed: https://github.com/login/oauth/authorize and https://github.com/login/oauth/access_token. An anonymous request to the authorize URL redirects to the login page before checking client_id.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p3",
+        "p2"
+      ]
+    },
+    {
+      "text": "The consent screen for a new app tells users it isn't owned by GitHub, was created recently and has few users. Expect that for early customers.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Org access restrictions hide org repos",
+      "signal": "The user has authorized the app, but org repos are missing or return 404/403. The user's authorization page shows the org as 'Access request pending' or denied.",
+      "nextMove": "Have the user click Request (or Grant, if they are an owner) for the org on the app's authorization page. An org owner then approves it under Org Settings > Third-party access / OAuth app policy.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization",
+        "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Org has turned off app access requests",
+      "signal": "Members get no option to request access for your app",
+      "nextMove": "An org owner must enable app access requests or approve your app directly",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.github.com/ru/enterprise-cloud@latest/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the registration form values (name, homepage, callback URL, description)",
+    "Pick the minimal scope set for the agent's GitHub tools",
+    "Write user-facing help text on requesting org approval",
+    "Test API access against personal and org repos after connection",
+    "Add refresh-token handling for 8-hour expiring tokens"
+  ],
+  "youMust": [
+    "Sign in to GitHub and register the app, because it needs an authenticated account (with 2FA if enabled)",
+    "Generate and store the client secret",
+    "Accept the GitHub Terms of Service, plus the Marketplace agreement if you ever list the app",
+    "As an org owner, approve the app for your own org when restrictions are on"
+  ],
+  "uncertainties": [
+    {
+      "question": "Are classic OAuth app tokens now forced to expire after 8 hours, or only when the opt-in expiration setting is on?",
+      "howToResolve": "Check the OAuth app's settings page and the GitHub changelog, or test a token after 9 hours"
+    },
+    {
+      "question": "Will the Composio GitHub toolkit accept GitHub App credentials, or only classic OAuth app credentials?",
+      "howToResolve": "Check Composio's GitHub auth config fields"
+    },
+    {
+      "question": "Does GitHub Marketplace listing review (optional) matter for distribution?",
+      "howToResolve": "It isn't needed to connect. Read docs.github.com Marketplace listing requirements only if you want a public listing"
+    }
+  ],
+  "providerContact": {
+    "channel": "GitHub Community discussions (github.com/orgs/community/discussions, 'API and Webhooks' category) or support.github.com",
+    "draftMessage": "Our classic OAuth app (client ID XXXX) issues user tokens that stop working about 8 hours after issue, though no expiration is set in the app settings. Is token expiration now enforced for OAuth apps, and should we be using refresh tokens?"
+  },
+  "slug": "github",
+  "origin": "library",
+  "input": "GitHub",
+  "generatedAt": "2026-11-03T14:23:54.093Z",
+  "durationMs": 72430,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "managed",
+    "name": "GitHub",
+    "slug": "GITHUB",
+    "docUrl": "https://docs.composio.dev/toolkits/github",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p3",
+      "url": "https://github.com/.well-known/oauth-authorization-server",
+      "purpose": "Check for OAuth authorization server metadata",
+      "status": 404,
+      "finalUrl": "https://github.com/.well-known/oauth-authorization-server",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Page not found \u00b7 GitHub \u00b7 GitHub",
+      "error": null,
+      "at": "2026-11-03T14:22:51.455Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://github.com/settings/applications/new",
+      "purpose": "Check whether OAuth app registration page requires login",
+      "status": 200,
+      "finalUrl": "https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsettings%2Fapplications%2Fnew",
+      "redirects": [
+        "https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsettings%2Fapplications%2Fnew"
+      ],
+      "loginWall": true,
+      "clientRendered": false,
+      "title": "Sign in to GitHub \u00b7 GitHub",
+      "error": null,
+      "at": "2026-11-03T14:22:51.455Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://github.com/login/oauth/authorize?client_id=test-probe&redirect_uri=https://example.com/cb&scope=repo",
+      "purpose": "See how authorize endpoint responds to an unknown client_id",
+      "status": 200,
+      "finalUrl": "https://github.com/login?client_id=test-probe&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcb%26scope%3Drepo",
+      "redirects": [
+        "https://github.com/login?client_id=test-probe&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcb%26scope%3Drepo"
+      ],
+      "loginWall": true,
+      "clientRendered": false,
+      "title": "Sign in to GitHub \u00b7 GitHub",
+      "error": null,
+      "at": "2026-11-03T14:22:51.455Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://developer.github.com/enterprise/2.16/apps/building-oauth-apps/authorizing-oauth-apps",
+    "https://docs.github.com/articles/authorizing-oauth-apps",
+    "https://docs.github.com/developers/apps/creating-an-oauth-app",
+    "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app",
+    "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens",
+    "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/best-practices-for-creating-an-oauth-app",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/differences-between-github-apps-and-oauth-apps",
+    "https://docs.github.com/en/developers/apps/refreshing-user-to-server-access-tokens",
+    "https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-oauth-access-to-your-organizations-data",
+    "https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions",
+    "https://docs.github.com/en/enterprise-server@3.10/apps/oauth-apps/using-oauth-apps/authorizing-oauth-apps",
+    "https://docs.github.com/en/enterprise-server@3.11/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/en/enterprise-server@3.13/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens",
+    "https://docs.github.com/en/enterprise-server@3.17/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/en/enterprise-server@3.19/apps/oauth-apps/using-oauth-apps/authorizing-oauth-apps",
+    "https://docs.github.com/en/enterprise-server@3.20/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/en/enterprise-server@3.21/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
+    "https://docs.github.com/en/enterprise-server@3.3/apps/building-github-apps/refreshing-user-to-server-access-tokens",
+    "https://docs.github.com/en/free-pro-team@latest/articles/authorizing-oauth-apps",
+    "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/about-oauth-app-access-restrictions",
+    "https://docs.github.com/en/organizations/managing-oauth-access-to-your-organizations-data/disabling-oauth-app-access-restrictions-for-your-organization",
+    "https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests",
+    "https://docs.github.com/enterprise-server@3.7/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
+    "https://docs.github.com/ko/enterprise-server@3.21/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations",
+    "https://docs.github.com/organizations/managing-oauth-access-to-your-organizations-data/approving-oauth-apps-for-your-organization",
+    "https://docs.github.com/ru/enterprise-cloud@latest/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations",
+    "https://github.blog/changelog/2024-11-08-updated-limits-for-github-app-private-keys-and-scoped-tokens/",
+    "https://github.com/.well-known/oauth-authorization-server",
+    "https://github.com/github/docs/blob/main/content/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app.md",
+    "https://github.com/github/docs/blob/main/content/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation.md",
+    "https://github.com/github/docs/blob/main/content/organizations/managing-oauth-access-to-your-organizations-data/enabling-oauth-app-access-restrictions-for-your-organization.md",
+    "https://github.com/k-k1/agent-fleet/issues/1676",
+    "https://github.com/login/oauth/authorize?client_id=test-probe&redirect_uri=https://example.com/cb&scope=repo",
+    "https://github.com/login?client_id=test-probe&return_to=%2Flogin%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%253A%252F%252Fexample.com%252Fcb%26scope%3Drepo",
+    "https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsettings%2Fapplications%2Fnew",
+    "https://github.com/onecli/onecli/issues/589",
+    "https://github.com/orgs/community/discussions/198354",
+    "https://github.com/orgs/community/discussions/210540",
+    "https://github.com/orgs/community/discussions/24584",
+    "https://github.com/settings/applications/new"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 13,
+      "uncertain": 3
+    },
+    "changes": []
+  }
+}

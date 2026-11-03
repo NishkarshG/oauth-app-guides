@@ -1,0 +1,431 @@
+{
+  "app": {
+    "name": "Pipedrive",
+    "website": "https://www.pipedrive.com",
+    "category": "Sales CRM",
+    "summary": "Through OAuth, an agent can read and write a user's Pipedrive CRM data (deals, persons, organizations, activities, leads and more) within the scopes the user approves."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "quick",
+    "headline": "No review is needed: a 'private' Pipedrive app can be installed by any Pipedrive company through an unlisted link.",
+    "rationale": {
+      "text": "Pipedrive has two app types, chosen in Developer Hub. A private app gets a client_id and client_secret as soon as you save it. After you click 'Change to live', any user or company in Pipedrive can install it from a direct installation link, with no Marketplace review. A public app has to pass Pipedrive's Marketplace approval, which the docs currently say can take up to 21 business days. Even then it stays unlisted until you click Publish. An agent product whose users connect through Composio only needs the private path, unless you want to be listed in the Marketplace. You need a developer sandbox account to see Developer Hub at all.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app",
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes (private app); 1-3 days of preparation if you also go public",
+    "approvalWait": "None for a private app; up to 21 business days (often longer) for a public Marketplace listing",
+    "firstConnection": "About 15-30 minutes after the sandbox signup email arrives",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "The private-app path has no review step, according to the private-app docs. For public apps, the approval-process page carries a banner (page modified 2025-11-12) saying reviews may take up to 21 business days. Developer Community threads describe 'In Review' lasting 11-14 days, and one lasted 2 months. The hands-on estimate is my own reading of the short registration form (App name, Callback URL, scopes) and is not published by Pipedrive.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app",
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+        "https://devcommunity.pipedrive.com/t/public-app-review-pending-for-2-months/20728",
+        "https://devcommunity.pipedrive.com/t/marketplace-review-timeline-for-initial-feedback/20188"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Draft app, test on your sandbox",
+      "whoCanConnect": "You, through 'Install & test' in Developer Hub on your developer sandbox company (5 seats by default)",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You must create the app inside a developer sandbox account, because regular accounts don't show Developer Hub. The sandbox is deleted if you create no app within 45 days, or if you don't make a private app live (or publish a public one) within 6 months.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://pipedrive.readme.io/docs/developer-sandbox-account"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Private app set to Live",
+      "whoCanConnect": "Any Pipedrive user or company that opens your unlisted installation link, or that your Composio connect flow sends through the OAuth authorize URL",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Click 'Change to live' on the 'OAuth & access scopes' tab, then share the installation link. There is no Marketplace listing and no review. The app type can't be changed later.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Public app, approved (unlisted by default)",
+      "whoCanConnect": "Anyone; listed in the Pipedrive Marketplace only after you click 'Publish'",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Pipedrive's Marketplace team reviews the app, including a demo video, test accounts, ToS and privacy pages and a listing checklist. The review can take up to 21 business days. After approval the app stays unlisted until you click 'Publish' in Developer Hub.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sign up for a developer sandbox account",
+      "detail": "On developers.pipedrive.com, enter your e-mail and first name in 'Sign up for a Sandbox account'. Doing so accepts the Terms of Service, the Developer Agreement and the Privacy Notice.",
+      "owner": "you",
+      "estimate": "5 minutes plus waiting for the email",
+      "doneWhen": "You can log in to the sandbox company, and Settings > (company name) shows 'Developer Hub'.",
+      "url": "https://developers.pipedrive.com/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/developer-sandbox-account"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create a private app in Developer Hub",
+      "detail": "Go to Settings > (sandbox company name) > Developer Hub, click 'Create an app', then 'Create private app'. Choose carefully, because the type can't be changed later. On 'Basic info', fill in App name and Callback URL. Only one callback URL is allowed per app, so enter the Composio redirect URI. Click Save.",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "You land on the 'OAuth & access scopes' tab.",
+      "url": "https://app.pipedrive.com/developer-hub",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Select access scopes and copy credentials",
+      "detail": "On 'OAuth & access scopes', tick only the scopes your agent's tools need, such as deals, contacts, activities or users. Users accept or deny all scopes together. Copy the client_id and client_secret.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "You have the client_id and client_secret.",
+      "url": "https://app.pipedrive.com/developer-hub",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app",
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Install & test on your sandbox",
+      "detail": "Click 'Install & test' and approve the OAuth confirmation dialog. Check that the token exchange works. Pipedrive's token endpoint needs HTTP Basic auth with the client_id and client_secret, and the response includes api_domain.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "An authorized connection can call the API on your sandbox company.",
+      "url": "https://app.pipedrive.com/developer-hub",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-oauth-authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Change the private app to live",
+      "detail": "On 'OAuth & access scopes', click 'Change to live'. This lets users outside your sandbox install the app through the installation link or the OAuth authorize URL.",
+      "owner": "you",
+      "estimate": "2 minutes",
+      "doneWhen": "The app's status in Developer Hub shows Live, and a user from a different Pipedrive company can authorize it.",
+      "url": "https://app.pipedrive.com/developer-hub",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "(Optional) Build and submit a public app for the Marketplace",
+      "detail": "Only needed if you want a Marketplace listing. Create a separate public app, because a private app can't be converted. Fill in all seven tabs: Basic info, OAuth & access scopes, App extensions, Onboarding for users, General info (icon plus 1-5 images at 16:10), Setup and Installation, and Support and legal info. You also need ToS and privacy URLs, a pricing page link, a demo video explaining the scopes, test accounts and a contact person. Then click 'Send to review'.",
+      "owner": "agent",
+      "estimate": "1-3 days of preparation",
+      "doneWhen": "The app status changes to in review and a confirmation email arrives.",
+      "url": "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "(Optional) Wait for Marketplace review, then Publish",
+      "detail": "Pipedrive's team tests the install flow and the app's functionality, and emails approval or rejection reasons. After approval, go to '...' next to the app in Developer Hub and click 'Publish' to list it.",
+      "owner": "provider",
+      "estimate": "Up to 21 business days, per the current docs banner",
+      "doneWhen": "You receive the approval email and the app appears in the Marketplace after you click Publish.",
+      "url": "https://app.pipedrive.com/developer-hub",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Pipedrive developer sandbox account. Developer Hub is only visible in sandbox companies, which are free and limited to 5 seats by default.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/developer-sandbox-account",
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The sandbox signup form is public and needs no login.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    },
+    {
+      "text": "Exactly one OAuth callback URL per app. It must match the redirect_uri you send, here Composio's.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app",
+        "https://pipedrive.readme.io/docs/marketplace-oauth-authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Public apps only: acceptance of the Pipedrive Developer Partner Agreement; Terms of Service and Privacy Policy pages; a pricing page link; a support contact; an app icon and 1-5 listing images; a demo video covering scope usage; working test accounts for reviewers; and primary use of OAuth (not API tokens).",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Access tokens last 60 minutes. A refresh_token expires if it goes unused for 60 days, and each use resets that window. A connection left idle for more than 60 days therefore has to be re-authorized.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-oauth-authorization",
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The token response includes api_domain, the company-specific base URL. Send API calls to that domain, not to a hard-coded host.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-oauth-authorization"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Scopes are all-or-nothing for the user, who accepts or denies the full set. Request only what the agent needs.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Pipedrive's authorize endpoint does not reject an unknown client_id up front. An anonymous request with client_id=test-probe was redirected to the Pipedrive login page, so a mistyped client_id only shows up after the user logs in.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "App type (private vs public) is permanent. Moving to the Marketplace later means registering a new public app with a new client_id, and existing connections would have to re-authorize.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app",
+        "https://pipedrive.readme.io/docs/marketplace-registering-the-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Developer sandbox accounts are deleted if no app is created within 45 days of signup, or if no private app goes live (or public app is published) within 6 months. Make the private app live early so the sandbox that owns your production client_id isn't deleted.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/developer-sandbox-account"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Developer Hub missing in your Pipedrive account",
+      "signal": "Settings has no 'Developer Hub' entry under the company name.",
+      "nextMove": "Sign up for a separate developer sandbox account at developers.pipedrive.com and create the app there. Regular paid companies don't show Developer Hub.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Users outside your sandbox cannot install",
+      "signal": "The authorization fails or the app isn't installable for other companies while it's still a draft.",
+      "nextMove": "Click 'Change to live' on the private app's 'OAuth & access scopes' tab.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Public app stuck 'In Review'",
+      "signal": "The status stays in review for weeks with no email. Developers report 2 weeks to 2 months.",
+      "nextMove": "Ship with the private app meanwhile. Follow up at marketplace.devs@pipedrive.com or on the Developer Community app-review category.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+        "https://devcommunity.pipedrive.com/t/public-app-review-pending-for-2-months/20728",
+        "https://devcommunity.pipedrive.com/t/marketplace-app-review-timeline-2-weeks-no-updates-yet/20214"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "redirect_uri mismatch",
+      "signal": "The OAuth error comes back at the callback, or no code is issued, because redirect_uri doesn't match the single registered Callback URL.",
+      "nextMove": "Set the app's Callback URL to exactly the redirect URI Composio uses.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://pipedrive.readme.io/docs/marketplace-oauth-authorization"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the private app's Basic info (App name, Callback URL) and pick the minimal access scopes in Developer Hub",
+    "Map the agent's tools to Pipedrive scopes and write a scope justification",
+    "Implement and test the authorize, token and refresh flow, using HTTP Basic auth at https://oauth.pipedrive.com/oauth/token and api_domain for API calls",
+    "Draft Marketplace listing copy (short summary of 150 characters max, full description of 1500 characters max), install instructions, onboarding guide blocks, privacy policy and ToS text",
+    "Prepare the public-app review checklist and the script for the demo video"
+  ],
+  "youMust": [
+    "Sign up for the developer sandbox, which accepts Pipedrive's Terms of Service and Developer Agreement",
+    "Click 'Change to live' and own the app account. This is a business decision, and the account holds production credentials.",
+    "For a public listing: accept the Developer Partner Agreement, record the demo video, provide test accounts and a reachable contact person, and click 'Send to review' and later 'Publish'"
+  ],
+  "uncertainties": [
+    {
+      "question": "Do live private apps have any install-count, rate-limit or feature restrictions compared with approved public apps?",
+      "howToResolve": "The private-app docs mention none. Ask marketplace.devs@pipedrive.com or check the Rate limiting doc for app-specific quotas."
+    },
+    {
+      "question": "Is the 21-business-day review banner still current? The page was last modified 2025-11-12.",
+      "howToResolve": "Check the approval-process page and recent Developer Community app-review threads just before you submit."
+    },
+    {
+      "question": "Does Pipedrive's terms for private apps allow distributing them to many unrelated customers at scale, which is how an AI agent product would use one?",
+      "howToResolve": "The docs say a private app can be shared with any company. To be sure, read the Developer Partner Agreement or ask marketplace.devs@pipedrive.com."
+    },
+    {
+      "question": "Does each user in a company need to authorize separately, or can an admin install for everyone?",
+      "howToResolve": "See the 'App sharing: Adding apps to multiple users' doc. That feature has to be requested for your app."
+    }
+  ],
+  "providerContact": {
+    "channel": "marketplace.devs@pipedrive.com (Marketplace team, listed on the App approval process page) or the Developers' Community at https://devcommunity.pipedrive.com",
+    "draftMessage": "Hi, we're building an AI agent product where our customers connect their own Pipedrive accounts via OAuth. We plan to use a live private app (client_id: <ID>) distributed by direct install link instead of a Marketplace listing. Can you confirm that (1) there's no cap on how many companies can install a live private app, (2) private apps get the same API rate limits as public apps, and (3) this distribution model is allowed under the Developer Partner Agreement? Thanks!"
+  },
+  "slug": "pipedrive",
+  "origin": "library",
+  "input": "Pipedrive",
+  "generatedAt": "2026-11-03T14:15:20.810Z",
+  "durationMs": 107206,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Pipedrive",
+    "slug": "PIPEDRIVE",
+    "docUrl": "https://docs.composio.dev/toolkits/pipedrive",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://developers.pipedrive.com/",
+      "purpose": "Developer Hub landing / sandbox signup",
+      "status": 200,
+      "finalUrl": "https://developers.pipedrive.com/",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "Pipedrive Developers Corner | Pipedrive API sandbox",
+      "error": null,
+      "at": "2026-11-03T14:13:40.370Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://oauth.pipedrive.com/oauth/authorize?client_id=test-probe&redirect_uri=https://example.com/cb",
+      "purpose": "See how authorize endpoint handles unknown client",
+      "status": 200,
+      "finalUrl": "https://oauth.pipedrive.com/auth/login?return_url=https%3A%2F%2Foauth.pipedrive.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%3A%2F%2Fexample.com%2Fcb",
+      "redirects": [
+        "https://oauth.pipedrive.com/auth/login?return_url=https%3A%2F%2Foauth.pipedrive.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%3A%2F%2Fexample.com%2Fcb"
+      ],
+      "loginWall": true,
+      "clientRendered": false,
+      "title": "Log in",
+      "error": null,
+      "at": "2026-11-03T14:13:40.370Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://crmbooster.io/en/blog/pipedrive-marketplace/",
+    "https://devcommunity.pipedrive.com/",
+    "https://devcommunity.pipedrive.com/t/is-app-review-required-for-oauth-app-to-be-found-by-any-user/7555",
+    "https://devcommunity.pipedrive.com/t/marketplace-app-review-timeline-2-weeks-no-updates-yet/20214",
+    "https://devcommunity.pipedrive.com/t/marketplace-review-timeline-for-initial-feedback/20188",
+    "https://devcommunity.pipedrive.com/t/oauth2-authorization-for-all-pipedrive-users/5820",
+    "https://devcommunity.pipedrive.com/t/pipedrive-app-verification-process-have-been-very-slow/20301",
+    "https://devcommunity.pipedrive.com/t/pipedrive-review-process/4355",
+    "https://devcommunity.pipedrive.com/t/public-app-callpal-in-review-since-august-24-any-update/20746",
+    "https://devcommunity.pipedrive.com/t/public-app-review-pending-for-2-months/20728",
+    "https://developers.pipedrive.com/",
+    "https://developers.pipedrive.com/changelog/page/6",
+    "https://developers.pipedrive.com/changelog/post/introducing-new-oauth-scopes-for-webhooks",
+    "https://developers.pipedrive.com/changelog/post/new-parameter-in-oauth-oauthtoken-responses",
+    "https://github.com/pipedrive/client-nodejs/blob/master/CHANGELOG.md",
+    "https://help.make.com/pipedrive-api-v1-to-v2-transition-by-july-31-2026",
+    "https://medium.com/pipedrive-engineering/getting-your-marketplace-app-approved-on-the-first-review-is-it-even-possible-628b7e5eca47",
+    "https://nango.dev/docs/api-integrations/pipedrive/how-to-register-your-own-pipedrive-oauth-app.md",
+    "https://oauth.pipedrive.com/auth/login?return_url=https%3A%2F%2Foauth.pipedrive.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26redirect_uri%3Dhttps%3A%2F%2Fexample.com%2Fcb",
+    "https://oauth.pipedrive.com/oauth/authorize?client_id=test-probe&redirect_uri=https://example.com/cb",
+    "https://pipedrive.readme.io/do/docs/marketplace-vendor-agreement",
+    "https://pipedrive.readme.io/docs/developer-hub.md",
+    "https://pipedrive.readme.io/docs/developer-sandbox-account",
+    "https://pipedrive.readme.io/docs/getting-started",
+    "https://pipedrive.readme.io/docs/marketplace-app-approval-process",
+    "https://pipedrive.readme.io/docs/marketplace-creating-a-proper-app",
+    "https://pipedrive.readme.io/docs/marketplace-oauth-api.md",
+    "https://pipedrive.readme.io/docs/marketplace-oauth-authorization",
+    "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app",
+    "https://pipedrive.readme.io/docs/marketplace-registering-the-app",
+    "https://pipedrive.readme.io/docs/marketplace-updating-the-existing-app",
+    "https://pipedrive.readme.io/docs/marketplace-vendor-agreement",
+    "https://pipedrive.readme.io/edit/developer-hub",
+    "https://pipeline.zoominfo.com/sales/pipedrive-api",
+    "https://www.activepieces.com/blog/pipedrive-api-a-2026-integration-guide"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 24,
+      "uncertain": 0
+    },
+    "changes": []
+  }
+}

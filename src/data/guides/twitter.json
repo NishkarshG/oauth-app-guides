@@ -1,0 +1,403 @@
+{
+  "app": {
+    "name": "X (formerly Twitter)",
+    "website": "https://x.com",
+    "category": "Social media",
+    "summary": "With an X OAuth 2.0 app, an agent can read and post on X for each user who connects: posts, timelines, likes, follows, bookmarks, lists and DMs. Every API call is billed to the developer's prepaid credits."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "X has no app review, but there is no free tier: you prepay credits and pay for every user's API calls.",
+    "rationale": {
+      "text": "You create an app in the Developer Console (console.x.com) and turn on OAuth 2.0 in User authentication settings yourself. None of the docs I read describe a review before other users can authorize it. The real gate is money. Since February 2026 the X API is pay-per-use only. You buy credits up front and they are used up per request, for example $0.005 per post read and $0.015 per post created. The cost of every connected user's calls comes out of your balance, and requests are blocked when the balance reaches zero.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md",
+        "https://docs.x.com/fundamentals/developer-apps.md",
+        "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes",
+    "approvalWait": "None (credit purchase is immediate)",
+    "firstConnection": "About 30 minutes after signing in to console.x.com and buying credits",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "X's docs describe app creation and OAuth setup as self-serve, with credits bought in the console. I found no published review or approval step for apps on pay-per-use. The time estimates are my inference from the number of console steps.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md",
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Create the app and test with your own X account",
+      "whoCanConnect": "You (the app owner)",
+      "reviewRequired": false,
+      "limit": {
+        "text": "API calls need a credit balance. Reads of your own data (your posts, bookmarks, followers and so on) are billed at a lower 'Owned Reads' rate of $0.001 per resource, but only when the authenticated user is the app owner.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.x.com/x-api/getting-started/pricing.md"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Any X user can connect (pay-per-use)",
+      "whoCanConnect": "Any X account holder who authorizes the app",
+      "reviewRequired": false,
+      "limit": {
+        "text": "All calls are billed to your credits at standard rates, capped at 3 million Post reads per monthly billing cycle. Requests are blocked when the balance hits zero or a spending limit you set is reached.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.x.com/x-api/getting-started/pricing.md"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Enterprise",
+      "whoCanConnect": "Any X user, at high volume",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Above 3M Post reads a month, or for custom rate limits, you need an Enterprise plan, which starts with X's enterprise interest form. Third-party reports put Enterprise contracts in the tens of thousands of dollars per month.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://docs.x.com/x-api/getting-started/pricing.md",
+          "https://www.xpoz.ai/blog/guides/understanding-twitter-api-pricing-tiers-and-alternatives/"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Sign in to the Developer Console and accept the developer terms",
+      "detail": "Go to console.x.com and sign in with the X account that will own the app. Use a company-controlled account, not a personal one. Accept the developer agreement and policy when prompted.",
+      "owner": "you",
+      "estimate": "5-10 minutes",
+      "doneWhen": "The Developer Console dashboard loads and shows a Create App option.",
+      "url": "https://console.x.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Buy credits and set a spending limit",
+      "detail": "In the Developer Console, save a payment card and buy credits. Optionally turn on Auto-recharge (Recharge amount plus Trigger threshold) and set a Spending limit per billing cycle. Per X's docs, your first purchase earns $20 in free credits.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The console shows a positive credit balance.",
+      "url": "https://console.x.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create App",
+      "detail": "Click Create App and enter a name, description and use case. Then generate credentials. Keys are shown only once.",
+      "owner": "agent",
+      "estimate": "5 minutes",
+      "doneWhen": "The app appears in the console with its keys generated.",
+      "url": "https://console.x.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure User authentication settings for OAuth 2.0",
+      "detail": "In App settings > User authentication settings > Edit, enable OAuth 2.0 and pick Type of App = Web App (confidential client, which gets a Client Secret). Set App permissions (Read / Read and write / Read, write and DMs), fill in the consent-screen info (website, terms and privacy URLs), and add your exact callback URL. Matching is exact, including trailing slashes. Use https, with at most 10 callback URLs per app.",
+      "owner": "agent",
+      "estimate": "10-15 minutes",
+      "doneWhen": "The OAuth 2.0 Client ID and Client Secret are shown.",
+      "url": "https://console.x.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md",
+        "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test authorization with your own account",
+      "detail": "Run the Authorization Code with PKCE flow (authorize at https://x.com/i/oauth2/authorize, token at https://api.x.com/2/oauth2/token). Request offline.access along with scopes such as tweet.read and users.read so you get a refresh token.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "A call to GET /2/users/me with the user token succeeds.",
+      "url": "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "An X account to own the developer app, plus acceptance of X's developer terms.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A payment card and prepaid credits. X has offered no free tier since the February 2026 move to pay-per-use. Legacy Basic/Pro subscribers can opt in to pay-per-use from the console.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md",
+        "https://postproxy.dev/blog/x-api-pricing-2026/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An exact-match https callback URL registered on the app.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The authorize endpoint (x.com/i/oauth2/authorize) resolves and shows an X login page to anonymous visitors. The page is rendered by JavaScript, so the probe could not see how X handles an invalid client_id.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Access tokens from the OAuth 2.0 PKCE flow are valid for only two hours. You get a refresh token only if you request the offline.access scope.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Billing is per resource returned and is deduplicated within a 24-hour UTC window. Fetching the same post again on the same UTC day is not charged twice, though X calls this a soft guarantee.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Creating a post that contains a URL costs $0.20 per request, against $0.015 for a plain post. This matters for agents that share links.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Auto-recharge fires at most once every 5 minutes and pauses at a zero or negative balance. A bursty agent can still hit 'out of credits' errors.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The cheap Owned Reads rate applies only when the authenticated user owns the developer app. Your connected customers' reads are billed at standard rates.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Changing app permissions means users must re-authorize before their tokens carry the new scope.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "For local development, X requires http://127.0.0.1 rather than localhost in callback URLs.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Credit balance exhausted or spending limit reached",
+      "signal": "API requests are blocked and return out-of-credits errors. A slightly negative balance blocks all requests until you top up.",
+      "nextMove": "Add credits, raise the Spending limit, or set the auto-recharge amount high enough to cover 5 minutes of peak usage.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Monthly Post read cap",
+      "signal": "Post reads stop after 3 million in a billing cycle on pay-per-use.",
+      "nextMove": "Request Enterprise access through X's enterprise interest form.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.x.com/x-api/getting-started/pricing.md"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Callback URL mismatch",
+      "signal": "The authorize step fails, usually with a 'Something went wrong / You weren't able to give access to the App' page, when redirect_uri does not exactly match an allowlisted URL.",
+      "nextMove": "Register the exact callback URL, trailing slash included, under User authentication settings.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://docs.x.com/fundamentals/developer-apps.md"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Draft the app name, description and use case for Create App",
+    "Fill in User authentication settings: app type, permissions, callback URLs, website, terms and privacy URLs",
+    "Draft privacy policy and terms pages for the consent screen",
+    "Run a test PKCE authorization and refresh-token exchange",
+    "Estimate monthly credit spend from planned endpoints using X's per-resource prices",
+    "Monitor consumption through GET /2/usage/tweets"
+  ],
+  "youMust": [
+    "Sign in with the X account that will own the app, and accept X's developer terms (a legal agreement)",
+    "Add a payment card, buy credits, and choose auto-recharge and spending limits (billing)",
+    "Complete the user consent step yourself during the first test authorization",
+    "Sign an Enterprise contract if you need more than 3M Post reads a month"
+  ],
+  "uncertainties": [
+    {
+      "question": "Does X ever review or restrict pay-per-use apps before or after launch, for example over use-case policy or automation rules?",
+      "howToResolve": "Read the current Developer Agreement and Policy at docs.x.com and ask on devcommunity.x.com."
+    },
+    {
+      "question": "What exact HTTP status and error body does the API return when credits run out?",
+      "howToResolve": "Run a test call against a zero-balance account, or check the X API error reference."
+    },
+    {
+      "question": "Do per-endpoint rate limits (per user and per app per 15 minutes) still apply on top of pay-per-use billing, and at what values?",
+      "howToResolve": "Check the rate limits page on docs.x.com and the response headers on real calls."
+    },
+    {
+      "question": "Third-party sources disagree on whether the pay-per-use read cap is 2M or 3M a month.",
+      "howToResolve": "X's own pricing page currently says 3M. Confirm the live figure in the Developer Console."
+    }
+  ],
+  "providerContact": {
+    "channel": "X Developer Community forum (devcommunity.x.com) or support from the Developer Console",
+    "draftMessage": "Hi, we're building an AI agent where our users connect their own X accounts through OAuth 2.0 (Web App, confidential client) on a pay-per-use developer account. Is there any review or approval before third-party users can authorize our app? Which per-user and per-app rate limits apply on pay-per-use? And what error do API calls return when our credit balance runs out?"
+  },
+  "slug": "twitter",
+  "origin": "library",
+  "input": "Twitter",
+  "generatedAt": "2026-11-03T14:13:27.461Z",
+  "durationMs": 84005,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Twitter",
+    "slug": "TWITTER",
+    "docUrl": "https://docs.composio.dev/toolkits/twitter",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://x.com/i/oauth2/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=tweet.read%20users.read&state=s&code_challenge=abc&code_challenge_method=plain",
+      "purpose": "See how X's authorize endpoint responds to an unknown client_id",
+      "status": 200,
+      "finalUrl": "https://x.com/i/oauth2/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=tweet.read%20users.read&state=s&code_challenge=abc&code_challenge_method=plain",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Authorize app / X",
+      "error": null,
+      "at": "2026-11-03T14:12:12.025Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://console.x.com",
+      "purpose": "Check whether the developer console requires login",
+      "status": 200,
+      "finalUrl": "https://console.x.com/",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Developer Console",
+      "error": null,
+      "at": "2026-11-03T14:12:12.025Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://auth0.com/ai/docs/connections/twitter",
+    "https://bundle.social/blog/x-api-pricing-2026-costs-limits",
+    "https://console.x.com",
+    "https://console.x.com/",
+    "https://devcommunity.x.com/t/access-token-expires-in/164425",
+    "https://devcommunity.x.com/t/refresh-token-expiring-with-offline-access-scope/168899?page=2",
+    "https://devcommunity.x.com/t/token-expiry/237799",
+    "https://developer.twitter.com/en/docs/authentication/oauth-2-0/authorization-code",
+    "https://developer.x.com/en/docs/apps.html",
+    "https://developer.x.com/en/docs/authentication/oauth-2-0/user-context",
+    "https://docs.cdp.coinbase.com/embedded-wallets/social-login/x",
+    "https://docs.stack-auth.com/docs/concepts/auth-providers/x-twitter",
+    "https://docs.stack-auth.com/docs/next/concepts/auth-providers/x-twitter",
+    "https://docs.x.com/es/fundamentals/authentication/oauth-2-0/authorization-code",
+    "https://docs.x.com/fundamentals/authentication/oauth-2-0/authorization-code",
+    "https://docs.x.com/fundamentals/developer-apps.md",
+    "https://docs.x.com/fundamentals/developer-portal",
+    "https://docs.x.com/ja/fundamentals/authentication/oauth-2-0/authorization-code",
+    "https://docs.x.com/ko/fundamentals/authentication/oauth-2-0/authorization-code",
+    "https://docs.x.com/overview?issue=64",
+    "https://docs.x.com/pt/fundamentals/authentication/oauth-2-0/authorization-code",
+    "https://docs.x.com/x-api/getting-started/",
+    "https://docs.x.com/x-api/getting-started/free-credits.md",
+    "https://docs.x.com/x-api/getting-started/getting-access",
+    "https://docs.x.com/x-api/getting-started/pricing",
+    "https://docs.x.com/x-api/getting-started/pricing.md",
+    "https://docs.x.com/x-api/introduction",
+    "https://en.wikipedia.org/wiki/X402",
+    "https://opentweet.io/x-api-pricing",
+    "https://postproxy.dev/blog/x-api-pricing-2026/",
+    "https://supabase.com/docs/guides/auth/auth-twitter",
+    "https://supabase.com/docs/guides/auth/social-login/auth-twitter",
+    "https://twitterapi.io/blog/x-api-cost-breakdown-2026",
+    "https://twitterapi.io/blog/x-developer-portal",
+    "https://www.blotato.com/blog/twitter-api-pricing",
+    "https://www.outstand.so/blog/x-api-pricing",
+    "https://www.postzen.dev/blog/twitter-api-pricing",
+    "https://www.socialcrawl.dev/blog/x-twitter-api-2026",
+    "https://www.twittrapi.com/blog/x-api-pricing-2026",
+    "https://www.xpoz.ai/blog/guides/understanding-twitter-api-pricing-tiers-and-alternatives/",
+    "https://x.com/i/oauth2/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=tweet.read%20users.read&state=s&code_challenge=abc&code_challenge_method=plain",
+    "https://x.com/i/trending/2019901839370531129?lang=en"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 21,
+      "uncertain": 2
+    },
+    "changes": []
+  }
+}

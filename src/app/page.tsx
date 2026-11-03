@@ -18,7 +18,7 @@ export default async function Home() {
         &ldquo;any customer can connect&rdquo;: the steps, the wait, the blockers, and what an agent can do for you.
       </p>
       <div className="mt-8 max-w-2xl">
-        <AppLookup examples={["Pipedrive", "Webflow", "Klaviyo"]} />
+        <AppLookup examples={["Brevo", "Zendesk", "Gusto"]} />
       </div>
 
       <h2 className="mt-14 text-xl font-semibold">Guide library</h2>

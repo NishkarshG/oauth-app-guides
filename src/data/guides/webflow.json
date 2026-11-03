@@ -1,0 +1,390 @@
+{
+  "app": {
+    "name": "Webflow",
+    "website": "https://webflow.com",
+    "category": "Website builder / CMS",
+    "summary": "With an OAuth Data Client app, an agent can read and write a user's Webflow sites, CMS collections, pages, assets and forms through the Webflow Data API."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "involved",
+    "headline": "Your app works only inside your own Workspace until Marketplace review approves it, which Webflow aims to decide in 10 business days.",
+    "rationale": {
+      "text": "A Workspace admin can register a Data Client app in minutes. Webflow's docs say new apps are available only to users in the app's Workspace, and external users can't install the app until it is approved and published in the Marketplace. Before review you can add at most 5 test users, and you have to request them through support. Private apps go through the same review as public ones. After you submit, Webflow aims to send a decision within 10 business days.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app",
+        "https://developers.webflow.com/apps/docs/marketplace/overview",
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "3-8 hours (registration, listing assets, review account, submission form, fixes)",
+    "approvalWait": "About 2 weeks (10-business-day target), longer if Webflow requests changes",
+    "firstConnection": "Under 30 minutes, for users in your own Workspace",
+    "handsOnMinutesHigh": 480,
+    "waitDaysHigh": 21,
+    "basis": {
+      "text": "Webflow publishes a target of a decision within 10 business days of submission. The hands-on time and the extra wait when changes are requested are estimates; Webflow publishes no figures for either.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app",
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Test in your own Workspace",
+      "whoCanConnect": "Members of the Workspace where the app is registered",
+      "reviewRequired": false,
+      "limit": {
+        "text": "New apps are available only to users in the app's Workspace. External users can't install the app until it's approved and published in the Webflow Marketplace.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.webflow.com/apps/data/docs/register-an-app"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Pre-launch user testing",
+      "whoCanConnect": "Up to 5 named external test users, added by Webflow Support",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Request up to 5 test users at support.webflow.com using their Webflow emails, then share your app's install URL with them.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.webflow.com/apps/docs/marketplace/overview"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Approved public app (listed or unlisted)",
+      "whoCanConnect": "Any Webflow user",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You submit through the Webflow App submission form and Webflow reviews against the Marketplace Guidelines. A public app can be listed in the Marketplace, or unlisted where Webflow supports that model. Private apps, meant for one specific Workspace or custom implementation, are reviewed the same way.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.webflow.com/apps/docs/marketplace/overview",
+          "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a Workspace where you are an admin",
+      "detail": "Use an existing Workspace where you have Admin permissions, or create Webflow's free Developer Workspace for building and testing apps. Only Workspace admins can create apps, view client secrets and change app settings.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "You can open Workspace settings > Apps & Integrations as an admin.",
+      "url": "https://webflow.com/dashboard",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Register the app with the Data Client building block",
+      "detail": "Go to Workspace settings > Apps & Integrations > App Development and register a new app. Enter the name, description, icon and homepage. Pick the Data Client building block. Add an HTTPS redirect URI that matches your callback exactly; a trailing slash counts as a different URI. Select only the scopes you need, such as sites:read, cms:read and cms:write, because scopes are locked once the app is published. Leave 'Restrict app installation to a specific site' off if users should be able to authorize several sites.",
+      "owner": "agent",
+      "estimate": "15-30 minutes",
+      "doneWhen": "The app appears under App Development, showing its Client ID and Client Secret.",
+      "url": "https://developers.webflow.com/apps/data/docs/register-an-app",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the OAuth flow inside your Workspace",
+      "detail": "Run the authorize flow with your own Workspace account. Check that the scopes and site selection behave as you expect.",
+      "owner": "you",
+      "estimate": "30 minutes",
+      "doneWhen": "You can make an API call (for example, list sites) with the access token.",
+      "url": "https://developers.webflow.com/data/reference/oauth-app",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Optionally add up to 5 external test users",
+      "detail": "Ask Webflow Support to add up to 5 test users, giving their Webflow emails. Then send them the app's install URL.",
+      "owner": "you",
+      "estimate": "15 minutes, plus Support's response time",
+      "doneWhen": "Support confirms the users were added and they can install the app.",
+      "url": "https://support.webflow.com/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/docs/marketplace/overview"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Prepare the listing and review artifacts",
+      "detail": "Write English listing copy with no beta or staging language. Keep 'Webflow' out of your app name and domains. Disclose pricing for any paid tiers, explain any Custom Code or Workspace scopes, and add alt text to screenshots. Set up a review account on your highest plan or tier that won't expire and isn't behind a paywall, and keep it active after approval for follow-up audits.",
+      "owner": "agent",
+      "estimate": "2-4 hours",
+      "doneWhen": "All assets and review credentials are ready.",
+      "url": "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app",
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Submit through the Webflow App submission form",
+      "detail": "Fill in the form at developers.webflow.com/submit. Choose Public (listed or unlisted) or Private under Marketplace Visibility. The form checks required fields and listing content when you submit.",
+      "owner": "you",
+      "estimate": "30-60 minutes",
+      "doneWhen": "A confirmation email arrives at the email address on your Webflow account.",
+      "url": "https://developers.webflow.com/submit",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app",
+        "https://developers.webflow.com/apps/docs/marketplace/overview"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Wait for review and respond to any requested changes",
+      "detail": "Webflow aims to decide within 10 business days. If it requests changes, fix every item, retest the app end to end and resubmit through the queue. Webflow won't check fixes outside the queue.",
+      "owner": "provider",
+      "estimate": "About 10 business days per round",
+      "doneWhen": "An approval email arrives and the app is published.",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines",
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Webflow account with Admin permissions on a Workspace. The free Developer Workspace is enough.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "An HTTPS redirect URI that you register exactly as it will be used.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A review account on your highest plan or tier that doesn't expire and stays active after approval.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The authorize endpoint webflow.com/oauth/authorize requires a Webflow login. An anonymous request with a fake client_id was redirected to the Webflow login page and never reached client validation.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Scopes are locked after publishing. To add scopes you must go through approval again. Webflow suggests registering a copy of the app to test the new scopes without disturbing the production version.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "'Restrict app installation to a specific site' limits each authorization to a single site. With it off (the default), a user can authorize the app for multiple sites.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Approval covers only the version, configuration and permissions that were reviewed. Material changes need an 'App Update' submission, which goes through the same review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines",
+        "https://developers.webflow.com/apps/docs/marketplace/overview"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Private apps are not a way to skip review. They are reviewed like public apps and are not meant for distribution across many Workspaces, so an AI agent product serving many customers needs a public app (listed or unlisted).",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/docs/marketplace/overview",
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/private-apps"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "From memory and not re-checked: Webflow OAuth access tokens do not expire and no refresh token is issued, and the token endpoint is https://api.webflow.com/oauth/access_token.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "External users can't install the unapproved app",
+      "signal": "Customers outside your Workspace (and outside the 5 test users) can't complete installation or authorization.",
+      "nextMove": "For early pilots, ask Support to add up to 5 test users. For general availability, submit for Marketplace review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app",
+        "https://developers.webflow.com/apps/docs/marketplace/overview"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Invalid Redirect URI",
+      "signal": "An 'Invalid Redirect URI' error during authorization.",
+      "nextMove": "Make the URI match the registered one exactly, including any trailing slash and the localhost port.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/apps/data/docs/register-an-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Review returns 'Changes requested'",
+      "signal": "A review email listing changes, typically about listing copy, an expired or paywalled review account, or unexplained Custom Code or Workspace scopes.",
+      "nextMove": "Fix every item, retest the app end to end, and resubmit through the form. Each round goes back into the queue.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines",
+        "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Fill in the app registration fields: name, description, redirect URI and scopes",
+    "Choose the minimal scope set and write the justification for any Custom Code or Workspace scopes",
+    "Draft listing copy, screenshot alt text and pricing disclosure that meet the Marketplace Guidelines",
+    "Fill in the submission form and prepare reviewer test instructions",
+    "Draft the Support request for adding test users"
+  ],
+  "youMust": [
+    "Hold or create a Webflow Workspace admin account and accept Webflow's terms",
+    "Run the OAuth consent flow with a real Webflow login",
+    "Pay for and maintain the review account on your highest tier",
+    "Submit the form and handle review emails sent to your account's address"
+  ],
+  "uncertainties": [
+    {
+      "question": "Does Webflow currently allow unlisted public distribution for Data Client apps, so customers can install from an install link without a discoverable listing?",
+      "howToResolve": "Ask Webflow Support or check the submission form's Marketplace Visibility options."
+    },
+    {
+      "question": "How long does review actually take compared with the 10-business-day target? No recent developer reports were found.",
+      "howToResolve": "Search the Webflow community forum (Developers > Marketplace Submission) for recent threads."
+    },
+    {
+      "question": "Do access tokens expire, and are refresh tokens supported?",
+      "howToResolve": "Read https://developers.webflow.com/data/reference/oauth-app."
+    },
+    {
+      "question": "How quickly does Support add test users?",
+      "howToResolve": "Submit the request at support.webflow.com and track the response time."
+    }
+  ],
+  "providerContact": {
+    "channel": "Webflow Support (support.webflow.com); Webflow community forum (community.webflow.com), Developers category",
+    "draftMessage": "Hi, we've registered a Data Client app (Client ID: <id>) in Workspace <name>. It's an AI agent integration that lets our customers connect their own Webflow sites. Could you add these Webflow accounts as test users before we submit for review: <emails>? Also, can a Data Client app be published as an unlisted public app, installable only from our install link? Thanks!"
+  },
+  "slug": "webflow",
+  "origin": "library",
+  "input": "Webflow",
+  "generatedAt": "2026-11-03T14:19:15.597Z",
+  "durationMs": 87913,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Webflow",
+    "slug": "WEBFLOW",
+    "docUrl": "https://docs.composio.dev/toolkits/webflow",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://webflow.com/oauth/authorize?client_id=test-probe&response_type=code&scope=sites:read",
+      "purpose": "See how authorize endpoint responds to unknown client_id",
+      "status": 200,
+      "finalUrl": "https://webflow.com/login?r=https%3A%2F%2Fwebflow.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26response_type%3Dcode%26scope%3Dsites%253Aread&m=WW91IGhhdmUgYmVlbiBsb2dnZWQgb3V0LiBQbGVhc2Ugc2lnbiBiYWNrIGluIHRvIGNvbnRpbnVlLg%3D%3D",
+      "redirects": [
+        "https://webflow.com/login?r=https%3A%2F%2Fwebflow.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26response_type%3Dcode%26scope%3Dsites%253Aread&m=WW91IGhhdmUgYmVlbiBsb2dnZWQgb3V0LiBQbGVhc2Ugc2lnbiBiYWNrIGluIHRvIGNvbnRpbnVlLg%3D%3D"
+      ],
+      "loginWall": true,
+      "clientRendered": false,
+      "title": "Login - Webflow",
+      "error": null,
+      "at": "2026-11-03T14:17:55.550Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://community.shopify.com/t/how-long-does-it-take-for-an-app-review-to-be-completed/264027/5",
+    "https://developers.frontegg.com/agen-for-work/connectors/marketplace/webflow",
+    "https://developers.webflow.com/apps/data/docs/register-an-app",
+    "https://developers.webflow.com/apps/docs/marketplace/overview",
+    "https://developers.webflow.com/data-beta/docs/register-an-app",
+    "https://developers.webflow.com/data/v1.0.0/docs/registering-an-app",
+    "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/marketplace-guidelines",
+    "https://developers.webflow.com/data/v2.0.0-beta/apps/docs/private-apps",
+    "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app",
+    "https://developers.webflow.com/docs/getting-started-data-clients",
+    "https://developers.webflow.com/docs/register-an-app",
+    "https://developers.webflow.com/submit",
+    "https://discourse.webflow.com/t/how-to-update-an-app-on-marketplace/279258",
+    "https://docs.alterauth.com/reference/oauth-providers/webflow/",
+    "https://docs.slack.dev/app-management/distribution/",
+    "https://help.webflow.com/hc/en-us/articles/33961266872211-Webflow-Apps-overview",
+    "https://help.webflow.com/hc/en-us/articles/33961398704915-Webflow-Marketplace-overview",
+    "https://help.webflow.com/hc/en-us/articles/41015530193811-Workspace-roles-and-permissions",
+    "https://nango.dev/docs/api-integrations/webflow/how-to-register-your-own-webflow-api-oauth-app",
+    "https://nango.dev/docs/api-integrations/webflow/how-to-register-your-own-webflow-api-oauth-app.md",
+    "https://slashexperts.com/post/webflow-apps-guide/",
+    "https://tools.launchllama.co/tools/launch-directories/webflow-marketplace",
+    "https://webflow.com/login?r=https%3A%2F%2Fwebflow.com%2Foauth%2Fauthorize%3Fclient_id%3Dtest-probe%26response_type%3Dcode%26scope%3Dsites%253Aread&m=WW91IGhhdmUgYmVlbiBsb2dnZWQgb3V0LiBQbGVhc2Ugc2lnbiBiYWNrIGluIHRvIGNvbnRpbnVlLg%3D%3D",
+    "https://webflow.com/oauth/authorize?client_id=test-probe&response_type=code&scope=sites:read",
+    "https://webflow.com/templates/submission-guidelines",
+    "https://www.appsubmitter.io/blog/convert-webflow-to-android-app/",
+    "https://www.loopexdigital.com/blog/best-webflow-plugins",
+    "https://www.npmjs.com/package/webflow-api"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 22,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

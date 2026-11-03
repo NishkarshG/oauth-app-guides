@@ -23,6 +23,11 @@ export default function EvidencePage() {
         <div><dt><EvidenceTag evidence="uncertain" /></dt><dd className="mt-1">Inference, or sources that conflict. Review times are often here, because few providers publish them.</dd></div>
       </dl>
 
+      <h2 className="mt-8 text-xl font-semibold">Attempted in a real account</h2>
+      <p className="mt-2 text-sm">
+        A few guide steps carry a note from the build agent attempting them in the author&rsquo;s real account, with what differed from the guide. No person performed these steps. They cover free setup only, not provider review or approval.
+      </p>
+
       <h2 className="mt-8 text-xl font-semibold">The automatic check</h2>
       <p className="mt-2 text-sm">
         After the agent finishes, the server compares each label with its own record of the run. &ldquo;Tested&rdquo; has to cite a probe that really ran. &ldquo;Sourced&rdquo; has to cite a page the agent really retrieved. Any label that fails is downgraded, and the change is listed on the guide.

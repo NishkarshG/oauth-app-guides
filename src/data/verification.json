@@ -1,5 +1,5 @@
 {
-  "summary": "After generation, these claims were checked again in a separate pass outside the agent, by fetching each provider's page directly on 3 November 2026 and comparing the text. This sample covers the claims a developer would plan around. It isn't every claim in every guide. 12 held up or got corrected here, 2 could not be verified.",
+  "summary": "After generation, these 28 claims were checked again outside the agent, either by fetching the provider's page directly on 3 November 2026 or by attempting the step in a real account. 19 held up, 4 were corrected, and 5 could not be verified. They are the claims a developer or the recommendation would rely on. This is a sample, and most claims in the 24 guides were not rechecked.",
   "entries": [
     {
       "app": "Spotify",
@@ -108,8 +108,116 @@
     {
       "app": "All apps",
       "result": "unverified",
-      "claim": "The logged-in setup flows and real approval outcomes",
-      "note": "No provider accounts were created and no app was submitted for review. Steps come from documentation, and the live probes only show what an anonymous visitor sees.",
+      "claim": "Most logged-in setup flows and all real approval outcomes",
+      "note": "No app was submitted for review, and no provider approval was attempted. Only GitHub had a test app registered, and it was not connected to Composio. Other steps come from documentation, and live probes only show what an anonymous visitor sees.",
+      "method": "Provider page fetched directly"
+    },
+    {
+      "app": "GitHub",
+      "result": "corrected",
+      "claim": "The form asks for one Authorization callback URL",
+      "note": "The real form has Redirect URIs, up to 10, with optional wildcard matching. Expire user access tokens is ticked by default. The guide is fixed. It came from docs that no longer match the page.",
+      "method": "Attempted in a real account"
+    },
+    {
+      "app": "Slack",
+      "result": "corrected",
+      "claim": "Choose From scratch or From a manifest",
+      "note": "The real dialog offers AI agent, Starter app, From a manifest and Blank app. The guide is fixed.",
+      "method": "Attempted in a real account"
+    },
+    {
+      "app": "Datadog",
+      "result": "confirmed",
+      "claim": "OAuth is available only to approved Technology Partners",
+      "note": "Stated in the API integration docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.datadoghq.com/extend/integrations/api_integration.md"
+    },
+    {
+      "app": "Deel",
+      "result": "confirmed",
+      "claim": "App Store review has a completeness check of 1-2 business days and a technical review of 3-5",
+      "note": "Stated on the publishing page.",
+      "method": "Provider page fetched directly",
+      "source": "https://developer.deel.com/api/partners/publishing-to-app-store"
+    },
+    {
+      "app": "Meta Ads",
+      "result": "confirmed",
+      "claim": "Full access needs 500 Marketing API calls in the past 15 days",
+      "note": "Stated in Meta's Marketing API docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://developers.facebook.com/documentation/ads-commerce/marketing-api/get-started/authorization"
+    },
+    {
+      "app": "Webflow",
+      "result": "confirmed",
+      "claim": "Webflow aims to decide on a submission within 10 business days",
+      "note": "Stated in the submission docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://developers.webflow.com/data/v2.0.0-beta/docs/marketplace/submitting-your-app"
+    },
+    {
+      "app": "Pipedrive",
+      "result": "confirmed",
+      "claim": "A private app can be shared with any company through a direct, unlisted link",
+      "note": "Stated in the private app docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://pipedrive.readme.io/docs/marketplace-registering-a-private-app"
+    },
+    {
+      "app": "Snowflake",
+      "result": "confirmed",
+      "claim": "The OAuth client is created with CREATE SECURITY INTEGRATION inside an account",
+      "note": "Stated in Snowflake's docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.snowflake.com/en/user-guide/oauth-custom.md"
+    },
+    {
+      "app": "Klaviyo",
+      "result": "confirmed",
+      "claim": "Unreviewed apps can be installed, with a warning",
+      "note": "Klaviyo's docs describe an OAuth installation warning until review.",
+      "method": "Provider page fetched directly",
+      "source": "https://developers.klaviyo.com/en/docs/submit_your_app_for_review"
+    },
+    {
+      "app": "X",
+      "result": "confirmed",
+      "claim": "The X API uses prepaid pay-per-usage credits",
+      "note": "Stated on the pricing page.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.x.com/x-api/getting-started/pricing.md"
+    },
+    {
+      "app": "LinkedIn Ads",
+      "result": "confirmed",
+      "claim": "All applications start in the Development tier",
+      "note": "Stated in Microsoft's LinkedIn docs.",
+      "method": "Provider page fetched directly",
+      "source": "https://learn.microsoft.com/en-us/linkedin/marketing/increasing-access"
+    },
+    {
+      "app": "Workday",
+      "result": "unverified",
+      "claim": "Each customer registers the client in their own tenant",
+      "note": "Only found in a third party's documentation, not Workday's own.",
+      "method": "Provider page fetched directly",
+      "source": "https://docs.unified.to/skills/workday-oauth-app/SKILL.md"
+    },
+    {
+      "app": "TikTok",
+      "result": "unverified",
+      "claim": "Public posting needs a separate Content Posting audit",
+      "note": "The cited source is a third-party blog. TikTok's own docs were not checked here.",
+      "method": "Provider page fetched directly"
+    },
+    {
+      "app": "ServiceNow",
+      "result": "unverified",
+      "claim": "Clients are registered per instance in the Application Registry",
+      "note": "ServiceNow's docs need JavaScript, so this check could not read them.",
       "method": "Provider page fetched directly"
     }
   ]

@@ -1,0 +1,391 @@
+{
+  "app": {
+    "name": "Klaviyo",
+    "website": "https://www.klaviyo.com",
+    "category": "Email & SMS marketing",
+    "summary": "An OAuth token gives an agent access to one Klaviyo account (not one user): profiles, lists, segments, events, campaigns, flows and metrics, limited to the scopes you request."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "quick",
+    "headline": "Any Klaviyo account can install your unreviewed app right away, but users see a 'not reviewed by Klaviyo' warning.",
+    "rationale": {
+      "text": "You create the OAuth app yourself inside a Klaviyo account under Integrations > Developers > Manage apps. You need an owner, admin or manager role. Klaviyo's docs say an app that has not been reviewed can still be installed and used by customers and testers. The only difference is an installation warning saying the app has not been reviewed by Klaviyo. Review is optional. Once you have 5 or more installs with API activity, you can submit for App Marketplace listing, which removes the warning. Marketplace review also requires registration and security forms and a technical and security review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+        "https://developers.klaviyo.com/en/docs/build_your_app",
+        "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes to a working app; 1-3 days of extra work if you pursue Marketplace listing",
+    "approvalWait": "None to go live; Marketplace review time is not published",
+    "firstConnection": "About 15-30 minutes after you have a Klaviyo account with an owner, admin or manager role",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "You create the app yourself and no review is needed before customers can install it (sourced). The hands-on time is my estimate based on the length of the setup flow: name the app, copy the client ID and secret, set scopes and redirect URLs. Klaviyo publishes no turnaround for Marketplace review, so any wait estimate there would be a guess.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+        "https://developers.klaviyo.com/en/docs/build_your_app"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Draft app tested on your own Klaviyo account",
+      "whoCanConnect": "You, using your own Klaviyo account (free accounts work)",
+      "reviewRequired": false,
+      "limit": {
+        "text": "You create the app in your account and install it there using your installation URL. No Klaviyo approval is needed.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.klaviyo.com/en/docs/build_your_app",
+          "https://developers.klaviyo.com/en/docs/set_up_oauth"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Any Klaviyo customer can install (unreviewed)",
+      "whoCanConnect": "Any Klaviyo account that opens your installation URL",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Customers can install and use the app, but until Klaviyo approves it they see an installation warning that the app has not been reviewed by Klaviyo. The app is also not listed in the App Marketplace.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.klaviyo.com/en/docs/submit_your_app_for_review"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Listed in the Klaviyo App Marketplace (optional)",
+      "whoCanConnect": "Any Klaviyo customer, with no warning and with discovery in the Marketplace",
+      "reviewRequired": true,
+      "limit": {
+        "text": "To submit you need at least 5 installs with API activity, testing instructions adapted from Klaviyo's 'App & Testing Requirements' template, the registration and security forms, least-privilege scopes, and a passed technical and security review.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+          "https://developers.klaviyo.com/en/docs/klaviyo_app_listing_requirements",
+          "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a Klaviyo account with the right role",
+      "detail": "Sign up for a free Klaviyo account, or use an existing one where you are Owner, Admin or Manager. Only those roles can create OAuth apps.",
+      "owner": "you",
+      "estimate": "5-10 minutes",
+      "doneWhen": "You can log in to klaviyo.com and see the Integrations menu.",
+      "url": "https://www.klaviyo.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/build_your_app",
+        "https://github.com/klaviyo-labs/Pet-Party-Planner"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the app",
+      "detail": "Go to Integrations > Developers > Manage apps and click 'Create app'. Enter the app name and click 'Create'. Copy the client ID and client secret shown on the 'Set up OAuth' page, then click 'Continue'.",
+      "owner": "you",
+      "estimate": "5 minutes",
+      "doneWhen": "The app shows as a draft and you have saved the client ID and client secret.",
+      "url": "https://www.klaviyo.com/manage-apps",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/build_your_app",
+        "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Set scopes and redirect URLs",
+      "detail": "Enter scopes as a space-separated list, for example 'accounts:read lists:read profiles:read profiles:write'. Use the smallest set your agent needs. Add your OAuth callback URL under Redirect URLs.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "The app's OAuth settings list your scopes and callback URL.",
+      "url": "https://developers.klaviyo.com/en/docs/build_your_app",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/build_your_app",
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Confirm your client meets Klaviyo's flow requirements",
+      "detail": "The authorize URL is https://www.klaviyo.com/oauth/authorize with response_type=code and PKCE (code_challenge_method=S256). Send token and revoke calls to https://a.klaviyo.com/oauth/token and https://a.klaviyo.com/oauth/revoke. Since 31 March 2025, Klaviyo blocks token and revoke calls sent to www.klaviyo.com.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "A test install on your own account returns an access token and a refresh token.",
+      "url": "https://developers.klaviyo.com/en/docs/set_up_oauth",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Optional: submit for App Marketplace review",
+      "detail": "Once you have 5 or more installs with API activity: write testing instructions adapted from Klaviyo's App & Testing Requirements template, and fill in the registration and security forms. Then go to Manage apps > your app > 'Review submission', check 'Preview listing', and click 'Submit'. Klaviyo carries out a technical and security review and gives detailed reasons if it rejects the app.",
+      "owner": "you",
+      "estimate": "1-3 days of preparation, plus the review wait",
+      "doneWhen": "Klaviyo approves the listing and the 'not reviewed' warning no longer appears at install.",
+      "url": "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+        "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app",
+        "https://developers.klaviyo.com/en/docs/klaviyo_app_listing_requirements"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A Klaviyo account in which you are Owner, Admin or Manager. Apps are created inside a Klaviyo account; there is no separate developer portal.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/build_your_app"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "PKCE (S256) is mandatory on the authorization code flow.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Marketplace listing only: at least 5 installs with API activity, testing instructions based on Klaviyo's template, a registration form and a security form, and a passed security review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+        "https://developers.klaviyo.com/en/docs/klaviyo_app_listing_requirements"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The Manage apps page and the authorize URL both returned HTTP 200 to an anonymous request, but the pages are rendered by JavaScript. The probe therefore could not tell whether a login is required or how an unknown client_id is handled.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1",
+        "p2"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Tokens grant access to a Klaviyo account, not to a user. A merchant with several Klaviyo accounts (brands, regions, test) has to install separately for each one.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_reviews_platform",
+        "https://developers.klaviyo.com/en/v2024-06-15/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Access tokens last 1 hour. Refresh tokens rotate on every use, so always store the newest one. A refresh token that goes unused for 90 days is revoked. A stale refresh token returns 400 invalid_grant.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/v2024-06-15/docs/set_up_oauth",
+        "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_reviews_platform",
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Since 31 March 2025, token and revoke traffic must go to a.klaviyo.com. Calls to www.klaviyo.com/oauth/token are blocked. The authorize step still uses www.klaviyo.com.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The OAuth flow must work when installation starts from klaviyo.com or from any klaviyo.com subdomain.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/set_up_oauth"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Klaviyo shows events sent through an OAuth token as 'branded' metrics attributed to your app. Name your metrics by the action only.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_reviews_platform"
+      ],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Install warning for unreviewed apps",
+      "signal": "Users see a warning on the Klaviyo consent screen that the app has not been reviewed by Klaviyo.",
+      "nextMove": "Accept the warning while you build up installs. Once you have 5 or more installs with API activity, submit for Marketplace review.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/submit_your_app_for_review"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Can't submit for review below 5 installs",
+      "signal": "The 'Review submission' page shows the install requirement (at least 5 installs) as not met.",
+      "nextMove": "Get at least 5 real accounts to install the app and make API calls before you submit.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Review rejection for unused scopes",
+      "signal": "Klaviyo rejects the submission and flags scopes the app does not use.",
+      "nextMove": "Cut the scope list to what the agent's tools actually call before you submit.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_reviews_platform",
+        "https://developers.klaviyo.com/en/docs/klaviyo_app_listing_requirements"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Pick a least-privilege Klaviyo scope list that matches the agent's tools",
+    "Fill in redirect URLs and scopes in the app's OAuth settings once given access",
+    "Check that the PKCE flow and the a.klaviyo.com token endpoint are configured correctly",
+    "Draft testing instructions from Klaviyo's App & Testing Requirements template",
+    "Draft the Marketplace listing copy and help documentation"
+  ],
+  "youMust": [
+    "Create or own a Klaviyo account with an Owner, Admin or Manager role (account sign-up and terms)",
+    "Click 'Create app' and keep the client secret",
+    "Complete and sign Klaviyo's registration and security forms if you seek a Marketplace listing (legal and security attestations)",
+    "Answer the reviewers if Klaviyo rejects the submission"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does Marketplace review take?",
+      "howToResolve": "Klaviyo publishes no timeline. Ask the app review team after you submit."
+    },
+    {
+      "question": "Will Klaviyo accept a multi-tenant AI agent platform into the Marketplace, given that the listing requirements expect an integration settings page specific to Klaviyo?",
+      "howToResolve": "Read 'Pass your app review' and ask the app review team before you invest in a submission."
+    },
+    {
+      "question": "Do OAuth apps get different API rate limits from private keys?",
+      "howToResolve": "Check Klaviyo's rate-limit docs, which give per-endpoint burst and steady limits applied per account."
+    }
+  ],
+  "providerContact": {
+    "channel": "Klaviyo developer community (community.klaviyo.com, developer group) or the app review team, reached through the 'Review submission' flow in Manage apps",
+    "draftMessage": "Hi, we're building an AI agent platform. Klaviyo customers will connect their account to it through our public OAuth app (PKCE, least-privilege scopes). Before we submit for review: (1) Is a multi-purpose agent integration eligible for an App Marketplace listing? (2) What is the typical turnaround for the technical and security review? (3) Are there any rate-limit differences for OAuth apps that serve many accounts? Thanks."
+  },
+  "slug": "klaviyo",
+  "origin": "library",
+  "input": "Klaviyo",
+  "generatedAt": "2026-11-03T14:16:49.549Z",
+  "durationMs": 88737,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "Klaviyo",
+    "slug": "KLAVIYO",
+    "docUrl": "https://docs.composio.dev/toolkits/klaviyo",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://www.klaviyo.com/manage-apps",
+      "purpose": "Check app registration page login wall",
+      "status": 200,
+      "finalUrl": "https://www.klaviyo.com/manage-apps",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Klaviyo",
+      "error": null,
+      "at": "2026-11-03T14:15:40.443Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://www.klaviyo.com/oauth/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=accounts:read&state=x&code_challenge_method=S256&code_challenge=abc",
+      "purpose": "See how authorize endpoint handles unknown client",
+      "status": 200,
+      "finalUrl": "https://www.klaviyo.com/oauth/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=accounts:read&state=x&code_challenge_method=S256&code_challenge=abc",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Klaviyo",
+      "error": null,
+      "at": "2026-11-03T14:15:40.443Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/set-up-your-oauth-flow",
+    "https://academy.klaviyo.com/en-us/courses/build-an-oauth-app-with-klaviyo/lessons/submit-and-monitor-your-app",
+    "https://apps.shopify.com/klaviyo-email-marketing/reviews?page=2&ratings%5B%5D=4",
+    "https://community.klaviyo.com/developer-group-64/listing-our-shopify-app-on-klaviyo-integrations-directory-15520",
+    "https://developer.tuya.com/en/docs/cubeprivate-cloud/80bb968f1d?id=Kdr7o5e65p7nl",
+    "https://developers.klaviyo.com/en/docs/build_your_app",
+    "https://developers.klaviyo.com/en/docs/create_a_public_oauth_app",
+    "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_forms_and_popups_platform",
+    "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_reviews_platform",
+    "https://developers.klaviyo.com/en/docs/guide_to_integrating_a_shipping_platform",
+    "https://developers.klaviyo.com/en/docs/guide_to_integrating_an_ad_platform",
+    "https://developers.klaviyo.com/en/docs/handle_your_apps_oauth_flow",
+    "https://developers.klaviyo.com/en/docs/klaviyo_app_listing_requirements",
+    "https://developers.klaviyo.com/en/docs/manage_your_app",
+    "https://developers.klaviyo.com/en/docs/migrate_to_oauth_from_private_key_authentication",
+    "https://developers.klaviyo.com/en/docs/pass_your_app_review",
+    "https://developers.klaviyo.com/en/docs/set%5Fup%5Foauth",
+    "https://developers.klaviyo.com/en/docs/set_up_oauth",
+    "https://developers.klaviyo.com/en/docs/submit_your_app_for_review",
+    "https://developers.klaviyo.com/en/docs/troubleshoot_oauth_errors",
+    "https://developers.klaviyo.com/en/v2023-10-15/docs/set-up-oauth",
+    "https://developers.klaviyo.com/en/v2024-06-15/docs/set_up_oauth",
+    "https://developers.klaviyo.com/en/v2024-07-15/docs/oauth_resources",
+    "https://developers.klaviyo.com/en/v2024-10-15/docs/build_your_app",
+    "https://developers.osano.com/integrations/data-discovery-integrations/klaviyo",
+    "https://docs.oracle.com/en/cloud/paas/process-automation/rest-api-proca/OAuth_refreshtoken.html",
+    "https://getkanal.com/blog/klaviyo-reviews",
+    "https://github.com/klaviyo-labs/Pet-Party-Planner",
+    "https://klaviyocms.wpengine.com/wp-content/uploads/2025/07/Official-Technology-Partner-Program-Guide.pdf",
+    "https://mailsoftly.com/blog/klaviyo-review/",
+    "https://nubiapage.com/klaviyo-review-2026-login-app-sign-up-pricing-careers/",
+    "https://themarketingagency.ca/blog/honest-review-klaviyo-email-marketing/",
+    "https://www.capterra.com/p/156699/Klaviyo/reviews/",
+    "https://www.emailvendorselection.com/klaviyo-review/",
+    "https://www.g2.com/products/klaviyo/reviews",
+    "https://www.klaviyo.com/manage-apps",
+    "https://www.klaviyo.com/oauth/authorize?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb&scope=accounts:read&state=x&code_challenge_method=S256&code_challenge=abc",
+    "https://www.manageengine.com/analytics-plus/api/v2/authentication/refresh-token.html",
+    "https://www.omnisend.com/blog/klaviyo-review-pricing-features/",
+    "https://www.zoho.com/commerce/api/oauth-step-4.html"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 20,
+      "uncertain": 1
+    },
+    "changes": []
+  }
+}

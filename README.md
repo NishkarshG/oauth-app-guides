@@ -10,6 +10,10 @@ Creating an OAuth app usually takes minutes, and Composio already has how-to pag
 
 So each guide is built around that ladder, and it opens with whatever is most likely to change the developer's plan.
 
+## What this suggests for Composio
+
+The guides led to a recommendation on which apps Composio should make managed next, and which it can't help this way. See `docs/recommendation.md`.
+
 ## Key decisions
 
 - **Start with "do you need this at all?"** Every guide first checks a snapshot of Composio's directory (125 managed toolkits, 262 bring-your-own). On a managed toolkit, the developer may be able to skip all of it.
@@ -21,11 +25,11 @@ So each guide is built around that ladder, and it opens with whatever is most li
 
 ## What the verification changed
 
-I checked 14 claims in a separate pass by fetching the provider's pages directly. The log is at `/evidence`.
+I checked 28 claims outside the agent, by fetching the provider's pages directly or attempting the step in a real account. The log is at `/evidence`.
 
-- **10 confirmed.**
-- **2 corrected, both on Spotify.** The agent reported one Client ID per developer from a February 2026 post, but a July 2026 update raised it to 25. It had also labelled a six-week figure uncertain when Spotify's docs state it directly.
-- **2 could not be verified:** Shopify's real review time, and the logged-in flows in general.
+- **19 confirmed.**
+- **4 corrected.** On Spotify, the agent reported one Client ID per developer from a February 2026 post, but a July 2026 update raised it to 25, and it labelled a six-week figure uncertain when Spotify's docs state it directly. On GitHub and Slack, the real forms no longer match the guide's field names.
+- **5 could not be verified**, including Shopify's real review time and logged-in flows in general.
 
 The first correction changed the product: the agent is now told to look for changelogs from the past year, since a newer post overrides an older doc. Two runs on Spotify also disagreed on that fact, so a single run shouldn't be trusted for a guide that people will plan around.
 
@@ -56,8 +60,8 @@ Import the repo and add `ANTHROPIC_API_KEY` as an environment variable. `netlify
 
 ## Limitations
 
-- **Six guides, not 100.** The brief asked for a few varied apps. Generating more is a matter of running the script, but quality at that scale would need a review process.
-- **Nobody completed a real setup.** No provider accounts were created and no apps were submitted. Probes only show what an anonymous visitor sees, and pages rendered with JavaScript are flagged as inconclusive.
+- **24 guides, not 100.** The brief asked for a few varied apps. I generated more to support the recommendation in `docs/recommendation.md`, and most of their claims have not been rechecked. Quality at 100 would need a review process.
+- **No full setup was completed.** The agent registered one free test app on GitHub, without connecting it to Composio, and no app was submitted for review. Slack and Xero attempts stopped because they needed a workspace or account of the author's own. Probes only show what an anonymous visitor sees, and pages rendered with JavaScript are flagged as inconclusive.
 - **Review times are often estimates.** Few providers publish them, so those figures rest on forum reports and are labelled Uncertain.
 - **Guides go stale.** Each shows its date, but nothing regenerates them. A scheduled re-run that flags changes would be my next step.
 - **Directory matching is exact, on a snapshot.** An app listed under a different name shows as "not listed".

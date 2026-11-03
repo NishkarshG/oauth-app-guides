@@ -1,0 +1,476 @@
+{
+  "app": {
+    "name": "Docusign",
+    "website": "https://developers.docusign.com",
+    "category": "E-signature",
+    "summary": "Lets an agent send envelopes for signature, track their status, and read templates and completed documents in a user's Docusign account through the eSignature REST API."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "severe",
+    "headline": "One integration key used by many customers counts as a \"Public integration\", and only Partner Program members can take that live.",
+    "rationale": {
+      "text": "Creating an integration key in a free developer (demo) account is self-serve and takes minutes. Production is the hard part. To go live you must promote the key to a paid production account, and you must pick an integration type at Go-Live. An AI-agent product where each customer authorises one shared key with their own Docusign account is classed as a Public integration. A Docusign staff answer on the community forum confirms that Partner Program membership is required for this, even if you don't resell or embed. The old rule requiring 20 API calls was removed in October 2025. Go-Live validation is now automated and is often instant, so the real gate is the partner program.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+        "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596",
+        "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    }
+  },
+  "effort": {
+    "handsOn": "2-5 hours (plus partner-program paperwork)",
+    "approvalWait": "Go-Live itself: minutes. Partner Program admission: unknown, likely 1-4 weeks",
+    "firstConnection": "Under 30 minutes with a free developer account",
+    "handsOnMinutesHigh": 300,
+    "waitDaysHigh": 30,
+    "basis": {
+      "text": "According to Docusign's Oct 2025 announcement, Go-Live validation is automatic and in most cases approves instantly, otherwise it flags the key for a quick follow-up. Docusign publishes no timeline for admission to the Partner Program or for the Partner Application Review. The 1-4 week figure is an inference, not a published number.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    }
+  },
+  "stages": [
+    {
+      "name": "Developer (demo) environment",
+      "whoCanConnect": "Any user of any Docusign developer (demo) account, through account-d.docusign.com. Production users cannot connect.",
+      "reviewRequired": false,
+      "limit": {
+        "text": "The key works only against the demo environment (account-d.docusign.com, demo base URIs). Envelopes sent there have no legal force.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+          "https://developers.docusign.com/partner/isv-faq/"
+        ],
+        "probeIds": [
+          "p1"
+        ]
+      }
+    },
+    {
+      "name": "Live as Private custom integration",
+      "whoCanConnect": "Users of your own production account (employees). Docusign does not intend this type for an app that outside customers use.",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You need a paid production account, and its administrator may need a one-time identity verification. Docusign defines this type as internal use by your employees. A staff answer says a multi-customer app with one shared key does not qualify.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+          "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Live as Public integration (any customer can connect)",
+      "whoCanConnect": "Any user on any production Docusign account",
+      "reviewRequired": true,
+      "limit": {
+        "text": "You must be a member of the Docusign Partner Program. Partners can apply for a free production account for managing integration keys, which cannot send envelopes. Once you choose an integration type at Go-Live, you cannot change it.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+          "https://developers.docusign.com/partner/isv-faq/",
+          "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Create a free Docusign developer account",
+      "detail": "Sign up for a developer account on the Docusign Developer Center. This gives you a demo environment at admindemo.docusign.com.",
+      "owner": "you",
+      "estimate": "5 min",
+      "doneWhen": "You can log in to admindemo.docusign.com",
+      "url": "https://developers.docusign.com",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Create the integration key",
+      "detail": "In Settings > Integrations > Apps and Keys, click 'Add App and Integration Key', give the app a name and click 'Create App'. The integration key is your OAuth client ID.",
+      "owner": "agent",
+      "estimate": "5 min",
+      "doneWhen": "A GUID integration key appears under My Apps / Integration Keys",
+      "url": "https://admindemo.docusign.com/apps-and-keys",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/",
+        "https://docs.docusign.com/supportdocs/ndse-admin-guide/Content/api-keys.htm"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure Authorization Code Grant and redirect URI",
+      "detail": "Under User Application, select Authorization Code Grant (confidential), then 'Add Secret Key' and copy it immediately. Under Additional settings > Redirect URIs, click '+ Add URI' and enter your callback. You can also add Privacy Policy and Terms of Use links here.",
+      "owner": "agent",
+      "estimate": "10 min",
+      "doneWhen": "Key shows a secret and your redirect URI is saved",
+      "url": "https://admindemo.docusign.com/apps-and-keys",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://docs.docusign.com/supportdocs/ndse-admin-guide/Content/api-keys.htm",
+        "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the connection in demo",
+      "detail": "Send users to https://account-d.docusign.com/oauth/auth with scope=signature (add extended for refresh tokens), exchange the code at /oauth/token, then call /oauth/userinfo to find the user's account_id and base_uri.",
+      "owner": "agent",
+      "estimate": "30-60 min",
+      "doneWhen": "You send a test envelope through the API from a demo account",
+      "url": "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Join the Docusign Partner Program",
+      "detail": "A multi-customer agent product counts as a Public integration, which needs Partner Program membership. While applying, also ask for the free IK management production account. Digital Referral is a prerequisite for that account.",
+      "owner": "you",
+      "estimate": "1-2 hours of forms; wait unknown",
+      "doneWhen": "You have confirmed partner membership and, ideally, a partner IK management account",
+      "url": "https://developers.docusign.com/partner/isv-faq/",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/partner/isv-faq/",
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Run Go-Live and choose 'Public integration'",
+      "detail": "On Apps and Keys, edit the key and select Integration Type = Public integration. Enter the credentials of the production account that will manage the key, or use Actions > Select Go-Live account. Built-in checks then approve the key, flag it 'Needs review' or return 'Not Allowed'. Once the key is in review or live, you cannot change the type.",
+      "owner": "you",
+      "estimate": "15 min",
+      "doneWhen": "The key shows as live in the production account's Apps and Keys",
+      "url": "https://admindemo.docusign.com/apps-and-keys",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Configure production key settings",
+      "detail": "In the production account's Apps and Keys, check the redirect URIs and create a production secret key. Switch your auth host to account.docusign.com, and take base_uri from userinfo for each user.",
+      "owner": "agent",
+      "estimate": "15 min",
+      "doneWhen": "A production user completes consent and an API call succeeds",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "A paid production Docusign account to manage the key, or the free partner IK management account that Partner Program members can apply for. The partner account cannot send envelopes.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+        "https://developers.docusign.com/partner/isv-faq/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Docusign Partner Program membership, which a Public integration needs to go live.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+        "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A one-time identity verification of the production account's administrator, which may be needed to unlock Go-Live.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Demo OIDC discovery is public, at account-d.docusign.com/.well-known/openid-configuration. The authorize endpoint is /oauth/auth and the token endpoint is /oauth/token.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Since Oct 3, 2025 you no longer need to make 20 successful demo API calls before Go-Live. Many blogs and older docs still describe that rule, along with its anti-polling check.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+        "https://www.docusign.com/blog/developers/the-trenches-go-live-failures"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "text": "The integration key (client ID) is created in demo and keeps the same value after promotion. Demo and production use different OAuth hosts: account-d.docusign.com and account.docusign.com.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/partner/isv-faq/"
+      ],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Each user's API base URI varies by account and region (for example na3, eu). Read it from /oauth/userinfo after token exchange rather than hard-coding it.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Docusign's alternative to partner membership is to have each customer create their own integration key as a 'Private custom integration' and paste it into your app. That fits badly with one shared Composio auth config.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Picking the wrong integration type at Go-Live can delay or reject the key, and you cannot cancel the request to switch types.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623"
+      ],
+      "probeIds": [
+        "p5"
+      ]
+    },
+    {
+      "text": "Without the 'extended' scope, the refresh token lifetime is short. The refresh token expires (roughly 30 days) and access tokens last about 8 hours.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Public integration requires Partner Program membership",
+      "signal": "At Go-Live the validation returns 'Not Allowed' or 'Needs review' for Integration Type = Public integration",
+      "nextMove": "Apply to the Docusign Partner Program before Go-Live, and request the free IK management account",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+        "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "No paid production account",
+      "signal": "You have no eligible production account to enter as the Go-Live target",
+      "nextMove": "Buy a plan that includes API access, or get the partner IK management account",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://developers.docusign.com/docs/esign-rest-api/go-live/"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Production users can't use a demo-only key",
+      "signal": "Production users get an OAuth error that the client is invalid or unknown at account.docusign.com",
+      "nextMove": "Finish Go-Live, and use account.docusign.com for production users",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": [
+        "p2"
+      ]
+    }
+  ],
+  "agentCan": [
+    "Create and configure the integration key, redirect URIs and secret in Apps and Keys, given developer-account access",
+    "Build and test the Authorization Code Grant flow against account-d.docusign.com",
+    "Draft the Partner Program application, app description, privacy policy and terms-of-use URLs",
+    "Prepare the Go-Live submission and choose the correct integration type",
+    "Send envelopes, query envelope status, list templates and download completed documents once users connect"
+  ],
+  "youMust": [
+    "Sign up for the developer account and accept Docusign's developer terms",
+    "Join the Docusign Partner Program, which means accepting partner agreements and possibly Digital Referral terms",
+    "Buy a production plan or obtain the partner IK management account",
+    "Complete administrator identity verification on the production account",
+    "Enter the production account credentials to start Go-Live"
+  ],
+  "uncertainties": [
+    {
+      "question": "How long does Partner Program admission or Partner Application Review take, and does it cost anything?",
+      "howToResolve": "Ask Docusign partner support or the Developer Community before you plan your launch date"
+    },
+    {
+      "question": "Does a Public integration that is 'flagged for review' get a human review, and how long does that take?",
+      "howToResolve": "Submit the Go-Live and watch its status, or ask in the Docusign Developer Community Go-Live forum"
+    },
+    {
+      "question": "Do secret keys carry over to production, or must you create new ones there?",
+      "howToResolve": "Check the Apps and Keys page of the production account after promotion"
+    }
+  ],
+  "providerContact": {
+    "channel": "Docusign Developer Community, Go-Live / Developer Tools forum (community.docusign.com), and the Docusign Partner Program application",
+    "draftMessage": "We're building an AI agent SaaS where each customer connects their own Docusign account through OAuth Authorization Code Grant, using one shared integration key. We don't embed or resell. Please confirm that this needs the 'Public integration' type and Partner Program membership. How long does partner admission usually take? And can we get the free IK management account for the production key?"
+  },
+  "slug": "docusign",
+  "origin": "library",
+  "input": "DocuSign",
+  "generatedAt": "2026-11-03T14:15:20.890Z",
+  "durationMs": 113427,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "DocuSign",
+    "slug": "DOCUSIGN",
+    "docUrl": "https://docs.composio.dev/toolkits/docusign",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p1",
+      "url": "https://account-d.docusign.com/.well-known/openid-configuration",
+      "purpose": "Check demo OIDC discovery",
+      "status": 200,
+      "finalUrl": "https://account-d.docusign.com/.well-known/openid-configuration",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": null,
+      "at": "2026-11-03T14:13:35.788Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://admindemo.docusign.com/apps-and-keys",
+      "purpose": "Check whether Apps and Keys requires login",
+      "status": 200,
+      "finalUrl": "https://admindemo.docusign.com/apps-and-keys",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Home Page  - Intelligent Agreement Management",
+      "error": null,
+      "at": "2026-11-03T14:13:35.788Z"
+    },
+    {
+      "id": "p2",
+      "url": "https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=test-probe&redirect_uri=https://example.com/callback",
+      "purpose": "See how authorize endpoint responds to unknown client",
+      "status": 200,
+      "finalUrl": "https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=test-probe&redirect_uri=https://example.com/callback",
+      "redirects": [],
+      "loginWall": true,
+      "clientRendered": true,
+      "title": "Docusign",
+      "error": null,
+      "at": "2026-11-03T14:13:35.788Z"
+    },
+    {
+      "id": "p4",
+      "url": "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+      "purpose": "Read the current Go-Live prerequisites",
+      "status": 200,
+      "finalUrl": "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Go-Live | Docusign",
+      "error": null,
+      "at": "2026-11-03T14:14:05.793Z"
+    },
+    {
+      "id": "p5",
+      "url": "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+      "purpose": "Read date and details of streamlined Go-Live announcement",
+      "status": 200,
+      "finalUrl": "https://community.docusign.com/developer-tools-175/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+      "redirects": [
+        "https://community.docusign.com/developer-tools-175/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623"
+      ],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "No More 20 API Calls: Introducing the Streamlined Integration Go-Live Experience in Apps &amp; Keys 🚀 | Community",
+      "error": null,
+      "at": "2026-11-03T14:14:13.396Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://account-d.docusign.com/.well-known/openid-configuration",
+    "https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=test-probe&redirect_uri=https://example.com/callback",
+    "https://admindemo.docusign.com/apps-and-keys",
+    "https://community.docusign.com/developer-tools-175/go-live-path-for-a-public-integration-from-an-isv-with-under-20-employees-27679",
+    "https://community.docusign.com/developer-tools-175/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+    "https://community.docusign.com/esignature-111/question-regarding-go-live-2732",
+    "https://community.docusign.com/esignature-api-63/go-live-docusign-app-20104",
+    "https://community.docusign.com/go-live-70/go-live-for-a-public-integration-when-every-customer-uses-their-own-docusign-account-27596",
+    "https://community.docusign.com/go-live-70/go-live-process-takes-very-long-and-is-declined-eventually-without-further-information-22283",
+    "https://community.docusign.com/go-live-70/go-live-review-21849",
+    "https://community.docusign.com/go-live-70/how-to-make-20-successfull-api-calls-before-review-to-go-live-4096",
+    "https://community.docusign.com/go-live-70/index2.html",
+    "https://community.docusign.com/go-live-70/index3.html",
+    "https://community.docusign.com/go-live-70/no-more-20-api-calls-introducing-the-streamlined-integration-go-live-experience-in-apps-keys-25623",
+    "https://community.docusign.com/help-forums-144/index2.html",
+    "https://composio.dev/auth/docusign",
+    "https://developers.docusign.com/docs/esign-rest-api/go-live/",
+    "https://developers.docusign.com/docs/idevidence-api/go-live/",
+    "https://developers.docusign.com/docs/workflow-builder-api/publishing-go-live/",
+    "https://developers.docusign.com/partner/isv-faq/",
+    "https://developers.docusign.com/platform/account/",
+    "https://developers.docusign.com/platform/auth/consent/obtaining-individual-consent/",
+    "https://developers.frontegg.com/agen-for-work/connectors/marketplace/docusign",
+    "https://developers.frontegg.com/agen-for-work/connectors/marketplace/docusign.md",
+    "https://docs.beyondtrust.com/entitle/docs/entitle-integration-docusign",
+    "https://docs.cmicglobal.com/portal/Content/E_Reference_Material/DocuSign_Integration/Reference/Authentication/Go-Live_Process.htm",
+    "https://docs.docusign.com/supportdocs/ndse-admin-guide/Content/api-keys.htm",
+    "https://docs.oracle.com/cd/F37375_01/English/admin/docusign/docusign_configuration.pdf",
+    "https://docs.oracle.com/cd/F88970_01/English/admin/docusign/docusign_configuration.pdf",
+    "https://docs.safe.security/docs/docusign-integration-guide",
+    "https://docs.serval.com/sections/integrations/docusign",
+    "https://docs.serval.com/sections/integrations/docusign.md",
+    "https://docs.stackai.com/workflow-builder/apps/docusign",
+    "https://docs.workato.com/connectors/docusign",
+    "https://github.com/docusign/code-example-net-framework-auth-code-grant",
+    "https://help.texadasoftware.com/en/crm-service/en/crm-service/921/api-requirements-for-docusign-integration",
+    "https://landing.composio.dev/auth/docusign",
+    "https://prismatic.io/docs/components/docusign.md",
+    "https://signeasy.com/blog/business/docusign-api-pricing",
+    "https://support.databuzz.com.au/article/520-docusign-integration-go-live-process",
+    "https://support.docusign.com/s/articles/DocuSign-Developer-FAQs-Integration-Keys-and-Go-Live?language=en_US",
+    "https://wso2.com/integration-platform/docs/connectors/catalog/productivity-collaboration/docusign.dsadmin/setup-guide/",
+    "https://www.docusign.com/blog/developers/oauth-jwt-granting-consent",
+    "https://www.docusign.com/blog/developers/the-trenches-authenticate-without-user-interaction-system-user",
+    "https://www.docusign.com/blog/developers/the-trenches-go-live-failures",
+    "https://xsoar.pan.dev/docs/reference/integrations/docusign"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 1,
+      "sourced": 19,
+      "uncertain": 5
+    },
+    "changes": []
+  }
+}

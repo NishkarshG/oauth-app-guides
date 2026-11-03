@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { EvidenceTag } from "@/components/ui";
 import type { Guide, Owner } from "@/lib/schema";
 
+export type PersonCheck = { step: string; minutes: number; note: string; date: string };
+
 const OWNER: Record<Owner, string> = { agent: "Agent can do this", you: "You", provider: "Waiting on provider" };
 
-export function StepChecklist({ slug, steps }: { slug: string; steps: Guide["steps"] }) {
+export function StepChecklist({ slug, steps, personChecks = [] }: { slug: string; steps: Guide["steps"]; personChecks?: PersonCheck[] }) {
   const key = `steps:${slug}`;
   const [done, setDone] = useState<number[]>([]);
 
@@ -46,6 +48,13 @@ export function StepChecklist({ slug, steps }: { slug: string; steps: Guide["ste
               </div>
               <p className="mt-1 text-sm">{step.detail}</p>
               <p className="mt-1.5 text-sm text-muted">Done when: {step.doneWhen}</p>
+              {personChecks.filter((c) => c.step === step.title).map((c) => (
+                <p key={c.date + c.note} className="mt-2 rounded-sm border-l-2 border-[var(--tested)] pl-2 text-sm">
+                  <span className="font-mono text-[11px] text-[var(--tested)]">Attempted by agent in a real account · about {c.minutes} min · {c.date}</span>
+                  <br />
+                  {c.note}
+                </p>
+              ))}
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                 <EvidenceTag evidence={step.evidence} sourceUrls={step.sourceUrls} probeIds={step.probeIds} />
                 {step.url && (

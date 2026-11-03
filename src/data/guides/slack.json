@@ -84,7 +84,7 @@
   "steps": [
     {
       "title": "Sign in and create an app",
-      "detail": "Go to api.slack.com/apps, sign in, then choose Create New App, then From scratch or From a manifest. Pick a development workspace you administer, or one where app installs are allowed.",
+      "detail": "Go to api.slack.com/apps, sign in, then choose Create an App. Pick Blank app or From a manifest (AI agent and Starter app templates are also offered). Pick a development workspace you administer, or one where app installs are allowed. The workspace can't be changed later, so use one you own.",
       "owner": "you",
       "estimate": "5 minutes",
       "doneWhen": "The app's Basic Information page shows a Client ID and Client Secret under App Credentials.",

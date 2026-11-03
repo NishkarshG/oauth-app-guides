@@ -1,0 +1,378 @@
+{
+  "app": {
+    "name": "ServiceNow",
+    "website": "https://www.servicenow.com",
+    "category": "ITSM platform",
+    "summary": "OAuth access lets an agent call a customer's ServiceNow instance REST APIs (Table API, incidents, changes, catalog, CMDB, HR cases) as the consenting user."
+  },
+  "hasOAuth": "yes",
+  "verdict": {
+    "difficulty": "moderate",
+    "headline": "ServiceNow has no global OAuth app. Each customer's admin must register your client on their own instance.",
+    "rationale": {
+      "text": "OAuth clients live in each instance's System OAuth > Application Registry. On Zurich and later they are also managed under Inbound Integrations, where the authorization code grant is one of the options. Nobody reviews an OAuth client you register on an instance you control. A client ID from your instance does not work on a customer's instance, though, so every tenant needs a client created by its own admin. The only route to a centrally distributed listing is ServiceNow Store certification, which requires joining the Partner Program. ServiceNow describes that as typically 3-5 weeks, and its certification team discourages listings that are integration-only with no code.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html",
+        "https://www.servicenow.com/docs/r/xanadu/platform-security/authentication/create-jwt-endpoint.html",
+        "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+      ],
+      "probeIds": []
+    }
+  },
+  "effort": {
+    "handsOn": "30-60 minutes for your test instance, plus about 15 minutes of admin time per customer instance",
+    "approvalWait": "None (per-instance). 3-5+ weeks only if you pursue a ServiceNow Store listing",
+    "firstConnection": "Under 1 hour, using a free Personal Developer Instance",
+    "handsOnMinutesHigh": 60,
+    "waitDaysHigh": 0,
+    "basis": {
+      "text": "Creating an inbound OAuth client is an admin form on the instance, and ServiceNow does not review it. The time estimates are inference. The 3-5 week figure is ServiceNow's own estimate for Store certification, which you do not need for per-customer OAuth. A former reviewer's site says 5-8 weeks in practice.",
+      "evidence": "uncertain",
+      "sourceUrls": [
+        "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630",
+        "https://xpertappdev.com/services/certification-guide.html"
+      ],
+      "probeIds": []
+    }
+  },
+  "stages": [
+    {
+      "name": "Test on your own Personal Developer Instance",
+      "whoCanConnect": "Users of your developer instance (https://devNNNNN.service-now.com)",
+      "reviewRequired": false,
+      "limit": {
+        "text": "The client ID and secret only work against the instance where they were created. Personal Developer Instances hibernate when idle and are reclaimed after a period of inactivity.",
+        "evidence": "uncertain",
+        "sourceUrls": [],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Each customer connects their own instance",
+      "whoCanConnect": "Users on any customer instance where an admin has created an inbound OAuth client (authorization code grant) with your redirect URI",
+      "reviewRequired": false,
+      "limit": {
+        "text": "Each tenant needs its own client ID and secret plus its instance URL, so your Composio auth config has to be set per customer or take these per connection. The customer's admin role and policies decide who can create the client and which roles or ACLs the token carries.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html"
+        ],
+        "probeIds": []
+      }
+    },
+    {
+      "name": "Optional: certified ServiceNow Store app",
+      "whoCanConnect": "Customers who install your Store app, which can pre-package the OAuth/inbound configuration",
+      "reviewRequired": true,
+      "limit": {
+        "text": "Requires joining the ServiceNow Partner Program as a Build/Technology Partner and passing app certification, which ServiceNow says typically takes 3-5 weeks. The certification team discourages apps that have no code or business logic, which describes a pure integration.",
+        "evidence": "sourced",
+        "sourceUrls": [
+          "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+        ],
+        "probeIds": []
+      }
+    }
+  ],
+  "steps": [
+    {
+      "title": "Get a Personal Developer Instance",
+      "detail": "Sign in at developer.servicenow.com with a ServiceNow ID and choose Request Instance on the latest release (Zurich or later). You receive admin credentials for https://devNNNNN.service-now.com.",
+      "owner": "you",
+      "estimate": "10 minutes",
+      "doneWhen": "You can log in to your instance as admin.",
+      "url": "https://developer.servicenow.com/dev.do",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Create an inbound OAuth client (authorization code grant)",
+      "detail": "On Zurich or later, go to System OAuth > Application Registry > New (or Machine Identity Console > Inbound integrations) > New Integration and choose 'OAuth - Authorization code grant'. On older releases, choose 'Create an OAuth API endpoint for external clients'. Enter a Name and set the Redirect URL to Composio's callback URL, then save. Note the generated Client ID and Client Secret. Optionally set the access and refresh token lifespans and restrict auth scopes.",
+      "owner": "agent",
+      "estimate": "10 minutes",
+      "doneWhen": "The Application Registry record shows a Client ID and Client Secret, with your redirect URL saved.",
+      "url": "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html",
+        "https://www.servicenow.com/docs/r/xanadu/platform-security/authentication/create-jwt-endpoint.html"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Test the flow against your instance",
+      "detail": "Authorize at https://<instance>.service-now.com/oauth_auth.do and exchange the code at https://<instance>.service-now.com/oauth_token.do. Then call /api/now/table/incident with the bearer token. The user logs in through local login, SSO or MFA and then gives consent.",
+      "owner": "agent",
+      "estimate": "15 minutes",
+      "doneWhen": "An API call returns records under the consenting user's ACLs.",
+      "url": null,
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/r/oL66E_cwDD_tnWQYzYPRdA/4YdkgeZo7Fnkpj2di2ZX_Q"
+      ],
+      "probeIds": []
+    },
+    {
+      "title": "Write customer-admin onboarding instructions",
+      "detail": "Draft a one-page guide for customer admins covering the same Application Registry steps with your exact redirect URL. Ask them to send back the instance URL, Client ID and Client Secret through a secure channel. Mention any roles the connecting users need, such as itil.",
+      "owner": "agent",
+      "estimate": "30 minutes",
+      "doneWhen": "A customer admin can create the client without contacting you.",
+      "url": null,
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "(Optional) Join the Partner Program and certify a Store app",
+      "detail": "Only if you want customers to install a packaged app rather than configure OAuth by hand. Enrol as a Build/Technology Partner, build on vendor instances and submit for certification.",
+      "owner": "you",
+      "estimate": "3-5+ weeks elapsed",
+      "doneWhen": "The app is published on store.servicenow.com.",
+      "url": "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+      ],
+      "probeIds": []
+    }
+  ],
+  "requirements": [
+    {
+      "text": "Admin role on the target ServiceNow instance to create the Application Registry / Inbound integration record, which applies to every customer instance too.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://community.trustcloud.ai/docs/trustcloud/integrations/ticketing-and-collaboration/servicenow-v4/"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A ServiceNow ID to get a free Personal Developer Instance. The developer portal home page loads without a login wall, but requesting an instance requires signing in.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p1"
+      ]
+    },
+    {
+      "text": "Each customer's instance hostname (e.g. acme.service-now.com), because the authorize and token URLs are instance-specific.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/r/xanadu/platform-security/authentication/create-jwt-endpoint.html"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "A Partner Program (Build Partner) agreement is needed only for a ServiceNow Store listing.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+      ],
+      "probeIds": []
+    }
+  ],
+  "nuances": [
+    {
+      "text": "Zurich moved inbound OAuth into a 'New Inbound Integrations experience' in the Machine Identity Console, with Authorization code, Client credentials and Third party token grants. Older instances still use 'Create an OAuth API endpoint for external clients'. Customer instances may run different releases, so your onboarding doc should cover both paths.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "Zurich raised the maximum client secret length to 4096 characters. Make sure your secret storage does not truncate it.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/docs/r/oL66E_cwDD_tnWQYzYPRdA/4YdkgeZo7Fnkpj2di2ZX_Q"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "ServiceNow has no fine-grained OAuth scopes by default ('useraccount' covers everything). The token acts with the user's roles and ACLs, and admins can restrict it with REST API Access Policies / auth scopes.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Default token lifespans are short-lived access tokens (about 30 minutes) and refresh tokens of about 100 days, both configurable per client record. Treat these numbers as memory, not verified.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "text": "Client credentials grant (Washington DC and later) needs the system property glide.oauth.inbound.client.credential.grant_type.enabled and an integration user. Use it only if your agent should act as a service account rather than as each user.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://truto.one/blog/how-to-integrate-with-the-servicenow-api-2026-engineering-guide"
+      ],
+      "probeIds": []
+    },
+    {
+      "text": "The Zurich docs URL resolves, but it is rendered by JavaScript, so anonymous fetches see little content.",
+      "evidence": "tested",
+      "sourceUrls": [],
+      "probeIds": [
+        "p3"
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Client ID does not work on another instance",
+      "signal": "invalid_client / 'Invalid client_id' or a login error when you point the authorize URL at a customer instance using credentials from your dev instance.",
+      "nextMove": "Have the customer's admin create a client on their own instance and store per-tenant credentials and the instance URL.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Customer admin will not create the OAuth client",
+      "signal": "Security or change-control teams refuse to add inbound integrations or ask for a security review.",
+      "nextMove": "Give them a precise setup doc with the redirect URL and required roles. Consider a certified Store app for enterprise buyers.",
+      "evidence": "uncertain",
+      "sourceUrls": [],
+      "probeIds": []
+    },
+    {
+      "title": "Store certification rejects an integration-only app",
+      "signal": "The certification team says an app with no code or business logic is not recommended.",
+      "nextMove": "Skip the Store and rely on per-instance OAuth, or package meaningful in-platform logic.",
+      "evidence": "sourced",
+      "sourceUrls": [
+        "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630"
+      ],
+      "probeIds": []
+    }
+  ],
+  "agentCan": [
+    "Configure the Application Registry / Inbound integration record on an instance it has admin access to",
+    "Draft the customer-admin onboarding guide with the exact redirect URL, grant type and required roles",
+    "Test the oauth_auth.do and oauth_token.do flow and Table API calls on a developer instance",
+    "Prepare Store listing copy and documentation if you pursue certification"
+  ],
+  "youMust": [
+    "Create a ServiceNow ID and request a Personal Developer Instance (account and terms)",
+    "Get each customer's ServiceNow admin to create the OAuth client and share its credentials",
+    "Sign the Partner Program agreement and manage Store certification, if you choose that route"
+  ],
+  "uncertainties": [
+    {
+      "question": "What are the exact default access and refresh token lifespans on Zurich and later?",
+      "howToResolve": "Open a new authorization-code client record on your PDI and read the 'Access Token Lifespan' and 'Refresh Token Lifespan' defaults."
+    },
+    {
+      "question": "Can a Store app pre-create the OAuth client so customers skip the manual setup, and would certification accept that?",
+      "howToResolve": "Ask in the ServiceNow Partner/App Publisher community or contact the certification team."
+    },
+    {
+      "question": "How long do Store certifications take in 2026? ServiceNow says 3-5 weeks, and a third party claims 5-8.",
+      "howToResolve": "Ask the Partner Program team or check recent App Publisher community posts."
+    },
+    {
+      "question": "The authorize endpoint was not probed live because the test hostname did not resolve.",
+      "howToResolve": "Load https://<your-pdi>.service-now.com/oauth_auth.do?response_type=code&client_id=test-probe and observe the error."
+    }
+  ],
+  "providerContact": {
+    "channel": "ServiceNow Developer Community forums (developer.servicenow.com > Community), or the App Publisher blog/community for Store certification",
+    "draftMessage": "We're building a multi-tenant AI agent that connects to customers' ServiceNow instances through the OAuth authorization code grant. Is there a supported way for a certified Store app to provision the inbound OAuth client automatically, so customer admins don't have to create Application Registry records by hand? Would the certification team accept an integration-focused app that only does this?"
+  },
+  "slug": "servicenow",
+  "origin": "library",
+  "input": "ServiceNow",
+  "generatedAt": "2026-11-03T14:14:56.693Z",
+  "durationMs": 75744,
+  "model": "claude-opus-5-5",
+  "composio": {
+    "status": "byo",
+    "name": "ServiceNow",
+    "slug": "SERVICENOW",
+    "docUrl": "https://docs.composio.dev/toolkits/servicenow",
+    "capturedAt": "2026-11-03"
+  },
+  "probes": [
+    {
+      "id": "p2",
+      "url": "https://dev.service-now.com/oauth_auth.do?response_type=code&client_id=test-probe&redirect_uri=https://example.com/cb",
+      "purpose": "See how a ServiceNow instance authorize endpoint responds to an unknown client_id",
+      "status": null,
+      "finalUrl": null,
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": null,
+      "error": "getaddrinfo ENOTFOUND dev.service-now.com",
+      "at": "2026-11-03T14:13:48.878Z"
+    },
+    {
+      "id": "p1",
+      "url": "https://developer.servicenow.com/dev.do",
+      "purpose": "Check whether the Personal Developer Instance portal requires login",
+      "status": 200,
+      "finalUrl": "https://developer.servicenow.com/dev.do",
+      "redirects": [],
+      "loginWall": false,
+      "clientRendered": false,
+      "title": "ServiceNow Developers",
+      "error": null,
+      "at": "2026-11-03T14:13:48.878Z"
+    },
+    {
+      "id": "p3",
+      "url": "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html",
+      "purpose": "Confirm Zurich inbound integrations doc resolves",
+      "status": 200,
+      "finalUrl": "https://www.servicenow.com/docs/r/zurich/platform-security/authentication/new-inbound-integrations.html",
+      "redirects": [
+        "https://www.servicenow.com/docs/r/zurich/platform-security/authentication/new-inbound-integrations.html"
+      ],
+      "loginWall": false,
+      "clientRendered": true,
+      "title": "Docs | ServiceNow",
+      "error": null,
+      "at": "2026-11-03T14:14:07.077Z"
+    }
+  ],
+  "sourcesSeen": [
+    "https://blogs.servicenow.com/content/dam/servicenow-assets/public/en-us/doc-type/other-document/partner-program-guide.pdf",
+    "https://community.trustcloud.ai/docs/trustcloud/integrations/ticketing-and-collaboration/servicenow-v4/",
+    "https://developer.servicenow.com/dev.do",
+    "https://developers.apideck.com/connectors/servicenow/docs/consumer+connection",
+    "https://docs.uipath.com/integration-service/automation-cloud/latest/user-guide/uipath-servicenow-servicenow-authentication",
+    "https://hub.metronlabs.com/how-to-get-your-app-published-on-the-servicenow-store/",
+    "https://medium.com/@shuklashubh818/the-servicenow-apis-every-admin-and-developer-actually-needs-4fd35e4d76de",
+    "https://truto.one/blog/how-to-integrate-with-the-servicenow-api-2026-engineering-guide",
+    "https://truto.one/blog/servicenow-integration-guide-2026-from-itsm-and-hrsd-to-agentic-ai/",
+    "https://webkul.com/blog/servicenow-rest-api-developer-guide/",
+    "https://www.ramisun.com/ramisun-blog-publish-app-servicenow-store.html",
+    "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-amp-certification/ba-p/2266727",
+    "https://www.servicenow.com/community/app-publisher-blog/guide-to-getting-your-app-certified-and-certification/ba-p/2477630",
+    "https://www.servicenow.com/community/in-other-news/the-value-of-certified-applications-from-the-servicenow-store/ba-p/2273039",
+    "https://www.servicenow.com/community/s/cgfwn76974/attachments/cgfwn76974/creatorcon-blog/136/1/CCB1395_Sharma_ServiceNow_Knowledge_19_final_presentation.pdf",
+    "https://www.servicenow.com/docs/bundle/zurich-platform-security/page/integrate/authentication/concept/new-inbound-integrations.html",
+    "https://www.servicenow.com/docs/r/5dMS5yW3UCzgm53GLZ42Ng/pH76AOdRRZSLFoljUPUzBg",
+    "https://www.servicenow.com/docs/r/8yND1KuvF7tjP~F577YThQ/965ZkcEDRRWS6RlYYp_8SQ",
+    "https://www.servicenow.com/docs/r/GypxAX2jEErwkCxugICKdg/UzLIVZPh2GGl3S4y3eG1kg",
+    "https://www.servicenow.com/docs/r/KClk0UwQlFjGoDJBQtfqgw/F22VjNP9fJWScquQeSrMLQ",
+    "https://www.servicenow.com/docs/r/ja-JP/application-development/app-engine-management-center/create-oauth-api-endpoints-for-external-clients.html",
+    "https://www.servicenow.com/docs/r/ko-KR/application-development/app-engine-management-center/create-oauth-api-endpoints-for-external-clients.html",
+    "https://www.servicenow.com/docs/r/oL66E_cwDD_tnWQYzYPRdA/0JS6ELRl4VIFzylonHaNRw",
+    "https://www.servicenow.com/docs/r/oL66E_cwDD_tnWQYzYPRdA/4YdkgeZo7Fnkpj2di2ZX_Q",
+    "https://www.servicenow.com/docs/r/xanadu/platform-security/authentication/create-jwt-endpoint.html",
+    "https://www.servicenow.com/docs/r/zurich/platform-security/authentication/new-inbound-integrations.html",
+    "https://www.servicenow.com/docs/r/zurich/platform-security/authentication/oauth-inbound.html",
+    "https://xpertappdev.com/services/certification-guide.html",
+    "https://xpertappdev.com/services/process.html"
+  ],
+  "audit": {
+    "counts": {
+      "tested": 2,
+      "sourced": 13,
+      "uncertain": 8
+    },
+    "changes": []
+  }
+}

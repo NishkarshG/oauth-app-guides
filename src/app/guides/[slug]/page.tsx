@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GuideActions } from "@/components/GuideActions";
-import { StepChecklist } from "@/components/StepChecklist";
+import { StepChecklist, type PersonCheck } from "@/components/StepChecklist";
 import { DifficultyBadge, EvidenceTag, SectionHeading } from "@/components/ui";
 import { COMPOSIO_AUTH_DOCS, COMPOSIO_STEPS } from "@/lib/composio-hookup";
 import { guideToMarkdown } from "@/lib/markdown";
+import personChecks from "@/data/person-checks.json";
 import verification from "@/data/verification.json";
 import type { Claim, Guide } from "@/lib/schema";
 import { getGuide } from "@/lib/store";
@@ -106,7 +107,7 @@ export default async function GuidePage({ params }: Props) {
       </ol>
 
       <SectionHeading note="Your progress is saved in this browser.">What to do, in order</SectionHeading>
-      <StepChecklist slug={g.slug} steps={g.steps} />
+      <StepChecklist slug={g.slug} steps={g.steps} personChecks={(personChecks.entries as (PersonCheck & { app: string })[]).filter((c) => c.app === g.app.name)} />
 
       <SectionHeading note={`These steps come from Composio's docs, not the agent.`}>Connect it to Composio</SectionHeading>
       <ol className="max-w-3xl list-decimal space-y-2 pl-5 text-sm">
